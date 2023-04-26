@@ -1,3 +1,5 @@
+require "open3"
+
 module QuietQuality
   module Tools
     Error = Class.new(::QuietQuality::Error)
