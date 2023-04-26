@@ -1,6 +1,6 @@
 module QuietQuality
   class Messages
-    attr_reader :messages
+    include Enumerable
 
     def initialize(messages)
       @messages = messages
@@ -17,5 +17,21 @@ module QuietQuality
     def to_yaml
       to_hashes.to_yaml
     end
+
+    def all
+      messages
+    end
+
+    def each(&block)
+      if block
+        messages.each(&block)
+      else
+        to_enum(:each)
+      end
+    end
+
+    private
+
+    attr_reader :messages
   end
 end

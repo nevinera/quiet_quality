@@ -1,6 +1,8 @@
 RSpec.describe QuietQuality::Messages do
-  let(:m1) { QuietQuality::Message.new(path: "/foo/1", body: "body1", start_line: 1, level: "high") }
-  let(:m2) { QuietQuality::Message.new(path: "/foo/2", body: "body2", start_line: 2, stop_line: 5) }
+  let(:m1_data) { {path: "/foo/1", body: "body1", start_line: 1, level: "high"} }
+  let(:m2_data) { {path: "/foo/2", body: "body2", start_line: 2, stop_line: 5} }
+  let(:m1) { QuietQuality::Message.new(**m1_data) }
+  let(:m2) { QuietQuality::Message.new(**m2_data) }
   subject(:messages) { described_class.new([m1, m2]) }
 
   describe "#to_hashes" do
@@ -52,5 +54,37 @@ RSpec.describe QuietQuality::Messages do
     it "produces yaml containing the expected data" do
       expect(YAML.load(to_yaml)).to eq(messages.to_hashes)
     end
+  end
+
+  describe "#each" do
+    context "with a block" do
+      it "calls the block with each message" do
+        visited = []
+        messages.each { |m| visited << m }
+        expect(visited).to eq([m1, m2])
+      end
+    end
+
+    context "without a block" do
+      it "returns an enumerator that iterates the messages" do
+        enumerator = messages.each
+        expect(enumerator).to be_an(Enumerator)
+        expect(enumerator.count).to eq(2)
+      end
+    end
+  end
+
+  describe "#all" do
+    subject(:all) { messages.all }
+    it { is_expected.to be_an(Array) }
+    it { is_expected.to contain_exactly(m1, m2) }
+  end
+
+  describe "Enumerable" do
+    it { is_expected.to respond_to(:all) }
+    it { is_expected.to respond_to(:map) }
+    it { is_expected.to respond_to(:first) }
+    it { is_expected.to respond_to(:count) }
+    it { is_expected.to respond_to(:select) }
   end
 end
