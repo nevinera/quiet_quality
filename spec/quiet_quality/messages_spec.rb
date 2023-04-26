@@ -16,6 +16,48 @@ RSpec.describe QuietQuality::Messages do
     end
   end
 
+  describe ".load_json" do
+    let(:json) do
+      <<~JSON
+        [
+          {"path": "/foo/1", "body": "body1", "start_line": 1, "level": "high"},
+          {"path": "/foo/2", "body": "body2", "start_line": 2, "stop_line": 5}
+        ]
+      JSON
+    end
+
+    subject(:loaded_json) { described_class.load_json(json) }
+    it { is_expected.to be_a(described_class) }
+
+    it "includes the expected messages" do
+      expect(loaded_json.all.first.body).to eq("body1")
+      expect(loaded_json.all.last.body).to eq("body2")
+    end
+  end
+
+  describe ".load_yaml" do
+    let(:yaml) do
+      <<~YAML
+        ---
+        - path: "/foo/1"
+          body: body1
+          start_line: 1
+          level: high
+        - path: "/foo/2"
+          body: body2
+          start_line: 2
+          stop_line: 5
+      YAML
+    end
+    subject(:loaded_yaml) { described_class.load_yaml(yaml) }
+    it { is_expected.to be_a(described_class) }
+
+    it "includes the expected messages" do
+      expect(loaded_yaml.all.first.body).to eq("body1")
+      expect(loaded_yaml.all.last.body).to eq("body2")
+    end
+  end
+
   describe "#to_hashes" do
     subject(:to_hashes) { messages.to_hashes }
 

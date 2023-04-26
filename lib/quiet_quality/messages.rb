@@ -7,6 +7,14 @@ module QuietQuality
       new(messages)
     end
 
+    def self.load_json(text)
+      load_data(JSON.parse(text))
+    end
+
+    def self.load_yaml(text)
+      load_data(YAML.safe_load(text))
+    end
+
     def initialize(messages)
       @messages = messages
     end
