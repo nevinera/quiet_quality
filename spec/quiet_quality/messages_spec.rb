@@ -105,7 +105,7 @@ RSpec.describe QuietQuality::Messages do
     it { is_expected.to be_a(String) }
 
     it "produces yaml containing the expected data" do
-      expect(YAML.load(to_yaml)).to eq(messages.to_hashes)
+      expect(YAML.safe_load(to_yaml)).to eq(messages.to_hashes)
     end
   end
 
