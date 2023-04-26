@@ -1,0 +1,31 @@
+name: Linters
+
+on: [push]
+
+jobs:
+  StandardRB:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+
+      - name: Cache gems
+        uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-linters-${{ hashFiles('Gemfile.lock') }}
+          restore-keys:
+            ${{ runner.os }}-linters-
+
+      - name: Install gems
+        run: bundle install --jobs 4 --retry 3
+
+      - name: Run standard
+        run: bundle exec standardrb
+
+      - name: Run rubocop (complexity checks)
+        run: bundle exec rubocop --parallel
