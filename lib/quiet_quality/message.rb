@@ -7,14 +7,14 @@ module QuietQuality
     end
 
     def initialize(**attrs)
-      @attrs = attrs
-      @path = attrs.fetch(:path)
-      @body = attrs.fetch(:body)
-      @start_line = attrs.fetch(:start_line)
-      @stop_line = attrs.fetch(:stop_line, @start_line)
-      @annotated_line = attrs.fetch(:annotated_line, @stop_line)
-      @level = attrs.fetch(:level, nil)
-      @rule = attrs.fetch(:rule, nil)
+      @attrs = attrs.map { |k, v| [k.to_s, v] }.to_h
+      @path = @attrs.fetch("path")
+      @body = @attrs.fetch("body")
+      @start_line = @attrs.fetch("start_line")
+      @stop_line = @attrs.fetch("stop_line", @start_line)
+      @annotated_line = @attrs.fetch("annotated_line", @stop_line)
+      @level = @attrs.fetch("level", nil)
+      @rule = @attrs.fetch("rule", nil)
     end
 
     def to_h
