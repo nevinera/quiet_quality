@@ -2,6 +2,11 @@ module QuietQuality
   class Messages
     include Enumerable
 
+    def self.load_data(data)
+      messages = data.map { |message_data| Message.new(**message_data) }
+      new(messages)
+    end
+
     def initialize(messages)
       @messages = messages
     end

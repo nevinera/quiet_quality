@@ -5,6 +5,17 @@ RSpec.describe QuietQuality::Messages do
   let(:m2) { QuietQuality::Message.new(**m2_data) }
   subject(:messages) { described_class.new([m1, m2]) }
 
+  describe ".load_data" do
+    let(:data) { [m1_data, m2_data] }
+    subject(:loaded_data) { described_class.load_data(data) }
+    it { is_expected.to be_a(described_class) }
+
+    it "includes the expected messages" do
+      expect(loaded_data.all.first.body).to eq("body1")
+      expect(loaded_data.all.last.body).to eq("body2")
+    end
+  end
+
   describe "#to_hashes" do
     subject(:to_hashes) { messages.to_hashes }
 
