@@ -35,7 +35,7 @@ module QuietQuality
         # when no target files are specified)
         def command
           return nil if skip_execution?
-          ["rubocop", "-f", "json", "--fail-level", "fatal"] + target_files.sort
+          ["standardrb", "-f", "json", "--fail-level", "fatal"] + target_files.sort
         end
 
         def relevant_files
