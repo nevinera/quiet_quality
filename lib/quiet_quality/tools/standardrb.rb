@@ -1,7 +1,8 @@
 module QuietQuality
   module Tools
     module Standardrb
-      ExecutionError = Class.new(::QuietQuality::Error)
+      ExecutionError = Class.new(Tools::Error)
+      ParsingError = Class.new(Tools::Error)
     end
   end
 end
