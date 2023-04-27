@@ -35,6 +35,10 @@ module QuietQuality
       messages
     end
 
+    def empty?
+      messages.length == 0
+    end
+
     def each(&block)
       if block
         messages.each(&block)
