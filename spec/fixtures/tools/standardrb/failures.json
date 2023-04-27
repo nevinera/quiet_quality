@@ -1,0 +1,226 @@
+{
+  "metadata": {
+    "rubocop_version": "1.50.2",
+    "ruby_engine": "ruby",
+    "ruby_version": "2.7.6",
+    "ruby_patchlevel": "219",
+    "ruby_platform": "x86_64-darwin22"
+  },
+  "files": [
+    {
+      "path": "Gemfile",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/message.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/messages.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/tools.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/tools/standardrb.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/tools/standardrb/parser.rb",
+      "offenses": [
+        {
+          "severity": "convention",
+          "message": "Style/EmptyMethod: Put the `end` of empty method definitions on the next line.",
+          "cop_name": "Style/EmptyMethod",
+          "corrected": false,
+          "correctable": true,
+          "location": {
+            "start_line": 9,
+            "start_column": 9,
+            "last_line": 9,
+            "last_column": 25,
+            "length": 17,
+            "line": 9,
+            "column": 9
+          }
+        },
+        {
+          "severity": "convention",
+          "message": "Style/SingleLineMethods: Avoid single-line method definitions.",
+          "cop_name": "Style/SingleLineMethods",
+          "corrected": false,
+          "correctable": true,
+          "location": {
+            "start_line": 9,
+            "start_column": 9,
+            "last_line": 9,
+            "last_column": 25,
+            "length": 17,
+            "line": 9,
+            "column": 9
+          }
+        },
+        {
+          "severity": "convention",
+          "message": "Layout/EmptyLinesAroundMethodBody: Extra empty line detected at method body beginning.",
+          "cop_name": "Layout/EmptyLinesAroundMethodBody",
+          "corrected": false,
+          "correctable": true,
+          "location": {
+            "start_line": 20,
+            "start_column": 1,
+            "last_line": 21,
+            "last_column": 1,
+            "length": 1,
+            "line": 20,
+            "column": 1
+          }
+        },
+        {
+          "severity": "convention",
+          "message": "Layout/EmptyLines: Extra blank line detected.",
+          "cop_name": "Layout/EmptyLines",
+          "corrected": false,
+          "correctable": true,
+          "location": {
+            "start_line": 21,
+            "start_column": 1,
+            "last_line": 22,
+            "last_column": 1,
+            "length": 1,
+            "line": 21,
+            "column": 1
+          }
+        },
+        {
+          "severity": "convention",
+          "message": "Layout/EmptyLines: Extra blank line detected.",
+          "cop_name": "Layout/EmptyLines",
+          "corrected": false,
+          "correctable": true,
+          "location": {
+            "start_line": 22,
+            "start_column": 1,
+            "last_line": 23,
+            "last_column": 1,
+            "length": 1,
+            "line": 22,
+            "column": 1
+          }
+        },
+        {
+          "severity": "convention",
+          "message": "Layout/EmptyLinesAroundMethodBody: Extra empty line detected at method body end.",
+          "cop_name": "Layout/EmptyLinesAroundMethodBody",
+          "corrected": false,
+          "correctable": true,
+          "location": {
+            "start_line": 22,
+            "start_column": 1,
+            "last_line": 23,
+            "last_column": 1,
+            "length": 1,
+            "line": 22,
+            "column": 1
+          }
+        }
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/tools/standardrb/runner.rb",
+      "offenses": [
+        {
+          "severity": "convention",
+          "message": "Layout/ExtraSpacing: Unnecessary spacing detected.",
+          "cop_name": "Layout/ExtraSpacing",
+          "corrected": false,
+          "correctable": true,
+          "location": {
+            "start_line": 19,
+            "start_column": 16,
+            "last_line": 19,
+            "last_column": 16,
+            "length": 1,
+            "line": 19,
+            "column": 16
+          }
+        },
+        {
+          "severity": "convention",
+          "message": "Layout/SpaceInsideParens: Space inside parentheses detected.",
+          "cop_name": "Layout/SpaceInsideParens",
+          "corrected": false,
+          "correctable": true,
+          "location": {
+            "start_line": 19,
+            "start_column": 16,
+            "last_line": 19,
+            "last_column": 17,
+            "length": 2,
+            "line": 19,
+            "column": 16
+          }
+        }
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/version.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "quiet_quality.gemspec",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "spec/quiet_quality/message_spec.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "spec/quiet_quality/messages_spec.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "spec/quiet_quality/tools/standardrb/runner_spec.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "spec/spec_helper.rb",
+      "offenses": [
+
+      ]
+    }
+  ],
+  "summary": {
+    "offense_count": 8,
+    "target_file_count": 14,
+    "inspected_file_count": 14
+  }
+}
