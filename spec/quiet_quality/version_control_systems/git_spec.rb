@@ -1,6 +1,6 @@
 require "ostruct"
 
-RSpec.describe QuietQuality::Git do
+RSpec.describe QuietQuality::VersionControlSystems::Git do
   describe ".default_branch" do
     let(:remote) { "https://some.remote.git.url" }
     subject(:default_branch) { described_class.default_branch(remote: remote) }
