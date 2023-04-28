@@ -1,3 +1,4 @@
+require "git"
 require "json"
 require "yaml"
 
