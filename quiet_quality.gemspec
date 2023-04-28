@@ -31,9 +31,12 @@ Gem::Specification.new do |spec|
       .map { |path| path.sub(/^bin\//, "") }
   end
 
+  spec.add_dependency "git", "~> 1.18"
+
   spec.add_development_dependency "rspec", "~> 3.10"
   spec.add_development_dependency "simplecov", "~> 0.22.0"
   spec.add_development_dependency "pry", "~> 0.14"
   spec.add_development_dependency "standard", "~> 1.28"
   spec.add_development_dependency "rubocop", "~> 1.50"
+  spec.add_development_dependency "debug"
 end
