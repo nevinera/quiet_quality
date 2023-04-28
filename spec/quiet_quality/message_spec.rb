@@ -65,9 +65,37 @@ RSpec.describe QuietQuality::Message do
   include_examples "required field", :body, :body
   include_examples "required field", :start_line, :start_line
   include_examples "field with default", :stop_line, default_binding: :start_line
-  include_examples "field with default", :annotated_line, default_binding: :stop_line
   include_examples "field with default", :level, default_value: nil
   include_examples "field with default", :rule, default_value: nil
+
+  describe "#annotated_line" do
+    subject { message.annotated_line }
+
+    context "when it is set during initialization" do
+      let(:annotated_line) { 19 }
+      it { is_expected.to eq(19) }
+    end
+
+    context "when it is set later" do
+      let(:annotated_line) { nil }
+      before { message.annotated_line = 44 }
+      it { is_expected.to eq(44) }
+    end
+
+    context "when it is not set" do
+      let(:annotated_line) { nil }
+
+      context "but stop_line is" do
+        let(:stop_line) { 28 }
+        it { is_expected.to eq(28) }
+      end
+
+      context "and neither is stop_line" do
+        let(:stop_line) { nil }
+        it { is_expected.to eq(start_line) }
+      end
+    end
+  end
 
   describe "#to_h" do
     subject(:to_h) { message.to_h }
