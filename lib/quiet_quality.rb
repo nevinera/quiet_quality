@@ -1,6 +1,7 @@
 require "git"
 require "json"
 require "yaml"
+require "set"
 
 module QuietQuality
   Error = Class.new(StandardError)
