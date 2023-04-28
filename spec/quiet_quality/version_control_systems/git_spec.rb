@@ -1,5 +1,3 @@
-require "ostruct"
-
 RSpec.describe QuietQuality::VersionControlSystems::Git do
   describe ".default_branch" do
     let(:remote) { "https://some.remote.git.url" }
@@ -15,9 +13,8 @@ RSpec.describe QuietQuality::VersionControlSystems::Git do
     let(:path) { "/path/to/git/repo" }
     let(:instance) { described_class.new(path) }
 
-    let(:git_double) {
-      instance_double(Git::Base, remote: OpenStruct.new(url: "remote_url"), merge_base: "expected_base")
-    }
+    let(:remote_double) { instance_double(Git::Remote, url: "remote_url") }
+    let(:git_double) { instance_double(Git::Base, remote: remote_double, merge_base: "expected_base") }
 
     before do
       expect(Git).to receive(:open).with(path).and_return(git_double)
