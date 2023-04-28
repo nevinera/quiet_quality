@@ -17,7 +17,17 @@ module QuietQuality
       #
       # @return [String] Branch name
       def default_branch
-        git.revparse("origin/HEAD").rpartition("/origin/").last
+        self.class.default_branch(remote: git.remote.url)
+      end
+
+      #
+      # The default branch for the given remote
+      #
+      # @param [String] remote The remote repository url
+      # @return [String] Branch name
+      #
+      def self.default_branch(remote:)
+        ::Git.default_branch(remote)
       end
 
       #
