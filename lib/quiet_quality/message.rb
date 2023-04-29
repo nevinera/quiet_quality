@@ -1,6 +1,6 @@
 module QuietQuality
   class Message
-    attr_writer :annotated_line
+    attr_accessor :annotated_line
     attr_reader :path, :body, :start_line, :stop_line, :level, :rule
 
     def self.load(hash)
@@ -16,10 +16,6 @@ module QuietQuality
       @annotated_line = @attrs.fetch("annotated_line", nil)
       @level = @attrs.fetch("level", nil)
       @rule = @attrs.fetch("rule", nil)
-    end
-
-    def annotated_line
-      @annotated_line || @stop_line || @start_line
     end
 
     def to_h
