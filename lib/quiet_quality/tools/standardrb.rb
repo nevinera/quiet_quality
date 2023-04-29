@@ -1,3 +1,5 @@
+require_relative "./rubocop"
+
 module QuietQuality
   module Tools
     module Standardrb
