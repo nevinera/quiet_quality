@@ -14,4 +14,15 @@ RSpec.describe QuietQuality::ChangedFile do
     it { is_expected.to be_a(Set) }
     it { is_expected.to contain_exactly(1, 3, 5, 9, 10) }
   end
+
+  describe "#line_numbers" do
+    subject { changed_file.line_numbers }
+    it { is_expected.to be_an(Array) }
+    it { is_expected.to eq([1, 3, 5, 9, 10]) }
+
+    context "when the lines are out of order" do
+      let(:lines) { [5, 1, 2, 9, 8] }
+      it { is_expected.to eq([1, 2, 5, 8, 9]) }
+    end
+  end
 end
