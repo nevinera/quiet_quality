@@ -4,7 +4,7 @@ RSpec.describe QuietQuality::AnnotationLocator do
   let(:changed_files) { QuietQuality::ChangedFiles.new([foo_file, bar_file]) }
   subject(:locator) { described_class.new(changed_files: changed_files) }
 
-  def build_message(path, body, start, stop=nil)
+  def build_message(path, body, start, stop = nil)
     QuietQuality::Message.new(path: path, body: body, start_line: start, stop_line: stop)
   end
 
@@ -54,6 +54,33 @@ RSpec.describe QuietQuality::AnnotationLocator do
           expect { update! }.to change { message.annotated_line }.from(nil).to(7)
         end
       end
+    end
+  end
+
+  describe "#update_all!" do
+    let(:foo_m1) { build_message(foo_file.path, "foo msg 1", 2, 3) }
+    let(:foo_m2) { build_message(foo_file.path, "foo msg 2", 7, 9) }
+    let(:bar_m1) { build_message(bar_file.path, "bar msg 2", 7, 15) }
+    let(:baz_m1) { build_message("path/baz.rb", "baz msg 1", 1, 50) }
+    let(:messages) { [foo_m1, foo_m2, bar_m1, baz_m1] }
+    subject(:update_all!) { locator.update_all!(messages) }
+
+    it { is_expected.to eq(2) }
+
+    it "updates the locatable foo message as expected" do
+      expect { update_all! }.to change { foo_m1.annotated_line }.from(nil).to(3)
+    end
+
+    it "does not update the unlocatable foo message" do
+      expect { update_all! }.not_to change { foo_m2.annotated_line }.from(nil)
+    end
+
+    it "updates the locatable bar message as expected" do
+      expect { update_all! }.to change { bar_m1.annotated_line }.from(nil).to(15)
+    end
+
+    it "does not update the unlocatable baz message" do
+      expect { update_all! }.not_to change { baz_m1.annotated_line }.from(nil)
     end
   end
 end

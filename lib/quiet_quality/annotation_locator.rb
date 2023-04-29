@@ -9,6 +9,10 @@ module QuietQuality
       message.annotated_line = changed_file ? file_line_for(message, changed_file) : nil
     end
 
+    def update_all!(messages)
+      messages.map { |m| update!(m) }.compact.length
+    end
+
     private
 
     attr_reader :changed_files
