@@ -14,8 +14,8 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
     context "when the standardrb command _fails_" do
       let(:stat) { instance_double(Process::Status, success?: false, exitstatus: 14) }
 
-      it "raises a Standardrb::ExecutionError" do
-        expect { invoke! }.to raise_error(QuietQuality::Tools::Standardrb::ExecutionError)
+      it "raises a Rubocop::ExecutionError" do
+        expect { invoke! }.to raise_error(QuietQuality::Tools::Rubocop::ExecutionError)
       end
     end
 
@@ -69,7 +69,7 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
       end
 
       context "and contains too many ruby files" do
-        before { stub_const("QuietQuality::Tools::Standardrb::Runner::MAX_FILES", 1) }
+        before { stub_const("QuietQuality::Tools::Rubocop::Runner::MAX_FILES", 1) }
         it { is_expected.to eq("fake output") }
 
         it "calls standardrb correctly, with no targets" do
