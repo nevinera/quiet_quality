@@ -10,5 +10,9 @@ module QuietQuality
     def lines
       @_lines ||= @lines.to_set
     end
+
+    def line_numbers
+      @_line_numbers ||= @lines.sort
+    end
   end
 end
