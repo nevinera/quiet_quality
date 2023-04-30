@@ -2,6 +2,10 @@ require "git"
 require "json"
 require "yaml"
 
+# 'set' doesn't need requiring after ruby 3.2, but it won't hurt anything.
+# And we're compatible back to 2.6
+require "set" # rubocop:disable Lint/RedundantRequireStatement
+
 module QuietQuality
   Error = Class.new(StandardError)
 end
