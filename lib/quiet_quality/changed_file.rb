@@ -33,7 +33,7 @@ module QuietQuality
         fail ArgumentError, "Cannot merge ChangedFiles '#{path}' and '#{other.path}', they're different files"
       end
 
-      new_lines = entire? || other.entire? ? :all : (lines + other.lines).to_a
+      new_lines = (entire? || other.entire?) ? :all : (lines + other.lines).to_a
       self.class.new(path: path, lines: new_lines)
     end
   end
