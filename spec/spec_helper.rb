@@ -6,6 +6,9 @@ require File.expand_path("../../lib/quiet_quality", __FILE__)
 gem_root = File.expand_path("../..", __FILE__)
 FIXTURES_DIRECTORY = File.join(gem_root, "spec", "fixtures")
 
+support_glob = File.join(gem_root, "spec", "support", "**", "*.rb")
+Dir[support_glob].sort.each { |f| require f }
+
 def fixture_path(*parts)
   File.join(FIXTURES_DIRECTORY, *parts)
 end
