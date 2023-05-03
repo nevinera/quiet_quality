@@ -27,5 +27,14 @@ module QuietQuality
       return nil if @lines.nil?
       @_line_numbers ||= @lines.sort
     end
+
+    def merge(other)
+      if path != other.path
+        fail ArgumentError, "Cannot merge ChangedFiles '#{path}' and '#{other.path}', they're different files"
+      end
+
+      return self.class.new(path: path, lines: :all) if entire? || other.entire?
+      self.class.new(path: path, lines: (lines + other.lines).to_a)
+    end
   end
 end
