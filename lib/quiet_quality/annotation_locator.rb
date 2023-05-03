@@ -18,6 +18,7 @@ module QuietQuality
     attr_reader :changed_files
 
     def file_line_for(message, changed_file)
+      return message.stop_line if changed_file.entire?
       message_range = (message.start_line..message.stop_line)
       last_match(changed_file.line_numbers, message_range)
     end
