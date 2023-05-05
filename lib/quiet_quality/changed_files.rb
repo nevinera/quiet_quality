@@ -14,6 +14,14 @@ module QuietQuality
       files_by_path.include?(path)
     end
 
+    def merge(other)
+      merged_files = []
+      (files + other.files)
+        .group_by(&:path)
+        .each_pair { |_path, pfiles| merged_files << pfiles.reduce(&:merge) }
+      self.class.new(merged_files)
+    end
+
     private
 
     def files_by_path
