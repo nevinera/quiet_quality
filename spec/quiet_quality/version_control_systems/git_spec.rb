@@ -10,39 +10,121 @@ RSpec.describe QuietQuality::VersionControlSystems::Git do
   end
 
   context "instance methods" do
-    let(:path) { "/path/to/git/repo" }
-    let(:instance) { described_class.new(path) }
+    let(:git_repo_path) { "tmp/repo" }
+    let(:base_sha) { "main" }
 
-    let(:remote_double) { instance_double(Git::Remote, url: "remote_url") }
-    let(:git_double) { instance_double(Git::Base, remote: remote_double, merge_base: [expected_base]) }
-    let(:expected_base) { instance_double(Git::Object::Commit, sha: "abcd1234") }
+    let(:instance) { described_class.new(git_repo_path) }
 
-    before do
-      expect(Git).to receive(:open).with(path).and_return(git_double)
+    describe "#changed_files" do
+      let(:base_params) { {base: base_sha} }
+      let(:params) { base_params }
+      subject(:changed_files) { instance.changed_files(**params) }
+
+      context "committed_changes" do
+        let(:params) { base_params.merge({include_uncommitted: false, include_untracked: false}) }
+        it { should be_a QuietQuality::ChangedFiles }
+
+        it "should have the correct files" do
+          expect(changed_files.files.map(&:path)).to include("bar/baz/h.txt", "foo/f.txt", "foo/g/g.txt")
+        end
+
+        it "should have the correct line numbers" do
+          expect(changed_files.files.map(&:lines)).to include([1].to_set, [1].to_set, (1..5).to_set)
+        end
+      end
+
+      context "uncommitted_changes" do
+        context "when include_uncommitted is not specified" do
+          let(:params) { base_params.merge({include_untracked: false}) }
+
+          it { should be_a QuietQuality::ChangedFiles }
+
+          it "should include the uncommitted files" do
+            expect(changed_files.files.map(&:path)).to include("i.txt")
+          end
+
+          it "should include the uncommitted line numbers" do
+            expect(changed_files.files.map(&:lines)).to include((1..3).to_set)
+          end
+        end
+
+        context "when include_uncommitted: true (default)" do
+          let(:params) { base_params.merge({include_uncommitted: true, include_untracked: false}) }
+
+          it { should be_a QuietQuality::ChangedFiles }
+
+          it "should include the uncommitted files" do
+            expect(changed_files.files.map(&:path)).to include("i.txt")
+          end
+
+          it "should include the uncommitted line numbers" do
+            expect(changed_files.files.map(&:lines)).to include((1..3).to_set)
+          end
+        end
+
+        context "when include_uncommitted: false" do
+          let(:params) { base_params.merge({include_uncommitted: false, include_untracked: false}) }
+
+          it "should not include the uncommitted files" do
+            expect(changed_files.files.map(&:path)).not_to include("i.txt")
+          end
+
+          it "should not include the uncommitted line numbers" do
+            expect(changed_files.files.map(&:lines)).not_to include((1..3).to_set)
+          end
+        end
+      end
+
+      context "untracked_changes" do
+        context "when include_untracked is not specified" do
+          let(:params) { base_params.merge({include_uncommitted: false}) }
+
+          it "should not include the untracked files" do
+            expect(changed_files.files.map(&:path)).not_to include("j.txt")
+          end
+
+          it "should not include the untracked line numbers" do
+            expect(changed_files.files.map(&:lines)).not_to include (1..8).to_set
+          end
+        end
+
+        context "when include_untracked: false (default)" do
+          let(:params) { base_params.merge({include_uncommitted: false, include_untracked: false}) }
+
+          it "should not include the untracked files" do
+            expect(changed_files.files.map(&:path)).not_to include("j.txt")
+          end
+
+          it "should not include the untracked line numbers" do
+            expect(changed_files.files.map(&:lines)).not_to include (1..8).to_set
+          end
+        end
+
+        context "when include_untracked: true" do
+          let(:params) { base_params.merge({include_uncommitted: false, include_untracked: true}) }
+
+          it "should not include the untracked files" do
+            expect(changed_files.files.map(&:path)).to include("j.txt")
+          end
+
+          it "should not include the untracked line numbers" do
+            expect(changed_files.file("j.txt").entire?).to eq true
+          end
+        end
+      end
     end
 
     describe "#default_branch" do
       subject(:default_branch) { instance.default_branch }
-
-      it "delegates to the Git api" do
-        expect(Git).to receive(:default_branch).with("remote_url")
-        default_branch
-      end
+      before { allow(instance).to receive_message_chain("git", "remote", "url").and_return("tmp/repo")}
+      it { should eq "branch-1" }
     end
 
     describe "#comparison_base" do
-      let(:sha) { "ABCDEF123456" }
-      let(:branch) { "default_branch" }
-      subject(:comparison_base) {
-        instance.comparison_base(sha: sha, comparison_branch: branch)
-      }
-
-      it "delegates to the Git api" do
-        comparison_base
-        expect(git_double).to have_received(:merge_base).with(branch, sha)
-      end
-
-      it { is_expected.to eq("abcd1234") }
+      let(:sha) { "main" }
+      let(:branch) { "branch-1" }
+      subject(:comparison_base) { instance.comparison_base(sha: sha, comparison_branch: branch) }
+      it { is_expected.to eq("d1e4d54ffff66d229cebe8cf8e9530b61998e119") }
     end
   end
 
