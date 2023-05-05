@@ -1,0 +1,53 @@
+{
+  "version": "3.12.2",
+  "seed": 34337,
+  "examples": [
+    {
+      "id": "./spec/quiet_quality/tools/standardrb/runner_spec.rb[1:1:4:3:2]",
+      "description": "calls standardrb correctly, with no targets",
+      "full_description": "QuietQuality::Tools::Standardrb::Runner#invoke! when changed_files is full and contains too many ruby files calls standardrb correctly, with no targets",
+      "status": "passed",
+      "file_path": "./spec/quiet_quality/tools/standardrb/runner_spec.rb",
+      "line_number": 75,
+      "run_time": 0.00024,
+      "pending_message": null
+    },
+    {
+      "id": "./spec/quiet_quality/tools/standardrb/runner_spec.rb[1:1:4:3:1]",
+      "description": "is expected to eq \"wrong fake output\"",
+      "full_description": "QuietQuality::Tools::Standardrb::Runner#invoke! when changed_files is full and contains too many ruby files is expected to eq \"wrong fake output\"",
+      "status": "failed",
+      "file_path": "./spec/quiet_quality/tools/standardrb/runner_spec.rb",
+      "line_number": 73,
+      "run_time": 0.004895,
+      "pending_message": null
+    },
+    {
+      "id": "./spec/quiet_quality/tools/standardrb/runner_spec.rb[1:1:4:1:1]",
+      "description": "does not call standardrb",
+      "full_description": "QuietQuality::Tools::Standardrb::Runner#invoke! when changed_files is full but contains no ruby files does not call standardrb",
+      "status": "failed",
+      "file_path": "./spec/quiet_quality/tools/standardrb/runner_spec.rb",
+      "line_number": 54,
+      "run_time": 0.000199,
+      "pending_message": null,
+      "exception": {
+        "class": "RSpec::Expectations::ExpectationNotMetError",
+        "message": "(Open3).capture3(*(any args))\n    expected: 1 time with any arguments\n    received: 0 times with any arguments",
+        "backtrace": [
+          "/Users/emueller/.rvm/gems/ruby-3.1.2@qq/gems/rspec-support-3.12.0/lib/rspec/support.rb:102:in `block in <module:Support>'",
+          "/Users/emueller/.rvm/gems/ruby-3.1.2@qq/gems/rspec-core-3.12.2/lib/rspec/core/example_group.rb:608:in `map'",
+          "/Users/emueller/.rvm/gems/ruby-3.1.2@qq/bin/ruby_executable_hooks:22:in `<main>'"
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "duration": 0.010737,
+    "example_count": 3,
+    "failure_count": 2,
+    "pending_count": 0,
+    "errors_outside_of_examples_count": 0
+  },
+  "summary_line": "10 examples, 2 failures"
+}

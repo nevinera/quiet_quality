@@ -13,6 +13,7 @@ RSpec.describe QuietQuality::Tools::Standardrb::Parser do
     context "when there are no offenses" do
       let(:text) { fixture_content("tools", "standardrb", "no-failures.json") }
       it { is_expected.to be_a(QuietQuality::Messages) }
+      it { is_expected.to be_empty }
     end
 
     context "when there are some offenses" do
