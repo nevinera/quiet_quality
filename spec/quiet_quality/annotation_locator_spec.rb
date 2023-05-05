@@ -1,7 +1,8 @@
 RSpec.describe QuietQuality::AnnotationLocator do
   let(:foo_file) { QuietQuality::ChangedFile.new(path: "path/foo.rb", lines: [1, 2, 3, 5, 10]) }
   let(:bar_file) { QuietQuality::ChangedFile.new(path: "path/bar.rb", lines: [5, 6, 7, 14, 15]) }
-  let(:changed_files) { QuietQuality::ChangedFiles.new([foo_file, bar_file]) }
+  let(:bug_file) { QuietQuality::ChangedFile.new(path: "path/bug.rb", lines: :all) }
+  let(:changed_files) { QuietQuality::ChangedFiles.new([foo_file, bar_file, bug_file]) }
   subject(:locator) { described_class.new(changed_files: changed_files) }
 
   def build_message(path, body, start, stop = nil)
@@ -26,6 +27,14 @@ RSpec.describe QuietQuality::AnnotationLocator do
 
       it "doesn't update annotated_line from nil" do
         expect { update! }.not_to change { message.annotated_line }.from(nil)
+      end
+    end
+
+    context "for a message in a file that was entirely changed" do
+      let(:message) { build_message(bug_file.path, "rah", 10_000, 20_000) }
+
+      it "updates the annotated_line to match" do
+        expect { update! }.to change { message.annotated_line }.from(nil).to(20_000)
       end
     end
 

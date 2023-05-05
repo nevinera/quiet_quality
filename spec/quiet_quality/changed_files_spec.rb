@@ -1,6 +1,7 @@
 RSpec.describe QuietQuality::ChangedFiles do
   let(:foo_file) { QuietQuality::ChangedFile.new(path: "path/foo.rb", lines: [1, 2, 3, 5, 10]) }
   let(:bar_file) { QuietQuality::ChangedFile.new(path: "path/bar.rb", lines: [5, 6, 7, 14, 15]) }
+  let(:bug_file) { QuietQuality::ChangedFile.new(path: "path/bug.py", lines: :all) }
   let(:files) { [foo_file, bar_file] }
   subject(:changed_files) { described_class.new(files) }
 

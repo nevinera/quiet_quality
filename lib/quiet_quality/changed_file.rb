@@ -4,14 +4,27 @@ module QuietQuality
 
     def initialize(path:, lines:)
       @path = path
-      @lines = lines
+
+      if lines == :all || lines == "all"
+        @entire = true
+        @lines = nil
+      else
+        @entire = false
+        @lines = lines
+      end
+    end
+
+    def entire?
+      @entire
     end
 
     def lines
+      return nil if @lines.nil?
       @_lines ||= @lines.to_set
     end
 
     def line_numbers
+      return nil if @lines.nil?
       @_line_numbers ||= @lines.sort
     end
   end
