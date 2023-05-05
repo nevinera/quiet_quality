@@ -39,7 +39,7 @@ module QuietQuality
       # @return [String] The nearest common ancestor (SHA)
       #
       def comparison_base(sha:, comparison_branch:)
-        git.merge_base(comparison_branch, sha)
+        git.merge_base(comparison_branch, sha).first.sha
       end
     end
   end

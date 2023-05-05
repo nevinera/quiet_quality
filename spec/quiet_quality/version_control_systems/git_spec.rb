@@ -14,7 +14,8 @@ RSpec.describe QuietQuality::VersionControlSystems::Git do
     let(:instance) { described_class.new(path) }
 
     let(:remote_double) { instance_double(Git::Remote, url: "remote_url") }
-    let(:git_double) { instance_double(Git::Base, remote: remote_double, merge_base: "expected_base") }
+    let(:git_double) { instance_double(Git::Base, remote: remote_double, merge_base: [expected_base]) }
+    let(:expected_base) { instance_double(Git::Object::Commit, sha: "abcd1234") }
 
     before do
       expect(Git).to receive(:open).with(path).and_return(git_double)
@@ -40,6 +41,20 @@ RSpec.describe QuietQuality::VersionControlSystems::Git do
         comparison_base
         expect(git_double).to have_received(:merge_base).with(branch, sha)
       end
+
+      it { is_expected.to eq("abcd1234") }
+    end
+  end
+
+  context "on the fixture repository" do
+    let(:repo_path) { tmp_path("repo") }
+    subject(:fixture_repo) { described_class.new(repo_path) }
+
+    describe "#comparison_base" do
+      subject(:comparison_base) { fixture_repo.comparison_base(sha: sha, comparison_branch: branch) }
+      let(:sha) { "HEAD" }
+      let(:branch) { "main" }
+      it { is_expected.to start_with("d1e4d54") }
     end
   end
 end

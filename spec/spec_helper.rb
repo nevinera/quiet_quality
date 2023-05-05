@@ -22,6 +22,10 @@ def fixture_json(*parts)
   JSON.parse(fixture_content(*parts))
 end
 
+def tmp_path(*parts)
+  File.join(TEMP_DIRECTORY, *parts)
+end
+
 RSpec.configure do |config|
   config.raise_errors_for_deprecations!
   config.mock_with :rspec
