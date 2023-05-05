@@ -10,7 +10,6 @@ RSpec.describe QuietQuality::Tools::Rspec::Parser do
       expect(parser.messages.object_id).to eq(first_messages.object_id)
     end
 
-
     context "when there are no offenses" do
       let(:text) { fixture_content("tools", "rspec", "no-failures.json") }
       it { is_expected.to be_a(QuietQuality::Messages) }
