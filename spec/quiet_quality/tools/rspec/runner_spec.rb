@@ -1,7 +1,6 @@
 RSpec.describe QuietQuality::Tools::Rspec::Runner do
   let(:changed_files) { nil }
-  let(:error_stream) { instance_double(IO, write: nil) }
-  subject(:runner) { described_class.new(changed_files: changed_files, error_stream: error_stream) }
+  subject(:runner) { described_class.new(changed_files: changed_files) }
 
   let(:out) { "fake output" }
   let(:err) { "fake error" }
@@ -21,7 +20,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
 
     context "when changed_files is nil" do
       let(:changed_files) { nil }
-      it { is_expected.to eq("fake output") }
+      it { is_expected.to eq(build_success("fake output", "fake error")) }
 
       it "calls rspec with no targets" do
         invoke!
@@ -33,7 +32,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
 
     context "when changed_files is empty" do
       let(:changed_files) { [] }
-      it { is_expected.to eq(described_class::NO_FILES_OUTPUT) }
+      it { is_expected.to eq(build_success(described_class::NO_FILES_OUTPUT)) }
 
       it "does not call rspec" do
         expect(Open3).not_to have_received(:capture3)
@@ -43,7 +42,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
     context "when changed_files is full" do
       context "but contains no spec files" do
         let(:changed_files) { ["foo_spec.ts", "bar.rb", "baz_spec.rb.bak"] }
-        it { is_expected.to eq(described_class::NO_FILES_OUTPUT) }
+        it { is_expected.to eq(build_success(described_class::NO_FILES_OUTPUT)) }
 
         it "does not call rspec" do
           expect(Open3).not_to have_received(:capture3)
@@ -52,7 +51,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
 
       context "and contains some spec files" do
         let(:changed_files) { ["foo_spec.ts", "bar_spec.rb", "baz_spec.rb.bak", "a/alpha_spec.rb"] }
-        it { is_expected.to eq("fake output") }
+        it { is_expected.to eq(build_success("fake output", "fake error")) }
 
         it "calls rspec with no targets" do
           invoke!

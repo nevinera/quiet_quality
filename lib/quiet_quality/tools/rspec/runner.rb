@@ -5,17 +5,12 @@ module QuietQuality
         MAX_FILES = 100
         NO_FILES_OUTPUT = '{"examples": [], "summary": {"failure_count": 0}}'
 
-        def initialize(changed_files: nil, error_stream: $stderr)
+        def initialize(changed_files: nil)
           @changed_files = changed_files
-          @error_stream = error_stream
         end
 
         def invoke!
-          return NO_FILES_OUTPUT if skip_execution?
-          out, err, stat = Open3.capture3(*command)
-          error_stream.write(err)
-          fail(ExecutionError, "Execution of rspec failed with #{stat.exitstatus}") unless stat.success?
-          out
+          @_outcome ||= skip_execution? ? skipped_outcome : performed_outcome
         end
 
         private
@@ -40,6 +35,21 @@ module QuietQuality
         def command
           return nil if skip_execution?
           ["rspec", "--failure-exit-code", "0", "-f", "json"] + target_files.sort
+        end
+
+        def skipped_outcome
+          Outcome.new(output: NO_FILES_OUTPUT)
+        end
+
+        def performed_outcome
+          out, err, stat = Open3.capture3(*command)
+          if stat.success?
+            Outcome.new(output: out, logging: err)
+          elsif stat.exitstatus == 1
+            Outcome.new(output: out, logging: err, failure: true)
+          else
+            fail(ExecutionError, "Execution of rspec failed with #{stat.exitstatus}")
+          end
         end
       end
     end
