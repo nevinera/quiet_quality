@@ -34,7 +34,7 @@ module QuietQuality
 
         def command
           return nil if skip_execution?
-          ["rspec", "--failure-exit-code", "0", "-f", "json"] + target_files.sort
+          ["rspec", "-f", "json"] + target_files.sort
         end
 
         def skipped_outcome
