@@ -2,24 +2,24 @@
 
 require_relative "../lib/quiet_quality"
 
-tools =
-  if ARGV.empty?
-    @tools = QuietQuality::Tools::AVAILABLE.values
-  else
-    @tools = ARGV.map { |t| QuietQuality::Tools::AVAILABLE.fetch(t.to_sym) }
-  end
+tool_names = ARGV.empty? ? QuietQuality::Tools::AVAILABLE.keys : ARGV.map(&:to_sym)
 
-tools.each do |tool|
-  warn "================ Running tool #{tool}"
+tool_names.each do |tool_name|
+  tool = QuietQuality::Tools::AVAILABLE.fetch(tool_name)
+  warn "================ Running #{tool_name}"
   runner = tool::Runner.new
-  output = runner.invoke!
+  outcome = runner.invoke!
 
-  parser = tool::Parser.new(output)
-  messages = parser.messages
-  warn "#{messages.count} messages\n"
-  messages.each do |msg|
-    warn "  #{msg.path}:#{msg.start_line}-#{msg.stop_line}    #{msg.rule}"
-    warn "      #{msg.body}"
+  if outcome.success?
+    warn "No problems found!\n\n"
+  else
+    parser = tool::Parser.new(outcome.output)
+    messages = parser.messages
+    warn "#{messages.count} messages\n"
+    messages.each do |msg|
+      warn "  #{msg.path}:#{msg.start_line}-#{msg.stop_line}    #{msg.rule}"
+      warn "      #{msg.body}"
+    end
+    warn "\n"
   end
-  warn "\n"
 end
