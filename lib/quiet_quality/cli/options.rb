@@ -6,7 +6,8 @@ module QuietQuality
         @tools = nil
       end
 
-      attr_reader :annotator, :tools
+      attr_reader :annotator
+      attr_accessor :tools
 
       def annotator=(name)
         @annotator = Annotators::ANNOTATOR_TYPES.fetch(name.to_sym)
