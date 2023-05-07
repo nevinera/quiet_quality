@@ -1,9 +1,9 @@
-name: Linters
+name: QuietQuality Itself
 
 on: [push]
 
 jobs:
-  StandardRB:
+  QuietQuality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,15 +17,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: vendor/bundle
-          key: ${{ runner.os }}-linters-${{ hashFiles('Gemfile.lock') }}
+          key: ${{ runner.os }}-dogfood-${{ hashFiles('Gemfile.lock') }}
           restore-keys:
-            ${{ runner.os }}-linters-
+            ${{ runner.os }}-dogfood-
 
       - name: Install gems
         run: bundle install --jobs 4 --retry 3
 
-      - name: Run standard
-        run: bundle exec standardrb
-
-      - name: Run rubocop (complexity checks)
-        run: bundle exec rubocop --parallel
+      - name: Run QuietQuality
+        run: bundle exec bin/qq standardrb rubocop rspec
+        env:
+          ANNOTATOR: github_stdout
