@@ -48,15 +48,15 @@ module QuietQuality
         end
 
         def skipped_outcome
-          Outcome.new(output: NO_FILES_OUTPUT)
+          Outcome.new(tool: command_name.to_sym, output: NO_FILES_OUTPUT)
         end
 
         def performed_outcome
           out, err, stat = Open3.capture3(*command)
           if stat.success?
-            Outcome.new(output: out, logging: err)
+            Outcome.new(tool: command_name.to_sym, output: out, logging: err)
           elsif stat.exitstatus == 1
-            Outcome.new(output: out, logging: err, failure: true)
+            Outcome.new(tool: command_name.to_sym, output: out, logging: err, failure: true)
           else
             fail(ExecutionError, "Execution of #{command_name} failed with #{stat.exitstatus}")
           end

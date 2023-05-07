@@ -20,7 +20,7 @@ RSpec.describe QuietQuality::Tools::Rubocop::Runner do
 
     context "when the rubocop command _finds problems_" do
       let(:stat) { instance_double(Process::Status, success?: false, exitstatus: 1) }
-      it { is_expected.to eq(build_failure("fake output", "fake error")) }
+      it { is_expected.to eq(build_failure(:rubocop, "fake output", "fake error")) }
 
       it "calls rubocop correctly, with no targets" do
         invoke!
@@ -30,7 +30,7 @@ RSpec.describe QuietQuality::Tools::Rubocop::Runner do
 
     context "when changed_files is nil" do
       let(:changed_files) { nil }
-      it { is_expected.to eq(build_success("fake output", "fake error")) }
+      it { is_expected.to eq(build_success(:rubocop, "fake output", "fake error")) }
 
       it "calls rubocop correctly, with no targets" do
         invoke!
@@ -40,7 +40,7 @@ RSpec.describe QuietQuality::Tools::Rubocop::Runner do
 
     context "when changed_files is empty" do
       let(:changed_files) { [] }
-      it { is_expected.to eq(build_success(described_class::NO_FILES_OUTPUT)) }
+      it { is_expected.to eq(build_success(:rubocop, described_class::NO_FILES_OUTPUT)) }
 
       it "does not call rubocop" do
         invoke!
@@ -65,7 +65,7 @@ RSpec.describe QuietQuality::Tools::Rubocop::Runner do
       end
 
       context "and contains some ruby files" do
-        it { is_expected.to eq(build_success("fake output", "fake error")) }
+        it { is_expected.to eq(build_success(:rubocop, "fake output", "fake error")) }
 
         it "calls rubocop correctly, with changed and relevant targets" do
           invoke!
@@ -77,7 +77,7 @@ RSpec.describe QuietQuality::Tools::Rubocop::Runner do
 
       context "and contains too many ruby files" do
         before { stub_const("QuietQuality::Tools::Rubocop::Runner::MAX_FILES", 1) }
-        it { is_expected.to eq(build_success("fake output", "fake error")) }
+        it { is_expected.to eq(build_success(:rubocop, "fake output", "fake error")) }
 
         it "calls rubocop correctly, with no targets" do
           invoke!

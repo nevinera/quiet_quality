@@ -1,9 +1,10 @@
 module QuietQuality
   module Tools
     class Outcome
-      attr_reader :output, :logging
+      attr_reader :output, :logging, :tool
 
-      def initialize(output:, logging: nil, failure: false)
+      def initialize(tool:, output:, logging: nil, failure: false)
+        @tool = tool
         @output = output
         @logging = logging
         @failure = failure
@@ -18,7 +19,7 @@ module QuietQuality
       end
 
       def ==(other)
-        output == other.output && logging == other.logging && failure? == other.failure?
+        tool == other.tool && output == other.output && logging == other.logging && failure? == other.failure?
       end
     end
   end
