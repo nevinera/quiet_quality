@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require_relative "../lib/quiet_quality"
+
+tool_names = ARGV.empty? ? QuietQuality::Tools::AVAILABLE.keys : ARGV.map(&:to_sym)
+
+tool_names.each do |tool_name|
+  tool = QuietQuality::Tools::AVAILABLE.fetch(tool_name)
+  warn "================ Running #{tool_name}"
+  runner = tool::Runner.new
+  outcome = runner.invoke!
+
+  if outcome.success?
+    warn "No problems found!\n\n"
+  else
+    parser = tool::Parser.new(outcome.output)
+    messages = parser.messages
+    warn "#{messages.count} messages\n"
+    messages.each do |msg|
+      warn "  #{msg.path}:#{msg.start_line}-#{msg.stop_line}    #{msg.rule}"
+      warn "      #{msg.body}"
+    end
+    warn "\n"
+  end
+end

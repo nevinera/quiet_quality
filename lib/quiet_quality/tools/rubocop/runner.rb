@@ -10,23 +10,17 @@ module QuietQuality
         end
 
         # Supplying changed_files: nil means "run against all files".
-        # error_stream is really just injectable for unit-testing purposes.
-        def initialize(changed_files: nil, error_stream: $stderr)
+        def initialize(changed_files: nil)
           @changed_files = changed_files
-          @error_stream = error_stream
         end
 
         def invoke!
-          return NO_FILES_OUTPUT if skip_execution?
-          out, err, stat = Open3.capture3(*command)
-          error_stream.write(err)
-          fail(ExecutionError, "Execution of #{command_name} failed with #{stat.exitstatus}") unless stat.success?
-          out
+          @_outcome ||= skip_execution? ? skipped_outcome : performed_outcome
         end
 
         private
 
-        attr_reader :changed_files, :error_stream
+        attr_reader :changed_files
 
         # If we were told that _no files changed_ (which is distinct from not being told that
         # any files changed - a [] instead of a nil), then we shouldn't run rubocop at all.
@@ -39,7 +33,7 @@ module QuietQuality
         # when no target files are specified)
         def command
           return nil if skip_execution?
-          [command_name, "-f", "json", "--fail-level", "fatal"] + target_files.sort
+          [command_name, "-f", "json"] + target_files.sort
         end
 
         def relevant_files
@@ -51,6 +45,21 @@ module QuietQuality
           return [] if changed_files.nil?
           return [] if relevant_files.length > MAX_FILES
           relevant_files
+        end
+
+        def skipped_outcome
+          Outcome.new(output: NO_FILES_OUTPUT)
+        end
+
+        def performed_outcome
+          out, err, stat = Open3.capture3(*command)
+          if stat.success?
+            Outcome.new(output: out, logging: err)
+          elsif stat.exitstatus == 1
+            Outcome.new(output: out, logging: err, failure: true)
+          else
+            fail(ExecutionError, "Execution of #{command_name} failed with #{stat.exitstatus}")
+          end
         end
       end
     end
