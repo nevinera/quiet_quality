@@ -10,11 +10,21 @@ RSpec.describe QuietQuality::Tools::Rubocop::Runner do
   describe "#invoke!" do
     subject(:invoke!) { runner.invoke! }
 
-    context "when the standardrb command _fails_" do
+    context "when the rubocop command _fails_" do
       let(:stat) { instance_double(Process::Status, success?: false, exitstatus: 14) }
 
       it "raises a Rubocop::ExecutionError" do
         expect { invoke! }.to raise_error(QuietQuality::Tools::Rubocop::ExecutionError)
+      end
+    end
+
+    context "when the rubocop command _finds problems_" do
+      let(:stat) { instance_double(Process::Status, success?: false, exitstatus: 1) }
+      it { is_expected.to eq(build_failure("fake output", "fake error")) }
+
+      it "calls rubocop correctly, with no targets" do
+        invoke!
+        expect(Open3).to have_received(:capture3).with("rubocop", "-f", "json")
       end
     end
 
@@ -24,9 +34,7 @@ RSpec.describe QuietQuality::Tools::Rubocop::Runner do
 
       it "calls rubocop correctly, with no targets" do
         invoke!
-        expect(Open3)
-          .to have_received(:capture3)
-          .with("rubocop", "-f", "json")
+        expect(Open3).to have_received(:capture3).with("rubocop", "-f", "json")
       end
     end
 
