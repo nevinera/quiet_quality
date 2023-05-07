@@ -26,4 +26,22 @@ RSpec.describe QuietQuality::Cli::ToolOptions do
       it { is_expected.to be_falsey }
     end
   end
+
+  describe "constants for tools" do
+    shared_examples "exposes the expected constants for" do |tool_name, expected_namespace|
+      context "for #{tool_name}" do
+        let(:tool) { tool_name }
+
+        it "exposes the right constants" do
+          expect(tool_options.tool_namespace).to eq(expected_namespace)
+          expect(tool_options.runner_class).to eq(expected_namespace::Runner)
+          expect(tool_options.parser_class).to eq(expected_namespace::Parser)
+        end
+      end
+    end
+
+    include_examples "exposes the expected constants for", :rspec, QuietQuality::Tools::Rspec
+    include_examples "exposes the expected constants for", :rubocop, QuietQuality::Tools::Rubocop
+    include_examples "exposes the expected constants for", :standardrb, QuietQuality::Tools::Standardrb
+  end
 end

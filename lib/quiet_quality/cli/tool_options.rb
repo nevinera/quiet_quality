@@ -17,6 +17,18 @@ module QuietQuality
       def filter_messages?
         @filter_messages
       end
+
+      def tool_namespace
+        Tools::AVAILABLE.fetch(tool_name)
+      end
+
+      def runner_class
+        tool_namespace::Runner
+      end
+
+      def parser_class
+        tool_namespace::Parser
+      end
     end
   end
 end
