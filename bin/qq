@@ -3,12 +3,14 @@
 require_relative "../lib/quiet_quality"
 
 tool_names = ARGV.empty? ? QuietQuality::Tools::AVAILABLE.keys : ARGV.map(&:to_sym)
+outcomes = []
 
 tool_names.each do |tool_name|
   tool = QuietQuality::Tools::AVAILABLE.fetch(tool_name)
   warn "================ Running #{tool_name}"
   runner = tool::Runner.new
   outcome = runner.invoke!
+  outcomes << outcome
 
   if outcome.success?
     warn "No problems found!\n\n"
@@ -22,4 +24,9 @@ tool_names.each do |tool_name|
     end
     warn "\n"
   end
+end
+
+if outcomes.any? { |o| o.failure? }
+  warn "failures detected in one or more tools"
+  exit(1)
 end
