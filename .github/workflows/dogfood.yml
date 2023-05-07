@@ -1,0 +1,30 @@
+name: QuietQuality Itself
+
+on: [push]
+
+jobs:
+  QuietQuality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+
+      - name: Cache gems
+        uses: actions/cache@v3
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-dogfood-${{ hashFiles('Gemfile.lock') }}
+          restore-keys:
+            ${{ runner.os }}-dogfood-
+
+      - name: Install gems
+        run: bundle install --jobs 4 --retry 3
+
+      - name: Run QuietQuality
+        run: bundle exec bin/qq standardrb rubocop rspec
+        env:
+          ANNOTATOR: github_stdout
