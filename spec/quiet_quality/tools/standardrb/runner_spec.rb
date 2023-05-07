@@ -18,6 +18,16 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
       end
     end
 
+    context "when the standardrb command _finds problems_" do
+      let(:stat) { instance_double(Process::Status, success?: false, exitstatus: 1) }
+      it { is_expected.to eq(build_failure("fake output", "fake error")) }
+
+      it "calls standardrb correctly, with no targets" do
+        invoke!
+        expect(Open3).to have_received(:capture3).with("standardrb", "-f", "json")
+      end
+    end
+
     context "when changed_files is nil" do
       let(:changed_files) { nil }
       it { is_expected.to eq(build_success("fake output", "fake error")) }
