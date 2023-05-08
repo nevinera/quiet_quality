@@ -116,7 +116,7 @@ RSpec.describe QuietQuality::VersionControlSystems::Git do
 
     describe "#default_branch" do
       subject(:default_branch) { instance.default_branch }
-      before { allow(instance).to receive_message_chain("git", "remote", "url").and_return("tmp/repo")}
+      before { allow(instance).to receive_message_chain("git", "remote", "url").and_return("tmp/repo") }
       it { should eq "branch-1" }
     end
 
