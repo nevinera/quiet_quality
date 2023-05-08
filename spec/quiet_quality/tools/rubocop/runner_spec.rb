@@ -1,4 +1,4 @@
-RSpec.describe QuietQuality::Tools::Standardrb::Runner do
+RSpec.describe QuietQuality::Tools::Rubocop::Runner do
   let(:changed_files) { nil }
   subject(:runner) { described_class.new(changed_files: changed_files) }
 
@@ -10,7 +10,7 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
   describe "#invoke!" do
     subject(:invoke!) { runner.invoke! }
 
-    context "when the standardrb command _fails_" do
+    context "when the rubocop command _fails_" do
       let(:stat) { instance_double(Process::Status, success?: false, exitstatus: 14) }
 
       it "raises a Rubocop::ExecutionError" do
@@ -18,13 +18,13 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
       end
     end
 
-    context "when the standardrb command _finds problems_" do
+    context "when the rubocop command _finds problems_" do
       let(:stat) { instance_double(Process::Status, success?: false, exitstatus: 1) }
       it { is_expected.to eq(build_failure("fake output", "fake error")) }
 
-      it "calls standardrb correctly, with no targets" do
+      it "calls rubocop correctly, with no targets" do
         invoke!
-        expect(Open3).to have_received(:capture3).with("standardrb", "-f", "json")
+        expect(Open3).to have_received(:capture3).with("rubocop", "-f", "json")
       end
     end
 
@@ -32,11 +32,9 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
       let(:changed_files) { nil }
       it { is_expected.to eq(build_success("fake output", "fake error")) }
 
-      it "calls standardrb correctly, with no targets" do
+      it "calls rubocop correctly, with no targets" do
         invoke!
-        expect(Open3)
-          .to have_received(:capture3)
-          .with("standardrb", "-f", "json")
+        expect(Open3).to have_received(:capture3).with("rubocop", "-f", "json")
       end
     end
 
@@ -44,7 +42,7 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
       let(:changed_files) { [] }
       it { is_expected.to eq(build_success(described_class::NO_FILES_OUTPUT)) }
 
-      it "does not call standardrb" do
+      it "does not call rubocop" do
         invoke!
         expect(Open3).not_to have_received(:capture3)
       end
@@ -60,7 +58,7 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
         let(:file2) { "bar.js" }
         let(:file3) { "baz.ts" }
 
-        it "does not call standardrb" do
+        it "does not call rubocop" do
           invoke!
           expect(Open3).not_to have_received(:capture3)
         end
@@ -69,11 +67,11 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
       context "and contains some ruby files" do
         it { is_expected.to eq(build_success("fake output", "fake error")) }
 
-        it "calls standardrb correctly, with changed and relevant targets" do
+        it "calls rubocop correctly, with changed and relevant targets" do
           invoke!
           expect(Open3)
             .to have_received(:capture3)
-            .with("standardrb", "-f", "json", "bar.rb", "baz.rb")
+            .with("rubocop", "-f", "json", "bar.rb", "baz.rb")
         end
       end
 
@@ -81,11 +79,11 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
         before { stub_const("QuietQuality::Tools::Rubocop::Runner::MAX_FILES", 1) }
         it { is_expected.to eq(build_success("fake output", "fake error")) }
 
-        it "calls standardrb correctly, with no targets" do
+        it "calls rubocop correctly, with no targets" do
           invoke!
           expect(Open3)
             .to have_received(:capture3)
-            .with("standardrb", "-f", "json")
+            .with("rubocop", "-f", "json")
         end
       end
     end
