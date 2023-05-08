@@ -61,39 +61,41 @@ module QuietQuality
         git.merge_base(comparison_branch, sha).first.sha
       end
 
-      private def changed_lines_for(diff)
+      private
+
+      def changed_lines_for(diff)
         GitDiffParser.parse(diff).flat_map do |parsed_diff|
           parsed_diff.changed_line_numbers.to_set
         end
       end
 
-      private def committed_changed_files(base, sha)
+      def committed_changed_files(base, sha)
         ChangedFiles.new(committed_changes(base, sha))
       end
 
-      private def committed_changes(base, sha)
+      def committed_changes(base, sha)
         patch = git.diff(base, sha).patch
         GitDiffParser.parse(patch).map { to_changed_file(_1) }
       end
 
-      private def to_changed_file(patch_file)
+      def to_changed_file(patch_file)
         ChangedFile.new(path: patch_file.file, lines: patch_file.changed_line_numbers.to_set)
       end
 
-      private def uncommitted_changed_files
+      def uncommitted_changed_files
         ChangedFiles.new(uncommitted_changes)
       end
 
-      private def uncommitted_changes
+      def uncommitted_changes
         patch = git.diff.patch
         GitDiffParser.parse(patch).map { to_changed_file(_1) }
       end
 
-      private def untracked_changed_files
+      def untracked_changed_files
         ChangedFiles.new(untracked_changes)
       end
 
-      private def untracked_changes
+      def untracked_changes
         git.status.untracked.map { |status| status[0] }.map do |file_path|
           ChangedFile.new(path: file_path, lines: :all)
         end
