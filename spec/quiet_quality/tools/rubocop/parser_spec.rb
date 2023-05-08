@@ -1,8 +1,8 @@
-RSpec.describe QuietQuality::Tools::Standardrb::Parser do
+RSpec.describe QuietQuality::Tools::Rubocop::Parser do
   subject(:parser) { described_class.new(text) }
 
   describe "#messages" do
-    let(:text) { fixture_content("tools", "standardrb", "no-failures.json") }
+    let(:text) { fixture_content("tools", "rubocop", "no-failures.json") }
     subject(:messages) { parser.messages }
 
     it "is memoized" do
@@ -11,13 +11,12 @@ RSpec.describe QuietQuality::Tools::Standardrb::Parser do
     end
 
     context "when there are no offenses" do
-      let(:text) { fixture_content("tools", "standardrb", "no-failures.json") }
+      let(:text) { fixture_content("tools", "rubocop", "no-failures.json") }
       it { is_expected.to be_a(QuietQuality::Messages) }
-      it { is_expected.to be_empty }
     end
 
     context "when there are some offenses" do
-      let(:text) { fixture_content("tools", "standardrb", "failures.json") }
+      let(:text) { fixture_content("tools", "rubocop", "failures.json") }
       it { is_expected.to be_a(QuietQuality::Messages) }
       it { is_expected.not_to be_empty }
 

@@ -1,0 +1,100 @@
+{
+  "metadata": {
+    "rubocop_version": "1.50.2",
+    "ruby_engine": "ruby",
+    "ruby_version": "2.7.6",
+    "ruby_patchlevel": "219",
+    "ruby_platform": "x86_64-darwin22"
+  },
+  "files": [
+    {
+      "path": "Gemfile",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/message.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/messages.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/tools.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/tools/standardrb.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/tools/standardrb/parser.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/tools/standardrb/runner.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "lib/quiet_quality/version.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "quiet_quality.gemspec",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "spec/quiet_quality/message_spec.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "spec/quiet_quality/messages_spec.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "spec/quiet_quality/tools/standardrb/runner_spec.rb",
+      "offenses": [
+
+      ]
+    },
+    {
+      "path": "spec/spec_helper.rb",
+      "offenses": [
+
+      ]
+    }
+  ],
+  "summary": {
+    "offense_count": 0,
+    "target_file_count": 14,
+    "inspected_file_count": 14
+  }
+}
