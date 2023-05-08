@@ -9,6 +9,8 @@ Dir.glob(glob).sort.each { |f| require f }
 
 module QuietQuality
   module Executors
-    AVAILABLE = {}
+    AVAILABLE = {
+      serial: SerialExecutor
+    }
   end
 end
