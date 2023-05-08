@@ -121,26 +121,10 @@ RSpec.describe QuietQuality::VersionControlSystems::Git do
     end
 
     describe "#comparison_base" do
-      let(:sha) { "main" }
-      let(:branch) { "branch-1" }
-      subject(:comparison_base) { instance.comparison_base(sha: sha, comparison_branch: branch) }
-      it { is_expected.to eq("d1e4d54ffff66d229cebe8cf8e9530b61998e119") }
-    end
-  end
-
-  context "on the fixture repository" do
-    let(:repo_path) { tmp_path("repo") }
-    subject(:fixture_repo) { described_class.new(repo_path) }
-
-    # Can't test default_branch unfortunately - it needs to reach out to the upstream repository
-    # to _ask_, which isn't really appropriate in a test suite. But I think it's simple enough
-    # to not worry about - it does actually return a string branch name.
-
-    describe "#comparison_base" do
-      subject(:comparison_base) { fixture_repo.comparison_base(sha: sha, comparison_branch: branch) }
       let(:sha) { "HEAD" }
       let(:branch) { "main" }
-      it { is_expected.to start_with("d1e4d54") }
+      subject(:comparison_base) { instance.comparison_base(sha: sha, comparison_branch: branch) }
+      it { is_expected.to eq("d1e4d54ffff66d229cebe8cf8e9530b61998e119") }
     end
   end
 end

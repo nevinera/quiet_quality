@@ -25,11 +25,10 @@ module QuietQuality
       def changed_files(base: nil, sha: "HEAD", include_uncommitted: true, include_untracked: false)
         base_commit = comparison_base(sha: sha, comparison_branch: base || default_branch)
         [
-          include_uncommitted ? uncommitted_changes : nil,
-          include_untracked ? untracked_changes : nil
-        ].compact.reduce(committed_changes(base_commit, sha)) do |acc, changed_files|
-          acc.merge(changed_files)
-        end
+          committed_changed_files(base_commit, sha),
+          include_uncommitted ? uncommitted_changed_files : nil,
+          include_untracked ? untracked_changed_files : nil
+        ].compact.reduce(&:merge)
       end
 
       #
@@ -68,11 +67,11 @@ module QuietQuality
         end
       end
 
-      private def committed_changes(base, sha)
-        ChangedFiles.new(committed_changed_files(base, sha))
+      private def committed_changed_files(base, sha)
+        ChangedFiles.new(committed_changes(base, sha))
       end
 
-      private def committed_changed_files(base, sha)
+      private def committed_changes(base, sha)
         patch = git.diff(base, sha).patch
         GitDiffParser.parse(patch).map { to_changed_file(_1) }
       end
@@ -81,21 +80,20 @@ module QuietQuality
         ChangedFile.new(path: patch_file.file, lines: patch_file.changed_line_numbers.to_set)
       end
 
-      private def uncommitted_changes
-        ChangedFiles.new(uncommitted_changed_files)
+      private def uncommitted_changed_files
+        ChangedFiles.new(uncommitted_changes)
       end
 
-      private def uncommitted_changed_files
+      private def uncommitted_changes
         patch = git.diff.patch
         GitDiffParser.parse(patch).map { to_changed_file(_1) }
       end
 
-      private def untracked_changes
-        # require "debug"; debugger
-        ChangedFiles.new(untracked_changed_files)
+      private def untracked_changed_files
+        ChangedFiles.new(untracked_changes)
       end
 
-      private def untracked_changed_files
+      private def untracked_changes
         git.status.untracked.map { |status| status[0] }.map do |file_path|
           ChangedFile.new(path: file_path, lines: :all)
         end
