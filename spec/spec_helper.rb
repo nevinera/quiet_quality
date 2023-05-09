@@ -1,4 +1,5 @@
 require "rspec"
+require "rspec/its"
 require "pry"
 
 require File.expand_path("../../lib/quiet_quality", __FILE__)
