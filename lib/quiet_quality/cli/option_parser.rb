@@ -7,7 +7,9 @@ module QuietQuality
 
       def initialize(args)
         @args = args
-        @options = {}
+        @options = {
+          executor: :concurrent
+        }
         @tool_options = {}
         @output = nil
       end
@@ -27,6 +29,7 @@ module QuietQuality
         ::OptionParser.new do |parser|
           setup_banner(parser)
           setup_help_output(parser)
+          setup_executor_options(parser)
           setup_annotation_options(parser)
           setup_file_target_options(parser)
           setup_filter_messages_options(parser)
@@ -41,6 +44,13 @@ module QuietQuality
         parser.on("-h", "--help", "Prints this help") do
           @output = parser.to_s
           @options[:exit_immediately] = true
+        end
+      end
+
+      def setup_executor_options(parser)
+        parser.on("-E", "--executor EXECUTOR", "Which executor to use") do |name|
+          fail(UsageError, "Executor not recognized: #{name}") unless Executors::AVAILABLE.include?(name.to_sym)
+          @options[:executor] = name.to_sym
         end
       end
 
