@@ -5,7 +5,7 @@ opt_parser = QuietQuality::Cli::OptionParser.new(ARGV)
 tool_names, global_options, tool_options = opt_parser.parse!
 options = QuietQuality::Cli::OptionsBuilder.new(tool_names: tool_names, global_options: global_options, tool_options: tool_options).options
 
-executor = QuietQuality::Executors::ConcurrentExecutor.new(tools: options.tools)
+executor = options.executor.new(tools: options.tools)
 executor.execute!
 
 executor.outcomes.each do |outcome|
