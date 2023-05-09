@@ -8,4 +8,12 @@ RSpec.describe QuietQuality::Executors::SerialExecutor do
   subject(:executor) { described_class.new(tools: tools, changed_files: changed_files) }
 
   include_examples "executes the pipelines"
+
+  it "invokes the outcome and messages from each pipeline serially" do
+    expect(rspec_pipeline).to receive(:outcome).ordered
+    expect(rspec_pipeline).to receive(:messages).ordered
+    expect(rubocop_pipeline).to receive(:outcome).ordered
+    expect(rubocop_pipeline).to receive(:messages).ordered
+    executor.execute!
+  end
 end

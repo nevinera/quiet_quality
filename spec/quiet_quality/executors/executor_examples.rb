@@ -20,14 +20,6 @@ shared_examples "executes the pipelines" do
       let(:rubocop_outcome) { build_failure(:rubocop, "rubocop output") }
       it { is_expected.to be_falsey }
     end
-
-    it "invokes the outcome and messages from each pipeline serially" do
-      expect(rspec_pipeline).to receive(:outcome).ordered
-      expect(rspec_pipeline).to receive(:messages).ordered
-      expect(rubocop_pipeline).to receive(:outcome).ordered
-      expect(rubocop_pipeline).to receive(:messages).ordered
-      execute!
-    end
   end
 
   describe "#outcomes" do

@@ -8,4 +8,12 @@ RSpec.describe QuietQuality::Executors::ConcurrentExecutor do
   subject(:executor) { described_class.new(tools: tools, changed_files: changed_files) }
 
   include_examples "executes the pipelines"
+
+  it "invokes the outcome and messages from each pipeline" do
+    executor.execute!
+    expect(rspec_pipeline).to have_received(:outcome)
+    expect(rspec_pipeline).to have_received(:messages)
+    expect(rubocop_pipeline).to have_received(:outcome)
+    expect(rubocop_pipeline).to have_received(:messages)
+  end
 end
