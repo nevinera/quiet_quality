@@ -11,6 +11,7 @@ module QuietQuality
         return @_options if defined?(@_options)
         options = Options.new
         set_unless_nil(options, :annotator, @raw_global_options[:annotator])
+        set_unless_nil(options, :executor, @raw_global_options[:executor])
         options.tools = tool_names.map { |tool_name| tool_options_for(tool_name) }
         @_options = options
       end
