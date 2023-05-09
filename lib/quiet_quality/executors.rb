@@ -10,7 +10,8 @@ Dir.glob(glob).sort.each { |f| require f }
 module QuietQuality
   module Executors
     AVAILABLE = {
-      serial: SerialExecutor
-    }
+      serial: SerialExecutor,
+      concurrent: ConcurrentExecutor
+    }.freeze
   end
 end
