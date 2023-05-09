@@ -1,4 +1,5 @@
 require "git"
+require "git_diff_parser"
 require "json"
 require "yaml"
 

@@ -32,8 +32,10 @@ Gem::Specification.new do |spec|
   end
 
   spec.add_dependency "git", "~> 1.18"
+  spec.add_dependency "git_diff_parser", "~> 4"
 
   spec.add_development_dependency "rspec", "~> 3.10"
+  spec.add_development_dependency "rspec-its", "~> 1.3"
   spec.add_development_dependency "simplecov", "~> 0.22.0"
   spec.add_development_dependency "pry", "~> 0.14"
   spec.add_development_dependency "standard", "~> 1.28"
