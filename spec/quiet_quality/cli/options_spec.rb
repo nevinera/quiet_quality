@@ -17,4 +17,26 @@ RSpec.describe QuietQuality::Cli::Options do
       end
     end
   end
+
+  describe "#executor" do
+    subject(:executor) { options.executor }
+    it { is_expected.to eq(QuietQuality::Executors::ConcurrentExecutor) }
+
+    context "when set to 'concurrent'" do
+      before { options.executor = "concurrent" }
+      it { is_expected.to eq(QuietQuality::Executors::ConcurrentExecutor) }
+    end
+
+    context "when set to 'serial'" do
+      before { options.executor = "serial" }
+      it { is_expected.to eq(QuietQuality::Executors::SerialExecutor) }
+    end
+
+    context "when set to 'fake_executor'" do
+      it "raises a UsageError" do
+        expect { options.executor = "fake_executor" }
+          .to raise_error(QuietQuality::Cli::UsageError, /unrecognized executor/i)
+      end
+    end
+  end
 end
