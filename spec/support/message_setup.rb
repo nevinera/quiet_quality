@@ -21,6 +21,14 @@ module MessageSetup
   def generate_messages(count, **attrs)
     count.times.map { generate_message(**attrs) }
   end
+
+  def empty_messages
+    QuietQuality::Messages.new([])
+  end
+
+  def full_messages(count, **attrs)
+    QuietQuality::Messages.new(generate_messages(count, **attrs))
+  end
 end
 
 RSpec.configure do |config|

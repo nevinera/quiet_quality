@@ -1,4 +1,4 @@
-RSpec.describe QuietQuality::Cli::ToolOptions do
+RSpec.describe QuietQuality::ToolOptions do
   let(:tool) { "foo" }
   subject(:tool_options) { described_class.new(tool) }
 

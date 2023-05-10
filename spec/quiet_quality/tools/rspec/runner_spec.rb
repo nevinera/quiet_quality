@@ -20,7 +20,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
 
     context "when the rspec _tests_ fail" do
       let(:stat) { instance_double(Process::Status, success?: false, exitstatus: 1) }
-      it { is_expected.to eq(build_failure("fake output", "fake error")) }
+      it { is_expected.to eq(build_failure(:rspec, "fake output", "fake error")) }
 
       it "calls rspec with no targets" do
         invoke!
@@ -32,7 +32,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
 
     context "when changed_files is nil" do
       let(:changed_files) { nil }
-      it { is_expected.to eq(build_success("fake output", "fake error")) }
+      it { is_expected.to eq(build_success(:rspec, "fake output", "fake error")) }
 
       it "calls rspec with no targets" do
         invoke!
@@ -44,7 +44,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
 
     context "when changed_files is empty" do
       let(:changed_files) { [] }
-      it { is_expected.to eq(build_success(described_class::NO_FILES_OUTPUT)) }
+      it { is_expected.to eq(build_success(:rspec, described_class::NO_FILES_OUTPUT)) }
 
       it "does not call rspec" do
         expect(Open3).not_to have_received(:capture3)
@@ -54,7 +54,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
     context "when changed_files is full" do
       context "but contains no spec files" do
         let(:changed_files) { ["foo_spec.ts", "bar.rb", "baz_spec.rb.bak"] }
-        it { is_expected.to eq(build_success(described_class::NO_FILES_OUTPUT)) }
+        it { is_expected.to eq(build_success(:rspec, described_class::NO_FILES_OUTPUT)) }
 
         it "does not call rspec" do
           expect(Open3).not_to have_received(:capture3)
@@ -63,7 +63,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
 
       context "and contains some spec files" do
         let(:changed_files) { ["foo_spec.ts", "bar_spec.rb", "baz_spec.rb.bak", "a/alpha_spec.rb"] }
-        it { is_expected.to eq(build_success("fake output", "fake error")) }
+        it { is_expected.to eq(build_success(:rspec, "fake output", "fake error")) }
 
         it "calls rspec with no targets" do
           invoke!

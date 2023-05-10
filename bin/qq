@@ -4,30 +4,32 @@ require_relative "../lib/quiet_quality"
 opt_parser = QuietQuality::Cli::OptionParser.new(ARGV)
 tool_names, global_options, tool_options = opt_parser.parse!
 options = QuietQuality::Cli::OptionsBuilder.new(tool_names: tool_names, global_options: global_options, tool_options: tool_options).options
-outcomes = []
 
-options.tools.each do |tool|
-  warn "================ Running #{tool.tool_name}"
-  outcome = tool.runner_class.new.invoke!
-  outcomes << outcome
+executor = QuietQuality::Executors::SerialExecutor.new(tools: options.tools)
+executor.execute!
 
-  if outcome.success?
-    warn "No problems found!\n\n"
-  else
-    messages = tool.parser_class.new(outcome.output).messages
+executor.outcomes.each do |outcome|
+  result = outcome.success? ? "Passed" : "Failed"
+  warn "--- #{result}: #{outcome.tool}"
+end
 
-    warn "#{messages.count} messages\n"
-    messages.each do |msg|
-      warn "  #{msg.path}:#{msg.start_line}-#{msg.stop_line}    #{msg.rule}"
-      warn "      #{msg.body}"
-    end
-    warn "\n"
-
-    options.annotator.new.annotate!(messages) if options.annotator
+messages = executor.messages
+if messages.any?
+  warn "\n\n#{messages.count} messages:"
+  messages.each do |msg|
+    line_range = msg.start_line == msg.stop_line ? msg.start_line.to_s : "#{msg.start_line}-#{msg.stop_line}"
+    body = msg.body.gsub(/ *\n */, "\\n").slice(0, 120)
+    warn "  #{msg.path}:#{line_range}   #{msg.rule}"
+    warn "      #{body}"
   end
 end
 
-if outcomes.any? { |o| o.failure? }
+if options.annotator
+  warn "\n\n"
+  options.annotator.new.annotate!(messages)
+end
+
+if executor.any_failure?
   warn "failures detected in one or more tools"
   exit(1)
 end
