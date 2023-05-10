@@ -1,35 +1,3 @@
 #!/usr/bin/env ruby
 require_relative "../lib/quiet_quality"
-
-opt_parser = QuietQuality::Cli::OptionParser.new(ARGV)
-tool_names, global_options, tool_options = opt_parser.parse!
-options = QuietQuality::Cli::OptionsBuilder.new(tool_names: tool_names, global_options: global_options, tool_options: tool_options).options
-
-executor = options.executor.new(tools: options.tools)
-executor.execute!
-
-executor.outcomes.each do |outcome|
-  result = outcome.success? ? "Passed" : "Failed"
-  warn "--- #{result}: #{outcome.tool}"
-end
-
-messages = executor.messages
-if messages.any?
-  warn "\n\n#{messages.count} messages:"
-  messages.each do |msg|
-    line_range = msg.start_line == msg.stop_line ? msg.start_line.to_s : "#{msg.start_line}-#{msg.stop_line}"
-    body = msg.body.gsub(/ *\n */, "\\n").slice(0, 120)
-    warn "  #{msg.path}:#{line_range}   #{msg.rule}"
-    warn "      #{body}"
-  end
-end
-
-if options.annotator
-  warn "\n\n"
-  options.annotator.new.annotate!(messages)
-end
-
-if executor.any_failure?
-  warn "failures detected in one or more tools"
-  exit(1)
-end
+exit(1) unless QuietQuality::Cli::Entrypoint.new(argv: ARGV).execute.successful?
