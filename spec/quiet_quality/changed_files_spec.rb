@@ -10,6 +10,11 @@ RSpec.describe QuietQuality::ChangedFiles do
     it { is_expected.to contain_exactly(foo_file, bar_file, bug_file) }
   end
 
+  describe "#paths" do
+    subject { changed_files.paths }
+    it { is_expected.to contain_exactly("path/foo.rb", "path/bar.rb", "path/bug.py") }
+  end
+
   describe "#file" do
     subject { changed_files.file(path) }
 

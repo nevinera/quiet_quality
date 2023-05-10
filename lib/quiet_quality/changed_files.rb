@@ -6,6 +6,10 @@ module QuietQuality
       @files = files
     end
 
+    def paths
+      @_paths ||= files.map(&:path)
+    end
+
     def file(path)
       files_by_path.fetch(path, nil)
     end
