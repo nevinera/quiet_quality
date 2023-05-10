@@ -49,6 +49,7 @@ RSpec.describe QuietQuality::Cli::OptionParser do
       expect(parser.output).to eq(<<~HELP_OUTPUT)
         Usage: qq [TOOLS] [GLOBAL_OPTIONS] [TOOL_OPTIONS]
             -h, --help                       Prints this help
+            -E, --executor EXECUTOR          Which executor to use
             -A, --annotate ANNOTATOR         Annotate with this annotator
             -G, --annotate-github-stdout     Annotate with GitHub Workflow commands
             -a, --all-files [tool]           Use the tool(s) on all files
@@ -57,6 +58,17 @@ RSpec.describe QuietQuality::Cli::OptionParser do
             -u, --unfiltered [tool]          Don't filter messages from tool(s)
       HELP_OUTPUT
     end
+  end
+
+  describe "executor options" do
+    subject(:executor_option) { parsed[1][:executor] }
+    expect_options("(none)", [], global: {executor: :concurrent})
+    expect_options("--executor concurrent", ["--executor", "concurrent"], global: {executor: :concurrent})
+    expect_options("--executor serial", ["--executor", "serial"], global: {executor: :serial})
+    expect_options("-Econcurrent", ["-Econcurrent"], global: {executor: :concurrent})
+    expect_options("-Eserial", ["-Eserial"], global: {executor: :serial})
+    expect_usage_error("--executor fooba", ["--executor", "fooba"], /not recognized/)
+    expect_usage_error("-Efooba", ["-Efooba"], /not recognized/)
   end
 
   describe "annotation options" do

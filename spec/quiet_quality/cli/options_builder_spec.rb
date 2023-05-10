@@ -22,6 +22,25 @@ RSpec.describe QuietQuality::Cli::OptionsBuilder do
       end
     end
 
+    describe "#executor" do
+      subject(:executor) { options.executor }
+
+      context "when global_options[:executor] is unset" do
+        let(:global_options) { {} }
+        it { is_expected.to eq(QuietQuality::Executors::ConcurrentExecutor) }
+      end
+
+      context "when global_options[:executor] is concurrent" do
+        let(:global_options) { {executor: :concurrent} }
+        it { is_expected.to eq(QuietQuality::Executors::ConcurrentExecutor) }
+      end
+
+      context "when global_options[:executor] is serial" do
+        let(:global_options) { {executor: :serial} }
+        it { is_expected.to eq(QuietQuality::Executors::SerialExecutor) }
+      end
+    end
+
     describe "#tools" do
       subject(:tools) { options.tools }
 
