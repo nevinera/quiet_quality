@@ -41,7 +41,7 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
     end
 
     context "when changed_files is empty" do
-      let(:changed_files) { [] }
+      let(:changed_files) { empty_changed_files }
       it { is_expected.to eq(build_success(:standardrb, described_class::NO_FILES_OUTPUT)) }
 
       it "does not call standardrb" do
@@ -54,7 +54,7 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
       let(:file1) { "foo.js" }
       let(:file2) { "bar.rb" }
       let(:file3) { "baz.rb" }
-      let(:changed_files) { [file1, file2, file3] }
+      let(:changed_files) { fully_changed_files(file1, file2, file3) }
 
       context "but contains no ruby files" do
         let(:file2) { "bar.js" }
