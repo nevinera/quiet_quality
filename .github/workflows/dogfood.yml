@@ -25,6 +25,4 @@ jobs:
         run: bundle install --jobs 4 --retry 3
 
       - name: Run QuietQuality
-        run: bundle exec bin/qq standardrb rubocop rspec
-        env:
-          ANNOTATOR: github_stdout
+        run: bundle exec bin/qq standardrb rubocop rspec --all-files --unfiltered --annotate github_stdout

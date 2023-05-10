@@ -1,22 +1,20 @@
 #!/usr/bin/env ruby
-
 require_relative "../lib/quiet_quality"
 
-tool_names = ARGV.empty? ? QuietQuality::Tools::AVAILABLE.keys : ARGV.map(&:to_sym)
+opt_parser = QuietQuality::Cli::OptionParser.new(ARGV)
+tool_names, global_options, tool_options = opt_parser.parse!
+options = QuietQuality::Cli::OptionsBuilder.new(tool_names: tool_names, global_options: global_options, tool_options: tool_options).options
 outcomes = []
 
-tool_names.each do |tool_name|
-  tool = QuietQuality::Tools::AVAILABLE.fetch(tool_name)
-  warn "================ Running #{tool_name}"
-  runner = tool::Runner.new
-  outcome = runner.invoke!
+options.tools.each do |tool|
+  warn "================ Running #{tool.tool_name}"
+  outcome = tool.runner_class.new.invoke!
   outcomes << outcome
 
   if outcome.success?
     warn "No problems found!\n\n"
   else
-    parser = tool::Parser.new(outcome.output)
-    messages = parser.messages
+    messages = tool.parser_class.new(outcome.output).messages
 
     warn "#{messages.count} messages\n"
     messages.each do |msg|
@@ -25,10 +23,7 @@ tool_names.each do |tool_name|
     end
     warn "\n"
 
-    if ENV.fetch("ANNOTATOR", nil) == "github_stdout"
-      QuietQuality::Annotators::GithubStdout.new.annotate!(messages)
-    end
-
+    options.annotator.new.annotate!(messages) if options.annotator
   end
 end
 
