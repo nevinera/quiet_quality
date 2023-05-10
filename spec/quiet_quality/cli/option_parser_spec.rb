@@ -54,6 +54,7 @@ RSpec.describe QuietQuality::Cli::OptionParser do
             -G, --annotate-github-stdout     Annotate with GitHub Workflow commands
             -a, --all-files [tool]           Use the tool(s) on all files
             -c, --changed-files [tool]       Use the tool(s) only on changed files
+            -B, --comparison-branch BRANCH   Specify the branch to compare against
             -f, --filter-messages [tool]     Filter messages from tool(s) based on changed lines
             -u, --unfiltered [tool]          Don't filter messages from tool(s)
       HELP_OUTPUT
@@ -95,6 +96,10 @@ RSpec.describe QuietQuality::Cli::OptionParser do
     expect_all_files("--all-files standardrb", ["--all-files", "standardrb"], globally: nil, standardrb: true, rubocop: nil, rspec: nil)
     expect_all_files("-a -crspec", ["-a", "-crspec"], globally: true, rspec: false, standardrb: nil, rubocop: nil)
     expect_all_files("-arspec -crubocop", ["-arspec", "-crubocop"], globally: nil, rspec: true, rubocop: false, standardrb: nil)
+
+    expect_options("nothing", [], global: {comparison_branch: nil})
+    expect_options("--comparison-branch trunk", ["--comparison-branch", "trunk"], global: {comparison_branch: "trunk"})
+    expect_options("-Btrunk", ["-Btrunk"], global: {comparison_branch: "trunk"})
   end
 
   describe "filtering options" do

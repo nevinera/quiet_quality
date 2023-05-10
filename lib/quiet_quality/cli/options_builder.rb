@@ -12,6 +12,7 @@ module QuietQuality
         options = Options.new
         set_unless_nil(options, :annotator, @raw_global_options[:annotator])
         set_unless_nil(options, :executor, @raw_global_options[:executor])
+        set_unless_nil(options, :comparison_branch, @raw_global_options[:comparison_branch])
         options.tools = tool_names.map { |tool_name| tool_options_for(tool_name) }
         @_options = options
       end
