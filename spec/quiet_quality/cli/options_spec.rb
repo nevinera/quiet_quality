@@ -1,6 +1,19 @@
 RSpec.describe QuietQuality::Cli::Options do
   subject(:options) { described_class.new }
 
+  describe "#comparison_branch" do
+    subject(:comparison_branch) { options.comparison_branch }
+
+    context "when not set" do
+      it { is_expected.to be_nil }
+    end
+
+    context "when set" do
+      before { options.comparison_branch = "my-branch" }
+      it { is_expected.to eq("my-branch") }
+    end
+  end
+
   describe "#annotator" do
     subject(:annotator) { options.annotator }
     it { is_expected.to be_nil }

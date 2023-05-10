@@ -5,10 +5,11 @@ module QuietQuality
         @annotator = nil
         @executor = Executors::ConcurrentExecutor
         @tools = nil
+        @comparison_branch = nil
       end
 
       attr_reader :annotator, :executor
-      attr_accessor :tools
+      attr_accessor :tools, :comparison_branch
 
       def annotator=(name)
         @annotator = Annotators::ANNOTATOR_TYPES.fetch(name.to_sym)

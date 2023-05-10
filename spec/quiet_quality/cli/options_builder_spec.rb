@@ -41,6 +41,20 @@ RSpec.describe QuietQuality::Cli::OptionsBuilder do
       end
     end
 
+    describe "#comparison_branch" do
+      subject(:comparison_branch) { options.comparison_branch }
+
+      context "when global_options[:comparison_branch] is unset" do
+        let(:global_options) { {} }
+        it { is_expected.to be_nil }
+      end
+
+      context "when global_options[:comparison_branch] is specified" do
+        let(:global_options) { {comparison_branch: "my-comparison-branch"} }
+        it { is_expected.to eq("my-comparison-branch") }
+      end
+    end
+
     describe "#tools" do
       subject(:tools) { options.tools }
 

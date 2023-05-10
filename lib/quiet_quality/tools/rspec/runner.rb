@@ -23,7 +23,7 @@ module QuietQuality
 
         def relevant_files
           return nil if changed_files.nil?
-          changed_files.select { |path| path.end_with?("_spec.rb") }
+          changed_files.paths.select { |path| path.end_with?("_spec.rb") }
         end
 
         def target_files

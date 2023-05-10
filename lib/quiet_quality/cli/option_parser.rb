@@ -83,6 +83,10 @@ module QuietQuality
         parser.on("-c", "--changed-files [tool]", "Use the tool(s) only on changed files") do |tool|
           read_tool_or_global_option(:all_files, tool, false)
         end
+
+        parser.on("-B", "--comparison-branch BRANCH", "Specify the branch to compare against") do |branch|
+          @options[:comparison_branch] = branch
+        end
       end
 
       def setup_filter_messages_options(parser)

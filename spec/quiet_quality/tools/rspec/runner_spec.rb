@@ -43,7 +43,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
     end
 
     context "when changed_files is empty" do
-      let(:changed_files) { [] }
+      let(:changed_files) { empty_changed_files }
       it { is_expected.to eq(build_success(:rspec, described_class::NO_FILES_OUTPUT)) }
 
       it "does not call rspec" do
@@ -53,7 +53,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
 
     context "when changed_files is full" do
       context "but contains no spec files" do
-        let(:changed_files) { ["foo_spec.ts", "bar.rb", "baz_spec.rb.bak"] }
+        let(:changed_files) { generate_changed_files({"foo_spec.ts" => :all, "bar.rb" => [1, 2], "baz_spec.rb.bak" => [5]}) }
         it { is_expected.to eq(build_success(:rspec, described_class::NO_FILES_OUTPUT)) }
 
         it "does not call rspec" do
@@ -62,7 +62,8 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
       end
 
       context "and contains some spec files" do
-        let(:changed_files) { ["foo_spec.ts", "bar_spec.rb", "baz_spec.rb.bak", "a/alpha_spec.rb"] }
+        let(:changed_paths) { ["foo_spec.ts", "bar_spec.rb", "baz_spec.rb.bak", "a/alpha_spec.rb"] }
+        let(:changed_files) { generate_changed_files(changed_paths.map { |p| [p, :all] }.to_h) }
         it { is_expected.to eq(build_success(:rspec, "fake output", "fake error")) }
 
         it "calls rspec with no targets" do

@@ -1,5 +1,6 @@
 module QuietQuality
   module VersionControlSystems
+    Error = Class.new(QuietQuality::Error)
   end
 end
 
