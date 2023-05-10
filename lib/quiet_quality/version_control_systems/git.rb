@@ -1,7 +1,9 @@
 module QuietQuality
   module VersionControlSystems
     class Git
-      attr_reader :git
+      Error = Class.new(VersionControlSystems::Error)
+
+      attr_reader :git, :path
 
       #
       # Initializer
@@ -9,6 +11,7 @@ module QuietQuality
       # @param [String] path Path to git repository
       #
       def initialize(path = ".")
+        @path = path
         @git = ::Git.open(path)
       end
 
@@ -96,9 +99,18 @@ module QuietQuality
       end
 
       def untracked_changes
-        git.status.untracked.map { |status| status[0] }.map do |file_path|
+        untracked_paths.map do |file_path|
           ChangedFile.new(path: file_path, lines: :all)
         end
+      end
+
+      def untracked_paths
+        out, err, stat = Open3.capture3("git", "-C", path, "ls-files", "--others", "--exclude-standard")
+        unless stat.success?
+          warn err
+          fail(Error, "git ls-files failed")
+        end
+        out.split
       end
     end
   end
