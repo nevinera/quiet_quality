@@ -1,5 +1,5 @@
 module QuietQuality
-  module Cli
+  module Config
     class Options
       def initialize
         @annotator = nil

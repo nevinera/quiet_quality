@@ -1,4 +1,4 @@
-RSpec.describe QuietQuality::Cli::Options do
+RSpec.describe QuietQuality::Config::Options do
   subject(:options) { described_class.new }
 
   describe "#comparison_branch" do

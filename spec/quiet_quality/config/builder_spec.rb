@@ -6,7 +6,7 @@ RSpec.describe QuietQuality::Config::Builder do
 
   describe "#options" do
     subject(:options) { builder.options }
-    it { is_expected.to be_a(QuietQuality::Cli::Options) }
+    it { is_expected.to be_a(QuietQuality::Config::Options) }
 
     describe "#annotator" do
       subject(:annotator) { options.annotator }
