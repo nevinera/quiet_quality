@@ -1,6 +1,6 @@
 module QuietQuality
-  module Cli
-    class OptionsBuilder
+  module Config
+    class Builder
       def initialize(tool_names:, global_options:, tool_options:)
         @raw_tool_names = tool_names
         @raw_global_options = global_options

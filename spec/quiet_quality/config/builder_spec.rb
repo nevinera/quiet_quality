@@ -1,4 +1,4 @@
-RSpec.describe QuietQuality::Cli::OptionsBuilder do
+RSpec.describe QuietQuality::Config::Builder do
   let(:tool_names) { [:rspec, :rubocop, :standardrb] }
   let(:global_options) { {} }
   let(:tool_options) { {} }

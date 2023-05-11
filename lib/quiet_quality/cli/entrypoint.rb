@@ -24,13 +24,13 @@ module QuietQuality
       attr_reader :argv, :output_stream, :error_stream
 
       def option_parser
-        @_option_parser ||= OptionParser.new(argv.dup)
+        @_option_parser ||= ArgParser.new(argv.dup)
       end
 
       def options
         return @_options if defined?(@_options)
         tool_names, global_options, tool_options = option_parser.parse!
-        optbuilder = OptionsBuilder.new(tool_names: tool_names, global_options: global_options, tool_options: tool_options)
+        optbuilder = Config::Builder.new(tool_names: tool_names, global_options: global_options, tool_options: tool_options)
         @_options = optbuilder.options
       end
 
