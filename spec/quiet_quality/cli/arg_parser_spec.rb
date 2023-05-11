@@ -1,4 +1,4 @@
-RSpec.describe QuietQuality::Cli::OptionParser do
+RSpec.describe QuietQuality::Cli::ArgParser do
   let(:parser) { described_class.new(args) }
   let(:parsed) { parser.parse! }
   let(:parsed_positionals) { parsed[0] }

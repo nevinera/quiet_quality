@@ -2,7 +2,7 @@ require "optparse"
 
 module QuietQuality
   module Cli
-    class OptionParser
+    class ArgParser
       attr_reader :options, :tool_options, :output
 
       def initialize(args)
