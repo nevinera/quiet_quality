@@ -90,6 +90,22 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
         end
       end
     end
+
+    context "when asked for --help" do
+      let(:argv) { ["--help"] }
+
+      it { is_expected.to be_successful }
+
+      it "does not run the executor" do
+        execute
+        expect(executor).not_to have_received(:execute!)
+      end
+
+      it "prints the help information to the error stream" do
+        execute
+        expect(error_stream).to have_received(:puts).with(a_string_matching(/Usage:/))
+      end
+    end
   end
 
   describe "#successful?" do
@@ -102,6 +118,11 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
 
     context "when the executor reports no failure" do
       let(:any_failure?) { false }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when asked for --help" do
+      let(:argv) { ["--help"] }
       it { is_expected.to be_truthy }
     end
   end
