@@ -49,14 +49,14 @@ module QuietQuality
 
       def setup_executor_options(parser)
         parser.on("-E", "--executor EXECUTOR", "Which executor to use") do |name|
-          fail(UsageError, "Executor not recognized: #{name}") unless Executors::AVAILABLE.include?(name.to_sym)
+          validate_value_from("executor", name, Executors::AVAILABLE)
           @options[:executor] = name.to_sym
         end
       end
 
       def setup_annotation_options(parser)
         parser.on("-A", "--annotate ANNOTATOR", "Annotate with this annotator") do |name|
-          fail(UsageError, "Annotator not recognized: #{name}") unless Annotators::ANNOTATOR_TYPES.include?(name.to_sym)
+          validate_value_from("annotator", name, Annotators::ANNOTATOR_TYPES)
           @options[:annotator] = name.to_sym
         end
 
@@ -68,6 +68,7 @@ module QuietQuality
 
       def read_tool_or_global_option(name, tool, value)
         if tool
+          validate_value_from("tool", tool, Tools::AVAILABLE)
           @tool_options[tool.to_sym] ||= {}
           @tool_options[tool.to_sym][name] = value
         else
@@ -97,6 +98,11 @@ module QuietQuality
         parser.on("-u", "--unfiltered [tool]", "Don't filter messages from tool(s)") do |tool|
           read_tool_or_global_option(:filter_messages, tool, false)
         end
+      end
+
+      def validate_value_from(name, value, allowed)
+        return if allowed.include?(value.to_sym)
+        fail(UsageError, "Unrecognized #{name}: #{value}")
       end
     end
   end
