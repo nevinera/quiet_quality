@@ -3,30 +3,55 @@ require "optparse"
 module QuietQuality
   module Cli
     class ArgParser
-      attr_reader :options, :tool_options, :output
-
       def initialize(args)
         @args = args
-        @options = {
-          executor: :concurrent
-        }
-        @tool_options = {}
-        @output = nil
+        @parsed_options = Config::ParsedOptions.new
+        @parsed = false
       end
 
-      def parse!
-        parser.parse!(@args)
-        [positional, options, tool_options]
-      end
-
-      def positional
-        @args
+      def parsed_options
+        unless @parsed
+          @parsed_options.help_text = parser.to_s
+          parser.parse!(@args)
+          # the parser pulls flags _out_ of @args when it uses them, and leaves the positionals.
+          @parsed_options.tools = @args.dup
+          @parsed = true
+        end
+        @parsed_options
       end
 
       private
 
+      def set_global_option(name, value)
+        @parsed_options.set_global_option(name, value)
+      end
+
+      def set_tool_option(tool, name, value)
+        @parsed_options.set_tool_option(tool, name, value)
+      end
+
+      def validate_value_from(name, value, allowed)
+        return if allowed.include?(value.to_sym)
+        fail(UsageError, "Unrecognized #{name}: #{value}")
+      end
+
+      # There are several flags that _may_ take a 'tool' argument - if they do, they are tool
+      # options; if they don't, they are global options. (optparse allows an optional argument
+      # to a flag if the string representing it is not a 'string in all caps'. So `[FOO]` or `foo`
+      # would be optional, but `FOO` would be required. This helper simplifies handling those.
+      def read_tool_or_global_option(name, tool, value)
+        if tool
+          validate_value_from("tool", tool, Tools::AVAILABLE)
+          set_tool_option(tool, name, value)
+        else
+          set_global_option(name, value)
+        end
+      end
+
+      # -- Set up the option parser itself -------------------------
+
       def parser
-        ::OptionParser.new do |parser|
+        @_parser ||= ::OptionParser.new do |parser|
           setup_banner(parser)
           setup_help_output(parser)
           setup_executor_options(parser)
@@ -42,37 +67,26 @@ module QuietQuality
 
       def setup_help_output(parser)
         parser.on("-h", "--help", "Prints this help") do
-          @output = parser.to_s
-          @options[:exit_immediately] = true
+          @parsed_options.helping = true
         end
       end
 
       def setup_executor_options(parser)
         parser.on("-E", "--executor EXECUTOR", "Which executor to use") do |name|
           validate_value_from("executor", name, Executors::AVAILABLE)
-          @options[:executor] = name.to_sym
+          set_global_option(:executor, name.to_sym)
         end
       end
 
       def setup_annotation_options(parser)
         parser.on("-A", "--annotate ANNOTATOR", "Annotate with this annotator") do |name|
           validate_value_from("annotator", name, Annotators::ANNOTATOR_TYPES)
-          @options[:annotator] = name.to_sym
+          set_global_option(:annotator, name.to_sym)
         end
 
         # shortcut option
         parser.on("-G", "--annotate-github-stdout", "Annotate with GitHub Workflow commands") do
-          @options[:annotator] = :github_stdout
-        end
-      end
-
-      def read_tool_or_global_option(name, tool, value)
-        if tool
-          validate_value_from("tool", tool, Tools::AVAILABLE)
-          @tool_options[tool.to_sym] ||= {}
-          @tool_options[tool.to_sym][name] = value
-        else
-          @options[name] = value
+          set_global_option(:annotator, :github_stdout)
         end
       end
 
@@ -86,7 +100,7 @@ module QuietQuality
         end
 
         parser.on("-B", "--comparison-branch BRANCH", "Specify the branch to compare against") do |branch|
-          @options[:comparison_branch] = branch
+          set_global_option(:comparison_branch, branch)
         end
       end
 
@@ -98,11 +112,6 @@ module QuietQuality
         parser.on("-u", "--unfiltered [tool]", "Don't filter messages from tool(s)") do |tool|
           read_tool_or_global_option(:filter_messages, tool, false)
         end
-      end
-
-      def validate_value_from(name, value, allowed)
-        return if allowed.include?(value.to_sym)
-        fail(UsageError, "Unrecognized #{name}: #{value}")
       end
     end
   end
