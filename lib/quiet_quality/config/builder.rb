@@ -10,8 +10,8 @@ module QuietQuality
       def options
         return @_options if defined?(@_options)
         options = Options.new
-        set_unless_nil(options, :annotator, @raw_global_options[:annotator])
-        set_unless_nil(options, :executor, @raw_global_options[:executor])
+        set_annotator(options)
+        set_executor(options)
         set_unless_nil(options, :comparison_branch, @raw_global_options[:comparison_branch])
         options.tools = tool_names.map { |tool_name| tool_options_for(tool_name) }
         @_options = options
@@ -36,13 +36,23 @@ module QuietQuality
       end
 
       def tool_names
-        names = @raw_tool_names.empty? ? Tools::AVAILABLE.keys : @raw_tool_names
-        names.map(&:to_sym).tap do |names|
-          unexpected_names = names - Tools::AVAILABLE.keys
-          if unexpected_names.any?
-            fail(UsageError, "Tool(s) not recognized: #{unexpected_names.join(", ")}")
-          end
+        if @raw_tool_names.empty?
+          Tools::AVAILABLE.keys
+        else
+          @raw_tool_names.map(&:to_sym)
         end
+      end
+
+      def set_annotator(options)
+        annotator_name = @raw_global_options[:annotator]
+        return if annotator_name.nil?
+        options.annotator = Annotators::ANNOTATOR_TYPES.fetch(annotator_name)
+      end
+
+      def set_executor(options)
+        executor_name = @raw_global_options[:executor]
+        return if executor_name.nil?
+        options.executor = Executors::AVAILABLE.fetch(executor_name)
       end
     end
   end

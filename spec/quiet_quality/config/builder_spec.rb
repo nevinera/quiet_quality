@@ -72,14 +72,6 @@ RSpec.describe QuietQuality::Config::Builder do
         it "exposes the listed tools" do
           expect(tools.map(&:tool_name)).to contain_exactly(:rspec, :standardrb)
         end
-
-        context "and some of them are unrecognized" do
-          let(:tool_names) { [:rspec, :barframist, :rubocop] }
-
-          it "raises a UsageError" do
-            expect { tools }.to raise_error(QuietQuality::Cli::UsageError, /not recognized/)
-          end
-        end
       end
 
       describe "#limit_targets" do
