@@ -84,6 +84,14 @@ RSpec.describe QuietQuality::Cli::ArgParser do
         let(:args) { ["-a", "-u", "rspec", "rspec", "-c", "standardrb", "standardrb"] }
         it { is_expected.to eq(["rspec", "standardrb"]) }
       end
+
+      context "when invalid tool names are supplied" do
+        let(:args) { ["rspec", "foo", "a"] }
+
+        it "raises a UsageError" do
+          expect { parsed }.to raise_error(QuietQuality::Cli::UsageError, /Unrecognized tool/)
+        end
+      end
     end
 
     describe "executor options" do

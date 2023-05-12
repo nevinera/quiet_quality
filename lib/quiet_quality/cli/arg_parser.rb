@@ -13,8 +13,7 @@ module QuietQuality
         unless @parsed
           @parsed_options.help_text = parser.to_s
           parser.parse!(@args)
-          # the parser pulls flags _out_ of @args when it uses them, and leaves the positionals.
-          @parsed_options.tools = @args.dup
+          @parsed_options.tools = validated_tool_names(@args.dup)
           @parsed = true
         end
         @parsed_options
@@ -33,6 +32,10 @@ module QuietQuality
       def validate_value_from(name, value, allowed)
         return if allowed.include?(value.to_sym)
         fail(UsageError, "Unrecognized #{name}: #{value}")
+      end
+
+      def validated_tool_names(names)
+        names.each { |name| validate_value_from("tool", name, Tools::AVAILABLE) }
       end
 
       # There are several flags that _may_ take a 'tool' argument - if they do, they are tool
