@@ -1,10 +1,8 @@
 module QuietQuality
   module Config
     class Builder
-      def initialize(tool_names:, global_options:, tool_options:)
-        @raw_tool_names = tool_names
-        @raw_global_options = global_options
-        @raw_tool_options = tool_options
+      def initialize(parsed_cli_options:)
+        @cli = parsed_cli_options
       end
 
       def options
@@ -12,12 +10,14 @@ module QuietQuality
         options = Options.new
         set_annotator(options)
         set_executor(options)
-        set_unless_nil(options, :comparison_branch, @raw_global_options[:comparison_branch])
+        set_unless_nil(options, :comparison_branch, cli.global_option(:comparison_branch))
         options.tools = tool_names.map { |tool_name| tool_options_for(tool_name) }
         @_options = options
       end
 
       private
+
+      attr_reader :cli
 
       def set_unless_nil(object, method, value)
         return if value.nil?
@@ -25,32 +25,31 @@ module QuietQuality
       end
 
       def tool_options_for(tool_name)
-        raw_tool_opts = @raw_tool_options.fetch(tool_name.to_sym, {})
         ToolOptions.new(tool_name).tap do |tool_options|
-          set_unless_nil(tool_options, :limit_targets, @raw_global_options[:limit_targets])
-          set_unless_nil(tool_options, :limit_targets, raw_tool_opts[:limit_targets])
+          set_unless_nil(tool_options, :limit_targets, cli.global_option(:limit_targets))
+          set_unless_nil(tool_options, :limit_targets, cli.tool_option(tool_name, :limit_targets))
 
-          set_unless_nil(tool_options, :filter_messages, @raw_global_options[:filter_messages])
-          set_unless_nil(tool_options, :filter_messages, raw_tool_opts[:filter_messages])
+          set_unless_nil(tool_options, :filter_messages, cli.global_option(:filter_messages))
+          set_unless_nil(tool_options, :filter_messages, cli.tool_option(tool_name, :filter_messages))
         end
       end
 
       def tool_names
-        if @raw_tool_names.empty?
+        if cli.tools.empty?
           Tools::AVAILABLE.keys
         else
-          @raw_tool_names.map(&:to_sym)
+          cli.tools.map(&:to_sym)
         end
       end
 
       def set_annotator(options)
-        annotator_name = @raw_global_options[:annotator]
+        annotator_name = cli.global_option(:annotator)
         return if annotator_name.nil?
         options.annotator = Annotators::ANNOTATOR_TYPES.fetch(annotator_name)
       end
 
       def set_executor(options)
-        executor_name = @raw_global_options[:executor]
+        executor_name = cli.global_option(:executor)
         return if executor_name.nil?
         options.executor = Executors::AVAILABLE.fetch(executor_name)
       end

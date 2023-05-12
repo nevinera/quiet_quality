@@ -2,7 +2,8 @@ RSpec.describe QuietQuality::Config::Builder do
   let(:tool_names) { [:rspec, :rubocop, :standardrb] }
   let(:global_options) { {} }
   let(:tool_options) { {} }
-  subject(:builder) { described_class.new(tool_names: tool_names, global_options: global_options, tool_options: tool_options) }
+  let(:parsed_cli) { parsed_options(tools: tool_names, global_options: global_options, tool_options: tool_options) }
+  subject(:builder) { described_class.new(parsed_cli_options: parsed_cli) }
 
   describe "#options" do
     subject(:options) { builder.options }
