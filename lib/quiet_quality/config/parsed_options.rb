@@ -8,7 +8,7 @@ module QuietQuality
         @helping = false
       end
 
-      attr_accessor :tools, :help_text
+      attr_accessor :tools
       attr_writer :helping
 
       def helping?

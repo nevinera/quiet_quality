@@ -3,8 +3,6 @@ RSpec.describe QuietQuality::Config::ParsedOptions do
 
   it { is_expected.to respond_to(:tools) }
   it { is_expected.to respond_to(:tools=) }
-  it { is_expected.to respond_to(:help_text) }
-  it { is_expected.to respond_to(:help_text=) }
 
   describe "#helping?" do
     subject(:helping?) { parsed_options.helping? }

@@ -11,12 +11,15 @@ module QuietQuality
 
       def parsed_options
         unless @parsed
-          @parsed_options.help_text = parser.to_s
           parser.parse!(@args)
           @parsed_options.tools = validated_tool_names(@args.dup)
           @parsed = true
         end
         @parsed_options
+      end
+
+      def help_text
+        @_help_text ||= parser.to_s
       end
 
       private

@@ -6,7 +6,6 @@ module OptionSetup
   def parsed_options(global_options: {}, tool_options: {}, **attrs)
     po = QuietQuality::Config::ParsedOptions.new
     po.tools = attrs.fetch(:tools, [])
-    po.help_text = attrs.fetch(:help_text, "fake help text")
     po.helping = attrs.fetch(:helping, false)
     set_global_options(po, global_options)
     set_tool_options(po, tool_options)

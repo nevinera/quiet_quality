@@ -28,8 +28,12 @@ module QuietQuality
 
       attr_reader :argv, :output_stream, :error_stream
 
+      def arg_parser
+        @_arg_parser ||= ArgParser.new(argv.dup)
+      end
+
       def parsed_options
-        @_parsed_options ||= ArgParser.new(argv.dup).parsed_options
+        @_parsed_options ||= arg_parser.parsed_options
       end
 
       def helping?
@@ -37,7 +41,7 @@ module QuietQuality
       end
 
       def log_help_text
-        error_stream.puts(parsed_options.help_text)
+        error_stream.puts(arg_parser.help_text)
       end
 
       def options

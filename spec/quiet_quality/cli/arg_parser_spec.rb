@@ -33,37 +33,38 @@ RSpec.describe QuietQuality::Cli::ArgParser do
     end
   end
 
+  describe "#help_text" do
+    let(:args) { [] }
+    subject(:help_text) { parser.help_text }
+
+    it "exposes the correct content" do
+      expect(help_text).to eq(<<~HELP_OUTPUT)
+        Usage: qq [TOOLS] [GLOBAL_OPTIONS] [TOOL_OPTIONS]
+            -h, --help                       Prints this help
+            -E, --executor EXECUTOR          Which executor to use
+            -A, --annotate ANNOTATOR         Annotate with this annotator
+            -G, --annotate-github-stdout     Annotate with GitHub Workflow commands
+            -a, --all-files [tool]           Use the tool(s) on all files
+            -c, --changed-files [tool]       Use the tool(s) only on changed files
+            -B, --comparison-branch BRANCH   Specify the branch to compare against
+            -f, --filter-messages [tool]     Filter messages from tool(s) based on changed lines
+            -u, --unfiltered [tool]          Don't filter messages from tool(s)
+      HELP_OUTPUT
+    end
+  end
+
   describe "#parsed_options" do
     subject(:parsed_options) { parser.parsed_options }
 
     describe "help option" do
-      shared_examples "exposes the correct help text" do
-        it "exposes the correct help text" do
-          expect(parsed_options.help_text).to eq(<<~HELP_OUTPUT)
-            Usage: qq [TOOLS] [GLOBAL_OPTIONS] [TOOL_OPTIONS]
-                -h, --help                       Prints this help
-                -E, --executor EXECUTOR          Which executor to use
-                -A, --annotate ANNOTATOR         Annotate with this annotator
-                -G, --annotate-github-stdout     Annotate with GitHub Workflow commands
-                -a, --all-files [tool]           Use the tool(s) on all files
-                -c, --changed-files [tool]       Use the tool(s) only on changed files
-                -B, --comparison-branch BRANCH   Specify the branch to compare against
-                -f, --filter-messages [tool]     Filter messages from tool(s) based on changed lines
-                -u, --unfiltered [tool]          Don't filter messages from tool(s)
-          HELP_OUTPUT
-        end
-      end
-
       context "without --help passed" do
         let(:args) { ["-a"] }
         it { is_expected.not_to be_helping }
-        include_examples "exposes the correct help text"
       end
 
       context "with --help passed" do
         let(:args) { ["-a", "--help"] }
         it { is_expected.to be_helping }
-        include_examples "exposes the correct help text"
       end
     end
 
