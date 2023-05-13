@@ -7,11 +7,8 @@ module QuietQuality
 
       def options
         return @_options if defined?(@_options)
-        options = Options.new
-        set_annotator(options)
-        set_executor(options)
-        set_unless_nil(options, :comparison_branch, cli.global_option(:comparison_branch))
-        options.tools = tool_names.map { |tool_name| tool_options_for(tool_name) }
+        options = build_initial_options
+        Updater.new(options: options, apply: cli).update!
         @_options = options
       end
 
@@ -19,19 +16,9 @@ module QuietQuality
 
       attr_reader :cli
 
-      def set_unless_nil(object, method, value)
-        return if value.nil?
-        object.send("#{method}=", value)
-      end
-
-      def tool_options_for(tool_name)
-        ToolOptions.new(tool_name).tap do |tool_options|
-          set_unless_nil(tool_options, :limit_targets, cli.global_option(:limit_targets))
-          set_unless_nil(tool_options, :limit_targets, cli.tool_option(tool_name, :limit_targets))
-
-          set_unless_nil(tool_options, :filter_messages, cli.global_option(:filter_messages))
-          set_unless_nil(tool_options, :filter_messages, cli.tool_option(tool_name, :filter_messages))
-        end
+      def build_initial_options
+        tools = tool_names.map { |name| ToolOptions.new(name) }
+        Options.new.tap { |opts| opts.tools = tools }
       end
 
       def tool_names
@@ -42,16 +29,63 @@ module QuietQuality
         end
       end
 
-      def set_annotator(options)
-        annotator_name = cli.global_option(:annotator)
-        return if annotator_name.nil?
-        options.annotator = Annotators::ANNOTATOR_TYPES.fetch(annotator_name)
-      end
+      class Updater
+        def initialize(options:, apply:)
+          @options, @apply = options, apply
+        end
 
-      def set_executor(options)
-        executor_name = cli.global_option(:executor)
-        return if executor_name.nil?
-        options.executor = Executors::AVAILABLE.fetch(executor_name)
+        def update!
+          update_globals
+          update_tools
+        end
+
+        private
+
+        attr_reader :options, :apply
+
+        def set_unless_nil(object, method, value)
+          return if value.nil?
+          object.send("#{method}=", value)
+        end
+
+        # ---- update the global options -------------
+
+        def update_globals
+          update_annotator
+          update_executor
+          update_comparison_branch
+        end
+
+        def update_annotator
+          annotator_name = apply.global_option(:annotator)
+          return if annotator_name.nil?
+          options.annotator = Annotators::ANNOTATOR_TYPES.fetch(annotator_name)
+        end
+
+        def update_executor
+          executor_name = apply.global_option(:executor)
+          return if executor_name.nil?
+          options.executor = Executors::AVAILABLE.fetch(executor_name)
+        end
+
+        def update_comparison_branch
+          set_unless_nil(options, :comparison_branch, apply.global_option(:comparison_branch))
+        end
+
+        # ---- update the tool options (apply global forms first) -------
+
+        def update_tools
+          options.tools.each do |tool_options|
+            update_tool_option(tool_options, :limit_targets)
+            update_tool_option(tool_options, :filter_messages)
+          end
+        end
+
+        def update_tool_option(tool_options, option_name)
+          tool_name = tool_options.tool_name
+          set_unless_nil(tool_options, option_name, apply.global_option(option_name))
+          set_unless_nil(tool_options, option_name, apply.tool_option(tool_name, option_name))
+        end
       end
     end
   end
