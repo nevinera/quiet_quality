@@ -8,30 +8,46 @@ module QuietQuality
       end
 
       def execute
-        executed
-        log_outcomes
-        log_messages
-        annotate_messages
+        if helping?
+          log_help_text
+        else
+          executed
+          log_outcomes
+          log_messages
+          annotate_messages
+        end
+
         self
       end
 
       def successful?
-        !executed.any_failure?
+        helping? || !executed.any_failure?
       end
 
       private
 
       attr_reader :argv, :output_stream, :error_stream
 
-      def option_parser
-        @_option_parser ||= ArgParser.new(argv.dup)
+      def arg_parser
+        @_arg_parser ||= ArgParser.new(argv.dup)
+      end
+
+      def parsed_options
+        @_parsed_options ||= arg_parser.parsed_options
+      end
+
+      def helping?
+        parsed_options.helping?
+      end
+
+      def log_help_text
+        error_stream.puts(arg_parser.help_text)
       end
 
       def options
         return @_options if defined?(@_options)
-        tool_names, global_options, tool_options = option_parser.parse!
-        optbuilder = Config::Builder.new(tool_names: tool_names, global_options: global_options, tool_options: tool_options)
-        @_options = optbuilder.options
+        builder = Config::Builder.new(parsed_cli_options: parsed_options)
+        @_options = builder.options
       end
 
       def executor

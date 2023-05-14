@@ -1,17 +1,13 @@
 RSpec.describe QuietQuality::Cli::ArgParser do
   let(:parser) { described_class.new(args) }
-  let(:parsed) { parser.parse! }
-  let(:parsed_positionals) { parsed[0] }
-  let(:parsed_options) { parsed[1] }
-  let(:parsed_tool_options) { parsed[2] }
+  let(:parsed) { parser.parsed_options }
 
   def expect_global_options(**opts)
-    opts.each_pair { |name, value| expect(parsed_options[name]).to eq(value) }
+    opts.each_pair { |name, value| expect(parsed.global_option(name)).to eq(value) }
   end
 
   def expect_tool_options(tool, opts)
-    tool_options = parsed_tool_options[tool] || {}
-    opts.each_pair { |name, value| expect(tool_options[name]).to eq(value) }
+    opts.each_pair { |name, value| expect(parsed.tool_option(tool, name)).to eq(value) }
   end
 
   def self.expect_options(desc, arguments, global: {}, **tools)
@@ -32,21 +28,17 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       let(:args) { arguments }
 
       it "raises a UsageError" do
-        expect { parser.parse! }.to raise_error(QuietQuality::Cli::UsageError, matcher)
+        expect { parsed }.to raise_error(QuietQuality::Cli::UsageError, matcher)
       end
     end
   end
 
-  describe "help option" do
-    let(:args) { ["--help"] }
+  describe "#help_text" do
+    let(:args) { [] }
+    subject(:help_text) { parser.help_text }
 
-    it "sets exit_immediately to true" do
-      expect(parsed_options[:exit_immediately]).to be_truthy
-    end
-
-    it "sets the output as expected" do
-      parser.parse!
-      expect(parser.output).to eq(<<~HELP_OUTPUT)
+    it "exposes the correct content" do
+      expect(help_text).to eq(<<~HELP_OUTPUT)
         Usage: qq [TOOLS] [GLOBAL_OPTIONS] [TOOL_OPTIONS]
             -h, --help                       Prints this help
             -E, --executor EXECUTOR          Which executor to use
@@ -61,70 +53,113 @@ RSpec.describe QuietQuality::Cli::ArgParser do
     end
   end
 
-  describe "executor options" do
-    subject(:executor_option) { parsed[1][:executor] }
-    expect_options("(none)", [], global: {executor: :concurrent})
-    expect_options("--executor concurrent", ["--executor", "concurrent"], global: {executor: :concurrent})
-    expect_options("--executor serial", ["--executor", "serial"], global: {executor: :serial})
-    expect_options("-Econcurrent", ["-Econcurrent"], global: {executor: :concurrent})
-    expect_options("-Eserial", ["-Eserial"], global: {executor: :serial})
-    expect_usage_error("--executor fooba", ["--executor", "fooba"], /Unrecognized executor/)
-    expect_usage_error("-Efooba", ["-Efooba"], /Unrecognized executor/)
-  end
+  describe "#parsed_options" do
+    subject(:parsed_options) { parser.parsed_options }
 
-  describe "annotation options" do
-    subject(:annotation_option) { parsed[1][:annotator] }
-    expect_options("--annotate github_stdout", ["--annotate", "github_stdout"], global: {annotator: :github_stdout})
-    expect_options("-Agithub_stdout", ["-Agithub_stdout"], global: {annotator: :github_stdout})
-    expect_options("--annotate-github-stdout", ["--annotate-github-stdout"], global: {annotator: :github_stdout})
-    expect_options("-G", ["-G"], global: {annotator: :github_stdout})
-    expect_usage_error("--annotate foo_bar", ["--annotate", "foo_bar"], /Unrecognized annotator/i)
-    expect_usage_error("-Afoo_bar", ["-Afoo_bar"], /Unrecognized annotator/i)
-  end
+    describe "help option" do
+      context "without --help passed" do
+        let(:args) { ["-a"] }
+        it { is_expected.not_to be_helping }
+      end
 
-  describe "file targeting options" do
-    def self.expect_all_files(desc, arguments, globally:, **tools)
-      tool_args = tools.each_pair.map { |tool, value| [tool, {all_files: value}] }.to_h
-      expect_options(desc, arguments, global: {all_files: globally}, **tool_args)
+      context "with --help passed" do
+        let(:args) { ["-a", "--help"] }
+        it { is_expected.to be_helping }
+      end
     end
 
-    expect_all_files("nothing", [], globally: nil, standardrb: nil, rubocop: nil, rspec: nil)
-    expect_all_files("--all-files", ["--all-files"], globally: true)
-    expect_all_files("-a", ["-a"], globally: true)
-    expect_all_files("--changed-files", ["--changed-files"], globally: false)
-    expect_all_files("-c", ["-c"], globally: false)
-    expect_all_files("--all-files standardrb", ["--all-files", "standardrb"], globally: nil, standardrb: true, rubocop: nil, rspec: nil)
-    expect_all_files("-a -crspec", ["-a", "-crspec"], globally: true, rspec: false, standardrb: nil, rubocop: nil)
-    expect_all_files("-arspec -crubocop", ["-arspec", "-crubocop"], globally: nil, rspec: true, rubocop: false, standardrb: nil)
+    describe "parsed tool names" do
+      subject(:tool_names) { parsed.tools }
 
-    expect_usage_error("--all-files fooba", ["--all-files", "fooba"], /Unrecognized tool/)
-    expect_usage_error("-afooba", ["-afooba"], /Unrecognized tool/)
-    expect_usage_error("--changed-files fooba", ["--changed-files", "fooba"], /Unrecognized tool/)
-    expect_usage_error("-cfooba", ["-cfooba"], /Unrecognized tool/)
+      context "when none are given" do
+        let(:args) { ["-a", "-u", "rspec", "-c", "standardrb"] }
+        it { is_expected.to be_empty }
+      end
 
-    expect_options("nothing", [], global: {comparison_branch: nil})
-    expect_options("--comparison-branch trunk", ["--comparison-branch", "trunk"], global: {comparison_branch: "trunk"})
-    expect_options("-Btrunk", ["-Btrunk"], global: {comparison_branch: "trunk"})
-  end
+      context "when a few are supplied" do
+        let(:args) { ["rspec", "standardrb", "-a", "-u", "rspec", "-c", "standardrb"] }
+        it { is_expected.to eq(["rspec", "standardrb"]) }
+      end
 
-  describe "filtering options" do
-    def self.expect_filter_messages(desc, arguments, globally:, **tools)
-      tool_args = tools.each_pair.map { |tool, value| [tool, {filter_messages: value}] }.to_h
-      expect_options(desc, arguments, global: {filter_messages: globally}, **tool_args)
+      context "when they are mixed in with the flags for some reason" do
+        let(:args) { ["-a", "-u", "rspec", "rspec", "-c", "standardrb", "standardrb"] }
+        it { is_expected.to eq(["rspec", "standardrb"]) }
+      end
+
+      context "when invalid tool names are supplied" do
+        let(:args) { ["rspec", "foo", "a"] }
+
+        it "raises a UsageError" do
+          expect { parsed }.to raise_error(QuietQuality::Cli::UsageError, /Unrecognized tool/)
+        end
+      end
     end
 
-    expect_filter_messages("nothing", [], globally: nil, standardrb: nil, rubocop: nil, rspec: nil)
-    expect_filter_messages("--filter-messages", ["--filter-messages"], globally: true)
-    expect_filter_messages("-f", ["-f"], globally: true)
-    expect_filter_messages("--unfiltered", ["--unfiltered"], globally: false)
-    expect_filter_messages("-u", ["-u"], globally: false)
-    expect_filter_messages("--filter-messages standardrb", ["--filter-messages", "standardrb"], globally: nil, standardrb: true, rubocop: nil, rspec: nil)
-    expect_filter_messages("-f -urspec", ["-f", "-urspec"], globally: true, rspec: false, standardrb: nil, rubocop: nil)
-    expect_filter_messages("-frspec -urubocop", ["-frspec", "-urubocop"], globally: nil, rspec: true, rubocop: false, standardrb: nil)
+    describe "executor options" do
+      subject(:executor_option) { parsed[1][:executor] }
+      expect_options("(none)", [], global: {executor: nil})
+      expect_options("--executor concurrent", ["--executor", "concurrent"], global: {executor: :concurrent})
+      expect_options("--executor serial", ["--executor", "serial"], global: {executor: :serial})
+      expect_options("-Econcurrent", ["-Econcurrent"], global: {executor: :concurrent})
+      expect_options("-Eserial", ["-Eserial"], global: {executor: :serial})
+      expect_usage_error("--executor fooba", ["--executor", "fooba"], /Unrecognized executor/)
+      expect_usage_error("-Efooba", ["-Efooba"], /Unrecognized executor/)
+    end
 
-    expect_usage_error("--filter-messages fooba", ["--filter-messages", "fooba"], /Unrecognized tool/)
-    expect_usage_error("-ffooba", ["-ffooba"], /Unrecognized tool/)
-    expect_usage_error("--unfiltered fooba", ["--unfiltered", "fooba"], /Unrecognized tool/)
-    expect_usage_error("-ufooba", ["-ufooba"], /Unrecognized tool/)
+    describe "annotation options" do
+      subject(:annotation_option) { parsed[1][:annotator] }
+      expect_options("--annotate github_stdout", ["--annotate", "github_stdout"], global: {annotator: :github_stdout})
+      expect_options("-Agithub_stdout", ["-Agithub_stdout"], global: {annotator: :github_stdout})
+      expect_options("--annotate-github-stdout", ["--annotate-github-stdout"], global: {annotator: :github_stdout})
+      expect_options("-G", ["-G"], global: {annotator: :github_stdout})
+      expect_usage_error("--annotate foo_bar", ["--annotate", "foo_bar"], /Unrecognized annotator/i)
+      expect_usage_error("-Afoo_bar", ["-Afoo_bar"], /Unrecognized annotator/i)
+    end
+
+    describe "file targeting options" do
+      def self.expect_all_files(desc, arguments, globally:, **tools)
+        tool_args = tools.each_pair.map { |tool, value| [tool, {all_files: value}] }.to_h
+        expect_options(desc, arguments, global: {all_files: globally}, **tool_args)
+      end
+
+      expect_all_files("nothing", [], globally: nil, standardrb: nil, rubocop: nil, rspec: nil)
+      expect_all_files("--all-files", ["--all-files"], globally: true)
+      expect_all_files("-a", ["-a"], globally: true)
+      expect_all_files("--changed-files", ["--changed-files"], globally: false)
+      expect_all_files("-c", ["-c"], globally: false)
+      expect_all_files("--all-files standardrb", ["--all-files", "standardrb"], globally: nil, standardrb: true, rubocop: nil, rspec: nil)
+      expect_all_files("-a -crspec", ["-a", "-crspec"], globally: true, rspec: false, standardrb: nil, rubocop: nil)
+      expect_all_files("-arspec -crubocop", ["-arspec", "-crubocop"], globally: nil, rspec: true, rubocop: false, standardrb: nil)
+
+      expect_usage_error("--all-files fooba", ["--all-files", "fooba"], /Unrecognized tool/)
+      expect_usage_error("-afooba", ["-afooba"], /Unrecognized tool/)
+      expect_usage_error("--changed-files fooba", ["--changed-files", "fooba"], /Unrecognized tool/)
+      expect_usage_error("-cfooba", ["-cfooba"], /Unrecognized tool/)
+
+      expect_options("nothing", [], global: {comparison_branch: nil})
+      expect_options("--comparison-branch trunk", ["--comparison-branch", "trunk"], global: {comparison_branch: "trunk"})
+      expect_options("-Btrunk", ["-Btrunk"], global: {comparison_branch: "trunk"})
+    end
+
+    describe "filtering options" do
+      def self.expect_filter_messages(desc, arguments, globally:, **tools)
+        tool_args = tools.each_pair.map { |tool, value| [tool, {filter_messages: value}] }.to_h
+        expect_options(desc, arguments, global: {filter_messages: globally}, **tool_args)
+      end
+
+      expect_filter_messages("nothing", [], globally: nil, standardrb: nil, rubocop: nil, rspec: nil)
+      expect_filter_messages("--filter-messages", ["--filter-messages"], globally: true)
+      expect_filter_messages("-f", ["-f"], globally: true)
+      expect_filter_messages("--unfiltered", ["--unfiltered"], globally: false)
+      expect_filter_messages("-u", ["-u"], globally: false)
+      expect_filter_messages("--filter-messages standardrb", ["--filter-messages", "standardrb"], globally: nil, standardrb: true, rubocop: nil, rspec: nil)
+      expect_filter_messages("-f -urspec", ["-f", "-urspec"], globally: true, rspec: false, standardrb: nil, rubocop: nil)
+      expect_filter_messages("-frspec -urubocop", ["-frspec", "-urubocop"], globally: nil, rspec: true, rubocop: false, standardrb: nil)
+
+      expect_usage_error("--filter-messages fooba", ["--filter-messages", "fooba"], /Unrecognized tool/)
+      expect_usage_error("-ffooba", ["-ffooba"], /Unrecognized tool/)
+      expect_usage_error("--unfiltered fooba", ["--unfiltered", "fooba"], /Unrecognized tool/)
+      expect_usage_error("-ufooba", ["-ufooba"], /Unrecognized tool/)
+    end
   end
 end
