@@ -12,7 +12,7 @@ module QuietQuality
       def parsed_options
         unless @parsed
           parser.parse!(@args)
-          @parsed_options.tools = validated_tool_names(@args.dup)
+          @parsed_options.tools = validated_tool_names(@args.dup).map(&:to_sym)
           @parsed = true
         end
         @parsed_options

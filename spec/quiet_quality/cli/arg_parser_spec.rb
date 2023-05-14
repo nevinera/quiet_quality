@@ -79,12 +79,12 @@ RSpec.describe QuietQuality::Cli::ArgParser do
 
       context "when a few are supplied" do
         let(:args) { ["rspec", "standardrb", "-a", "-u", "rspec", "-c", "standardrb"] }
-        it { is_expected.to eq(["rspec", "standardrb"]) }
+        it { is_expected.to eq([:rspec, :standardrb]) }
       end
 
       context "when they are mixed in with the flags for some reason" do
         let(:args) { ["-a", "-u", "rspec", "rspec", "-c", "standardrb", "standardrb"] }
-        it { is_expected.to eq(["rspec", "standardrb"]) }
+        it { is_expected.to eq([:rspec, :standardrb]) }
       end
 
       context "when invalid tool names are supplied" do
