@@ -1,0 +1,14 @@
+---
+default_tools: ["standardrb", "rubocop"]
+executor: concurrent
+comparison_branch: master
+changed_files: true
+filter_messages: false
+
+rspec:
+  filter_messages: false
+  changed_files: false
+standardrb:
+  filter_messages: true
+rubocop:
+  changed_files: false
