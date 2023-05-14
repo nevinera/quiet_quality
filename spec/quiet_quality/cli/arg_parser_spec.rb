@@ -1,4 +1,4 @@
-RSpec.describe QuietQuality::Cli::OptionParser do
+RSpec.describe QuietQuality::Cli::ArgParser do
   let(:parser) { described_class.new(args) }
   let(:parsed) { parser.parse! }
   let(:parsed_positionals) { parsed[0] }
@@ -68,8 +68,8 @@ RSpec.describe QuietQuality::Cli::OptionParser do
     expect_options("--executor serial", ["--executor", "serial"], global: {executor: :serial})
     expect_options("-Econcurrent", ["-Econcurrent"], global: {executor: :concurrent})
     expect_options("-Eserial", ["-Eserial"], global: {executor: :serial})
-    expect_usage_error("--executor fooba", ["--executor", "fooba"], /not recognized/)
-    expect_usage_error("-Efooba", ["-Efooba"], /not recognized/)
+    expect_usage_error("--executor fooba", ["--executor", "fooba"], /Unrecognized executor/)
+    expect_usage_error("-Efooba", ["-Efooba"], /Unrecognized executor/)
   end
 
   describe "annotation options" do
@@ -78,8 +78,8 @@ RSpec.describe QuietQuality::Cli::OptionParser do
     expect_options("-Agithub_stdout", ["-Agithub_stdout"], global: {annotator: :github_stdout})
     expect_options("--annotate-github-stdout", ["--annotate-github-stdout"], global: {annotator: :github_stdout})
     expect_options("-G", ["-G"], global: {annotator: :github_stdout})
-    expect_usage_error("--annotate foo_bar", ["--annotate", "foo_bar"], /not recognized/i)
-    expect_usage_error("-Afoo_bar", ["-Afoo_bar"], /not recognized/i)
+    expect_usage_error("--annotate foo_bar", ["--annotate", "foo_bar"], /Unrecognized annotator/i)
+    expect_usage_error("-Afoo_bar", ["-Afoo_bar"], /Unrecognized annotator/i)
   end
 
   describe "file targeting options" do
@@ -96,6 +96,11 @@ RSpec.describe QuietQuality::Cli::OptionParser do
     expect_all_files("--all-files standardrb", ["--all-files", "standardrb"], globally: nil, standardrb: true, rubocop: nil, rspec: nil)
     expect_all_files("-a -crspec", ["-a", "-crspec"], globally: true, rspec: false, standardrb: nil, rubocop: nil)
     expect_all_files("-arspec -crubocop", ["-arspec", "-crubocop"], globally: nil, rspec: true, rubocop: false, standardrb: nil)
+
+    expect_usage_error("--all-files fooba", ["--all-files", "fooba"], /Unrecognized tool/)
+    expect_usage_error("-afooba", ["-afooba"], /Unrecognized tool/)
+    expect_usage_error("--changed-files fooba", ["--changed-files", "fooba"], /Unrecognized tool/)
+    expect_usage_error("-cfooba", ["-cfooba"], /Unrecognized tool/)
 
     expect_options("nothing", [], global: {comparison_branch: nil})
     expect_options("--comparison-branch trunk", ["--comparison-branch", "trunk"], global: {comparison_branch: "trunk"})
@@ -116,5 +121,10 @@ RSpec.describe QuietQuality::Cli::OptionParser do
     expect_filter_messages("--filter-messages standardrb", ["--filter-messages", "standardrb"], globally: nil, standardrb: true, rubocop: nil, rspec: nil)
     expect_filter_messages("-f -urspec", ["-f", "-urspec"], globally: true, rspec: false, standardrb: nil, rubocop: nil)
     expect_filter_messages("-frspec -urubocop", ["-frspec", "-urubocop"], globally: nil, rspec: true, rubocop: false, standardrb: nil)
+
+    expect_usage_error("--filter-messages fooba", ["--filter-messages", "fooba"], /Unrecognized tool/)
+    expect_usage_error("-ffooba", ["-ffooba"], /Unrecognized tool/)
+    expect_usage_error("--unfiltered fooba", ["--unfiltered", "fooba"], /Unrecognized tool/)
+    expect_usage_error("-ufooba", ["-ufooba"], /Unrecognized tool/)
   end
 end

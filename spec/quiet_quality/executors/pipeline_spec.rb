@@ -2,7 +2,7 @@ RSpec.describe QuietQuality::Executors::Pipeline do
   let(:limit_targets?) { true }
   let(:filter_messages?) { true }
   let(:tool_name) { :rspec }
-  let(:tool_opts) { QuietQuality::ToolOptions.new(tool_name, limit_targets: limit_targets?, filter_messages: filter_messages?) }
+  let(:tool_opts) { tool_options(tool_name, limit_targets: limit_targets?, filter_messages: filter_messages?) }
 
   let(:foo_file) { QuietQuality::ChangedFile.new(path: "path/foo.rb", lines: [1, 2, 3, 5, 10]) }
   let(:bar_file) { QuietQuality::ChangedFile.new(path: "path/bar.rb", lines: [5, 6, 7, 14, 15]) }

@@ -1,4 +1,4 @@
-RSpec.describe QuietQuality::Cli::OptionsBuilder do
+RSpec.describe QuietQuality::Config::Builder do
   let(:tool_names) { [:rspec, :rubocop, :standardrb] }
   let(:global_options) { {} }
   let(:tool_options) { {} }
@@ -6,7 +6,7 @@ RSpec.describe QuietQuality::Cli::OptionsBuilder do
 
   describe "#options" do
     subject(:options) { builder.options }
-    it { is_expected.to be_a(QuietQuality::Cli::Options) }
+    it { is_expected.to be_a(QuietQuality::Config::Options) }
 
     describe "#annotator" do
       subject(:annotator) { options.annotator }
@@ -71,14 +71,6 @@ RSpec.describe QuietQuality::Cli::OptionsBuilder do
 
         it "exposes the listed tools" do
           expect(tools.map(&:tool_name)).to contain_exactly(:rspec, :standardrb)
-        end
-
-        context "and some of them are unrecognized" do
-          let(:tool_names) { [:rspec, :barframist, :rubocop] }
-
-          it "raises a UsageError" do
-            expect { tools }.to raise_error(QuietQuality::Cli::UsageError, /not recognized/)
-          end
         end
       end
 
