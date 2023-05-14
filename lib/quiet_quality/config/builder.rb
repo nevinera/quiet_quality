@@ -8,6 +8,7 @@ module QuietQuality
       def options
         return @_options if defined?(@_options)
         options = build_initial_options
+        Updater.new(options: options, apply: config_file).update! if config_file
         Updater.new(options: options, apply: cli).update!
         @_options = options
       end
@@ -22,10 +23,24 @@ module QuietQuality
       end
 
       def tool_names
-        if cli.tools.empty?
-          Tools::AVAILABLE.keys
+        if cli.tools.any?
+          cli.tools
+        elsif config_file&.tools&.any?
+          config_file.tools
         else
-          cli.tools.map(&:to_sym)
+          Tools::AVAILABLE.keys
+        end
+      end
+
+      def config_file
+        return @_parsed_config_options if defined?(@_parsed_config_options)
+        config_path = cli.global_option(:config_path)
+
+        if config_path
+          parser = Parser.new(config_path)
+          @_parsed_config_options = parser.parsed_options
+        else
+          @_parsed_config_options = nil
         end
       end
 

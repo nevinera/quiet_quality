@@ -5,6 +5,13 @@ RSpec.describe QuietQuality::Config::Builder do
   let(:parsed_cli) { parsed_options(tools: tool_names, global_options: global_options, tool_options: tool_options) }
   subject(:builder) { described_class.new(parsed_cli_options: parsed_cli) }
 
+  let(:cfg_tool_names) { [:rspec, :rubocop] }
+  let(:cfg_global_options) { {} }
+  let(:cfg_tool_options) { {} }
+  let(:parsed_config_file) { parsed_options(tools: cfg_tool_names, global_options: cfg_global_options, tool_options: cfg_tool_options) }
+  let(:fake_parser) { instance_double(QuietQuality::Config::Parser, parsed_options: parsed_config_file) }
+  before { allow(QuietQuality::Config::Parser).to receive(:new).and_return(fake_parser) }
+
   describe "#options" do
     subject(:options) { builder.options }
     it { is_expected.to be_a(QuietQuality::Config::Options) }
@@ -14,12 +21,21 @@ RSpec.describe QuietQuality::Config::Builder do
 
       context "when global_options[:annotator] is unset" do
         let(:global_options) { {} }
-        it { is_expected.to be_falsey }
+        it { is_expected.to be_nil }
       end
 
       context "when global_options[:annotator] is true" do
         let(:global_options) { {annotator: :github_stdout} }
-        it { is_expected.to be_truthy }
+        it { is_expected.to eq(QuietQuality::Annotators::GithubStdout) }
+      end
+
+      context "when a config file is passed" do
+        let(:global_options) { {config_path: "/fake.yml"} }
+
+        context "when the config file sets the annotator" do
+          let(:cfg_global_options) { {annotator: :github_stdout} }
+          it { is_expected.to eq(QuietQuality::Annotators::GithubStdout) }
+        end
       end
     end
 
@@ -40,6 +56,24 @@ RSpec.describe QuietQuality::Config::Builder do
         let(:global_options) { {executor: :serial} }
         it { is_expected.to eq(QuietQuality::Executors::SerialExecutor) }
       end
+
+      context "when a config file is passed" do
+        let(:global_options) { {config_path: "/fake.yml", executor: cli_executor} }
+
+        context "when the config file sets the executor" do
+          let(:cfg_global_options) { {executor: :concurrent} }
+
+          context "and the cli does not" do
+            let(:cli_executor) { nil }
+            it { is_expected.to eq(QuietQuality::Executors::ConcurrentExecutor) }
+          end
+
+          context "and the cli sets a different one" do
+            let(:cli_executor) { :serial }
+            it { is_expected.to eq(QuietQuality::Executors::SerialExecutor) }
+          end
+        end
+      end
     end
 
     describe "#comparison_branch" do
@@ -54,24 +88,60 @@ RSpec.describe QuietQuality::Config::Builder do
         let(:global_options) { {comparison_branch: "my-comparison-branch"} }
         it { is_expected.to eq("my-comparison-branch") }
       end
+
+      context "when a config file is passed" do
+        let(:global_options) { {config_path: "/fake.yml", comparison_branch: cli_comparison_branch} }
+
+        context "when the config file sets the executor" do
+          let(:cfg_global_options) { {comparison_branch: "main"} }
+
+          context "and the cli does not" do
+            let(:cli_comparison_branch) { nil }
+            it { is_expected.to eq("main") }
+          end
+
+          context "and the cli sets a different one" do
+            let(:cli_comparison_branch) { "master" }
+            it { is_expected.to eq("master") }
+          end
+        end
+      end
     end
 
     describe "#tools" do
       subject(:tools) { options.tools }
 
-      context "when there are no tools specified" do
+      context "when there are no tools specified on the cli" do
         let(:tool_names) { [] }
 
         it "exposes all of the tools" do
           expect(tools.map(&:tool_name)).to contain_exactly(:rspec, :rubocop, :standardrb)
         end
+
+        context "but there are some specified in a config file" do
+          let(:global_options) { {config_path: "fake.yml"} }
+          let(:cfg_tool_names) { [:rspec, :rubocop] }
+
+          it "uses the config file values" do
+            expect(tools.map(&:tool_name)).to contain_exactly(:rspec, :rubocop)
+          end
+        end
       end
 
-      context "when there are some tools listed" do
+      context "when there are some tools listed on the cli" do
         let(:tool_names) { [:rspec, :standardrb] }
 
         it "exposes the listed tools" do
           expect(tools.map(&:tool_name)).to contain_exactly(:rspec, :standardrb)
+        end
+
+        context "and others listed in a supplied config file" do
+          let(:global_options) { {config_path: "fake.yml"} }
+          let(:cfg_tool_names) { [:rspec, :rubocop] }
+
+          it "uses the cli values" do
+            expect(tools.map(&:tool_name)).to contain_exactly(:rspec, :standardrb)
+          end
         end
       end
 
@@ -103,6 +173,30 @@ RSpec.describe QuietQuality::Config::Builder do
             it { is_expected.to be_falsey }
           end
         end
+
+        context "when a config file is supplied" do
+          let(:cli_limit_targets) { nil }
+          let(:global_options) { {config_path: "fake.yml", limit_targets: cli_limit_targets} }
+
+          context "when the config file specifically enables it" do
+            let(:cfg_tool_options) { {rspec: {limit_targets: true}} }
+
+            context "and the cli doesn't care" do
+              let(:tool_options) { {} }
+              it { is_expected.to be_truthy }
+            end
+
+            context "but the cli globally disables it" do
+              let(:cli_limit_targets) { false }
+              it { is_expected.to be_falsey }
+            end
+
+            context "but the cli specifically disables it" do
+              let(:tool_options) { {rspec: {limit_targets: false}} }
+              it { is_expected.to be_falsey }
+            end
+          end
+        end
       end
 
       describe "#filter_messages" do
@@ -131,6 +225,30 @@ RSpec.describe QuietQuality::Config::Builder do
           context "but specifically disabled" do
             let(:tool_options) { {rspec: {filter_messages: false}} }
             it { is_expected.to be_falsey }
+          end
+        end
+
+        context "when a config file is supplied" do
+          let(:cli_filter_messages) { nil }
+          let(:global_options) { {config_path: "fake.yml", filter_messages: cli_filter_messages} }
+
+          context "when the config file specifically enables it" do
+            let(:cfg_tool_options) { {rspec: {filter_messages: true}} }
+
+            context "and the cli doesn't care" do
+              let(:tool_options) { {} }
+              it { is_expected.to be_truthy }
+            end
+
+            context "but the cli globally disables it" do
+              let(:cli_filter_messages) { false }
+              it { is_expected.to be_falsey }
+            end
+
+            context "but the cli specifically disables it" do
+              let(:tool_options) { {rspec: {filter_messages: false}} }
+              it { is_expected.to be_falsey }
+            end
           end
         end
       end
