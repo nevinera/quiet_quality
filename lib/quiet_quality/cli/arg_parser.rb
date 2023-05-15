@@ -12,7 +12,7 @@ module QuietQuality
       def parsed_options
         unless @parsed
           parser.parse!(@args)
-          @parsed_options.tools = validated_tool_names(@args.dup)
+          @parsed_options.tools = validated_tool_names(@args.dup).map(&:to_sym)
           @parsed = true
         end
         @parsed_options
@@ -60,6 +60,7 @@ module QuietQuality
         @_parser ||= ::OptionParser.new do |parser|
           setup_banner(parser)
           setup_help_output(parser)
+          setup_config_options(parser)
           setup_executor_options(parser)
           setup_annotation_options(parser)
           setup_file_target_options(parser)
@@ -74,6 +75,12 @@ module QuietQuality
       def setup_help_output(parser)
         parser.on("-h", "--help", "Prints this help") do
           @parsed_options.helping = true
+        end
+      end
+
+      def setup_config_options(parser)
+        parser.on("-C", "--config PATH", "Load a config file from this path") do |path|
+          set_global_option(:config_path, path)
         end
       end
 

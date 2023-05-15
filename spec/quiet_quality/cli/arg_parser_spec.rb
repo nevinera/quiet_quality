@@ -41,6 +41,7 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       expect(help_text).to eq(<<~HELP_OUTPUT)
         Usage: qq [TOOLS] [GLOBAL_OPTIONS] [TOOL_OPTIONS]
             -h, --help                       Prints this help
+            -C, --config PATH                Load a config file from this path
             -E, --executor EXECUTOR          Which executor to use
             -A, --annotate ANNOTATOR         Annotate with this annotator
             -G, --annotate-github-stdout     Annotate with GitHub Workflow commands
@@ -78,12 +79,12 @@ RSpec.describe QuietQuality::Cli::ArgParser do
 
       context "when a few are supplied" do
         let(:args) { ["rspec", "standardrb", "-a", "-u", "rspec", "-c", "standardrb"] }
-        it { is_expected.to eq(["rspec", "standardrb"]) }
+        it { is_expected.to eq([:rspec, :standardrb]) }
       end
 
       context "when they are mixed in with the flags for some reason" do
         let(:args) { ["-a", "-u", "rspec", "rspec", "-c", "standardrb", "standardrb"] }
-        it { is_expected.to eq(["rspec", "standardrb"]) }
+        it { is_expected.to eq([:rspec, :standardrb]) }
       end
 
       context "when invalid tool names are supplied" do
@@ -95,8 +96,13 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       end
     end
 
+    describe "config file options" do
+      expect_options("(none)", [], global: {config_path: nil, skip_config: nil})
+      expect_options("-Cbar.yml", ["-Cbar.yml"], global: {config_path: "bar.yml"})
+      expect_options("--config bar.yml", ["--config", "bar.yml"], global: {config_path: "bar.yml"})
+    end
+
     describe "executor options" do
-      subject(:executor_option) { parsed[1][:executor] }
       expect_options("(none)", [], global: {executor: nil})
       expect_options("--executor concurrent", ["--executor", "concurrent"], global: {executor: :concurrent})
       expect_options("--executor serial", ["--executor", "serial"], global: {executor: :serial})
@@ -107,7 +113,6 @@ RSpec.describe QuietQuality::Cli::ArgParser do
     end
 
     describe "annotation options" do
-      subject(:annotation_option) { parsed[1][:annotator] }
       expect_options("--annotate github_stdout", ["--annotate", "github_stdout"], global: {annotator: :github_stdout})
       expect_options("-Agithub_stdout", ["-Agithub_stdout"], global: {annotator: :github_stdout})
       expect_options("--annotate-github-stdout", ["--annotate-github-stdout"], global: {annotator: :github_stdout})
