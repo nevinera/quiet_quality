@@ -13,6 +13,7 @@ Dir.glob(glob).sort.each { |f| require f }
 module QuietQuality
   module Tools
     AVAILABLE = {
+      brakeman: Brakeman,
       rspec: Rspec,
       rubocop: Rubocop,
       standardrb: Standardrb
