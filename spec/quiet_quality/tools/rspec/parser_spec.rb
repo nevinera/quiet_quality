@@ -40,7 +40,6 @@ RSpec.describe QuietQuality::Tools::Rspec::Parser do
 
       it "properly populates the message when no exception is present" do
         m = messages.detect { |msg| msg.start_line == 73 }
-        expect(m.path)
         expect(m.path).to eq("spec/quiet_quality/tools/standardrb/runner_spec.rb")
         expect(m.start_line).to eq(73)
         expect(m.rule).to eq("Failed Example")
