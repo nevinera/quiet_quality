@@ -15,7 +15,7 @@ module QuietQuality
 
         private
 
-        attr_reader :changed_files, :error_stream
+        attr_reader :changed_files
 
         def skip_execution?
           changed_files && relevant_files.empty?
