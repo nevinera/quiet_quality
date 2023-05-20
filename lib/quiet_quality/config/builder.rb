@@ -32,9 +32,25 @@ module QuietQuality
         end
       end
 
+      def config_finder
+        @_config_finder ||= Finder.new(from: ".")
+      end
+
+      def config_path
+        return @_config_path if defined?(@_config_path)
+
+        @_config_path =
+          if cli.global_option(:no_config)
+            nil
+          elsif cli.global_option(:config_path)
+            cli.global_option(:config_path)
+          elsif config_finder.config_path
+            config_finder.config_path
+          end
+      end
+
       def config_file
         return @_parsed_config_options if defined?(@_parsed_config_options)
-        config_path = cli.global_option(:config_path)
 
         if config_path
           parser = Parser.new(config_path)
