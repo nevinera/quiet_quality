@@ -4,6 +4,24 @@ RSpec.describe QuietQuality::Config::Finder do
 
   before { stub_const("QuietQuality::Config::Finder::MAXIMUM_SEARCH_DEPTH", 3) }
 
+  # Here is the fixture directory we're working with - the output of `tree -aF`, with
+  # the .gitkeep files removed:
+  # spec/fixtures/config_finder_tree/
+  # ├── bar/
+  # │   ├── .quiet_quality.yml
+  # │   └── buzz/
+  # ├── blue/
+  # │   └── red/
+  # │       └── .quiet_quality.yml
+  # └── foo/
+  #     ├── .quiet_quality.yml
+  #     └── baz/
+  #         └── bam/
+  #             └── bim/
+  #                 ├── lum/
+  #                 └── other/
+  #                     └── .quiet_quality.yml
+
   describe "#config_path" do
     subject(:config_path) { finder.config_path }
 
