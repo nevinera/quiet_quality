@@ -42,6 +42,7 @@ RSpec.describe QuietQuality::Cli::ArgParser do
         Usage: qq [TOOLS] [GLOBAL_OPTIONS] [TOOL_OPTIONS]
             -h, --help                       Prints this help
             -C, --config PATH                Load a config file from this path
+            -N, --no-config                  Do not load a config file, even if present
             -E, --executor EXECUTOR          Which executor to use
             -A, --annotate ANNOTATOR         Annotate with this annotator
             -G, --annotate-github-stdout     Annotate with GitHub Workflow commands
@@ -100,6 +101,8 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       expect_options("(none)", [], global: {config_path: nil, skip_config: nil})
       expect_options("-Cbar.yml", ["-Cbar.yml"], global: {config_path: "bar.yml"})
       expect_options("--config bar.yml", ["--config", "bar.yml"], global: {config_path: "bar.yml"})
+      expect_options("-N", ["-N"], global: {no_config: true})
+      expect_options("--no-config", ["--no-config"], global: {no_config: true})
     end
 
     describe "executor options" do
