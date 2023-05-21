@@ -1,0 +1,16 @@
+{
+  "metadata": {
+    "haml_lint_version": "0.45.0",
+    "ruby_engine": "ruby",
+    "ruby_patchlevel": "20",
+    "ruby_platform": "arm64-darwin21"
+  },
+  "files": [
+
+  ],
+  "summary": {
+    "offense_count": 0,
+    "target_file_count": 0,
+    "inspected_file_count": 1
+  }
+}
