@@ -14,6 +14,7 @@ module QuietQuality
   module Tools
     AVAILABLE = {
       brakeman: Brakeman,
+      haml_lint: HamlLint,
       rspec: Rspec,
       rubocop: Rubocop,
       standardrb: Standardrb
