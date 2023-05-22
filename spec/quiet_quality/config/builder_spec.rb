@@ -119,7 +119,7 @@ RSpec.describe QuietQuality::Config::Builder do
         let(:tool_names) { [] }
 
         it "exposes all of the tools" do
-          expect(tools.map(&:tool_name)).to contain_exactly(:rspec, :rubocop, :standardrb)
+          expect(tools.map(&:tool_name)).to match_array(QuietQuality::Tools::AVAILABLE.keys)
         end
 
         context "but there are some specified in a config file" do

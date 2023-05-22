@@ -1,0 +1,75 @@
+{
+  "scan_info": {
+    "app_path": "/Users/emueller/src/blank",
+    "rails_version": "7.0.4.3",
+    "security_warnings": 2,
+    "start_time": "2023-05-20 15:13:14 -0400",
+    "end_time": "2023-05-20 15:13:14 -0400",
+    "duration": 0.101801,
+    "checks_performed": [
+      "BasicAuth",
+      "SQL",
+      "YAMLParsing"
+    ],
+    "number_of_controllers": 2,
+    "number_of_models": 1,
+    "number_of_templates": 3,
+    "ruby_version": "3.1.4",
+    "brakeman_version": "5.4.1"
+  },
+  "warnings": [
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "510fe4f52a10a04e00467e55324962beaef9960275f9dceaf5d1d7eb5887b5a2",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/controllers/articles_controller.rb",
+      "line": 3,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "ApplicationRecord.connection.execute(params[:sql])",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "ArticlesController",
+        "method": "index"
+      },
+      "user_input": "params[:sql]",
+      "confidence": "High",
+      "cwe_id": [
+        89
+      ]
+    },
+    {
+      "warning_type": "Remote Code Execution",
+      "warning_code": 25,
+      "fingerprint": "68c72b81eabcdc4242ea87c47c880ebeab73958fb18dd74f035f11131e66748a",
+      "check_name": "Deserialize",
+      "message": "`YAML.load` called with parameter value",
+      "file": "app/controllers/articles_controller.rb",
+      "line": 11,
+      "link": "https://brakemanscanner.org/docs/warning_types/unsafe_deserialization",
+      "code": "YAML.load(params[:yaml])",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "ArticlesController",
+        "method": "do_the_bad_thing"
+      },
+      "user_input": "params[:yaml]",
+      "confidence": "High",
+      "cwe_id": [
+        502
+      ]
+    }
+  ],
+  "ignored_warnings": [
+
+  ],
+  "errors": [
+
+  ],
+  "obsolete": [
+
+  ]
+}
