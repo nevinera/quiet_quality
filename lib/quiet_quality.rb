@@ -2,6 +2,7 @@ require "git"
 require "git_diff_parser"
 require "json"
 require "yaml"
+require "pathname"
 
 # 'set' doesn't need requiring after ruby 3.2, but it won't hurt anything.
 # And we're compatible back to 2.6

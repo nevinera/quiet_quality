@@ -12,6 +12,10 @@ RSpec.describe QuietQuality::Config::Builder do
   let(:fake_parser) { instance_double(QuietQuality::Config::Parser, parsed_options: parsed_config_file) }
   before { allow(QuietQuality::Config::Parser).to receive(:new).and_return(fake_parser) }
 
+  let(:found_path) { nil }
+  let(:fake_finder) { instance_double(QuietQuality::Config::Finder, config_path: found_path) }
+  before { allow(QuietQuality::Config::Finder).to receive(:new).and_return(fake_finder) }
+
   describe "#options" do
     subject(:options) { builder.options }
     it { is_expected.to be_a(QuietQuality::Config::Options) }
@@ -251,6 +255,53 @@ RSpec.describe QuietQuality::Config::Builder do
             end
           end
         end
+      end
+    end
+
+    describe "config_file parsing" do
+      shared_examples "config file is parsed" do |expected_path|
+        it "parsed the expected config file" do
+          options
+          expect(QuietQuality::Config::Parser).to have_received(:new).with(expected_path)
+          expect(fake_parser).to have_received(:parsed_options)
+        end
+      end
+
+      shared_examples "config file is not parsed" do
+        it "does not parse the config file" do
+          options
+          expect(QuietQuality::Config::Parser).not_to have_received(:new)
+          expect(fake_parser).not_to have_received(:parsed_options)
+        end
+      end
+
+      context "when config_path is supplied through the cli" do
+        let(:global_options) { {config_path: "/fake.yml"} }
+        include_examples "config file is parsed", "/fake.yml"
+
+        context "but no_config is passed" do
+          let(:global_options) { {config_path: "/fake.yml", no_config: true} }
+          include_examples "config file is not parsed"
+        end
+      end
+
+      context "when the config_finder finds a config_path" do
+        let(:found_path) { "/found.yml" }
+        include_examples "config file is parsed", "/found.yml"
+
+        context "but a config_path is also supplied on the cli" do
+          let(:global_options) { {config_path: "/fake.yml"} }
+          include_examples "config file is parsed", "/fake.yml"
+        end
+
+        context "but no_config is passed" do
+          let(:global_options) { {config_path: "/fake.yml", no_config: true} }
+          include_examples "config file is not parsed"
+        end
+      end
+
+      context "when no config_path is available" do
+        include_examples "config file is not parsed"
       end
     end
   end

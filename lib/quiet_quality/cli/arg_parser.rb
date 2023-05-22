@@ -82,6 +82,10 @@ module QuietQuality
         parser.on("-C", "--config PATH", "Load a config file from this path") do |path|
           set_global_option(:config_path, path)
         end
+
+        parser.on("-N", "--no-config", "Do not load a config file, even if present") do
+          set_global_option(:no_config, true)
+        end
       end
 
       def setup_executor_options(parser)
