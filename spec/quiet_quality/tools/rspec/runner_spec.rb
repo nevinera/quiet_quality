@@ -66,7 +66,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
         let(:changed_files) { generate_changed_files(changed_paths.map { |p| [p, :all] }.to_h) }
         it { is_expected.to eq(build_success(:rspec, "fake output", "fake error")) }
 
-        it "calls rspec with no targets" do
+        it "calls rspec with the correct targets" do
           invoke!
           expect(Open3)
             .to have_received(:capture3)

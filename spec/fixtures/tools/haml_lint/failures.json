@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "haml_lint_version": "0.45.0",
+    "ruby_engine": "ruby",
+    "ruby_patchlevel": "20",
+    "ruby_platform": "arm64-darwin21"
+  },
+  "files": [
+    {
+      "path": "tmp/good.haml",
+      "offenses": [
+        {
+          "severity": "warning",
+          "message": "`%div.foo` can be written as `.foo` since `%div` is implicit",
+          "location": {
+            "line": 1
+          },
+          "linter_name": "ImplicitDiv"
+        },
+        {
+          "severity": "warning",
+          "message": "Hash attribute should start with one space after the opening brace",
+          "location": {
+            "line": 3
+          },
+          "linter_name": "SpaceInsideHashAttributes"
+        },
+        {
+          "severity": "warning",
+          "message": "Hash attribute should end with one space before the closing brace or be on its own line",
+          "location": {
+            "line": 3
+          },
+          "linter_name": "SpaceInsideHashAttributes"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "offense_count": 3,
+    "target_file_count": 1,
+    "inspected_file_count": 1
+  }
+}
