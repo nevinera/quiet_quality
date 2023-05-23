@@ -22,7 +22,7 @@ qq rubocop
 # of them) against the commit using github's inline output-based annotation approach. Which
 # will of course only produce actual annotations if this happens to have been run in a
 # github action.
-qq rspec --annotate=stdout
+qq rspec --annotate=github_stdout
 
 # run standardrb against all of the files (not just the changed ones). Still only print out
 # problems to lines that have changed, so not particularly useful :-)
