@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set up ruby
         uses: ruby/setup-ruby@v1
@@ -25,4 +27,4 @@ jobs:
         run: bundle install --jobs 4 --retry 3
 
       - name: Run QuietQuality
-        run: bundle exec bin/qq standardrb rubocop rspec --all-files --unfiltered --annotate github_stdout
+        run: bundle exec bin/qq standardrb rubocop rspec --all-files --unfiltered --annotate github_stdout --comparison-branch origin/main

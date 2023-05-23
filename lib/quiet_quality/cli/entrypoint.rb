@@ -50,8 +50,18 @@ module QuietQuality
         @_options = builder.options
       end
 
+      def changed_files
+        return @_changed_files if defined?(@_changed_files)
+        @_changed_files = VersionControlSystems::Git.new.changed_files(
+          base: options.comparison_branch,
+          sha: "HEAD",
+          include_uncommitted: true,
+          include_untracked: true
+        )
+      end
+
       def executor
-        @_executor ||= options.executor.new(tools: options.tools)
+        @_executor ||= options.executor.new(tools: options.tools, changed_files: changed_files)
       end
 
       def executed
