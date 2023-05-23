@@ -10,6 +10,10 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
   let!(:executor) { instance_double(QuietQuality::Executors::ConcurrentExecutor, execute!: nil, messages: messages, outcomes: outcomes, any_failure?: any_failure?) }
   before { allow(QuietQuality::Executors::ConcurrentExecutor).to receive(:new).and_return(executor) }
 
+  let(:changed_files) { instance_double(QuietQuality::ChangedFiles) }
+  let(:git) { instance_double(QuietQuality::VersionControlSystems::Git, changed_files: changed_files) }
+  before { allow(QuietQuality::VersionControlSystems::Git).to receive(:new).and_return(git) }
+
   describe "#execute" do
     subject(:execute) { entrypoint.execute }
 
