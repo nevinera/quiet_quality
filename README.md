@@ -10,10 +10,9 @@ But essentially, QuietQuality is intended for two purposes:
    with _new or modified_ code, without bothering you about existing issues that you didn't
    touch.
 
+## Basic usage examples
 
-Basic usage examples:
-
-```
+```shell
 # you have five commits in your feature branch and 3 more files changes but not committed.
 # this will run rubocop against all of those files.
 qq rubocop
@@ -23,6 +22,10 @@ qq rubocop
 # will of course only produce actual annotations if this happens to have been run in a
 # github action.
 qq rspec --annotate=github_stdout
+
+OR
+
+qq rspec --annotate-github-stdout
 
 # run standardrb against all of the files (not just the changed ones). Still only print out
 # problems to lines that have changed, so not particularly useful :-)
