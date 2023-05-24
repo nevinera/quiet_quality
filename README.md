@@ -31,9 +31,9 @@ tool's support is built orthogonally to the others, in a
 Working locally, you'll generally want to commit a `.quiet_quality.yml`
 configuration file into the root of your repository - it'll specify which tools
 to run by default, and how to run them (whether you want to only run each tool
-against the "changed files", whether to filter the resulting messages down to
-only those targeting lines that have been changed), and allows you to specify
-the 'comparison branch', so you don't have to make a request to your origin
+against the _changed files_, whether to _filter_ the resulting _messages_ down
+to only those targeting lines that have been changed), and allows you to specify
+the _comparison branch_, so you don't have to make a request to your origin
 server every time you run the tool to see whether you're comparing against
 `master` or `main` in this project.
 
