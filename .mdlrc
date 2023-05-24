@@ -1,0 +1,2 @@
+style File.expand_path("../.mdl_rules.rb", __FILE__)
+git_recurse true
