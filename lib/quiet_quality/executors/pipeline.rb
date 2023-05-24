@@ -15,7 +15,7 @@ module QuietQuality
       end
 
       def failure?
-        outcome.failure?
+        messages.any?
       end
 
       def messages
