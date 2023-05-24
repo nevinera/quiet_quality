@@ -13,9 +13,10 @@ RSpec.describe QuietQuality::Executors::Pipeline do
   let(:runner) { instance_double(QuietQuality::Tools::Rspec::Runner, invoke!: runner_outcome) }
   before { allow(QuietQuality::Tools::Rspec::Runner).to receive(:new).and_return(runner) }
 
+  let(:other_messages) { generate_messages(4, path: "path/other.rb") }
   let(:foo_message) { generate_message(path: "path/foo.rb", start_line: 3, stop_line: 7, body: "foo text") }
   let(:bar_message) { generate_message(path: "path/bar.rb", start_line: 8, stop_line: 12, body: "bar text") }
-  let(:parsed_messages) { QuietQuality::Messages.new(generate_messages(4) + [foo_message, bar_message]) }
+  let(:parsed_messages) { QuietQuality::Messages.new(other_messages + [foo_message, bar_message]) }
   let(:parser) { instance_double(QuietQuality::Tools::Rspec::Parser, messages: parsed_messages) }
   before { allow(QuietQuality::Tools::Rspec::Parser).to receive(:new).and_return(parser) }
 
@@ -33,10 +34,19 @@ RSpec.describe QuietQuality::Executors::Pipeline do
 
   describe "#failure?" do
     subject(:failure?) { pipeline.failure? }
-    it { is_expected.to be_truthy }
 
-    context "when the runner succeeds" do
-      let(:runner_outcome) { build_success(tool_name, "fake output", "fake logging") }
+    context "when there are messages from the tool" do
+      let(:parsed_messages) { QuietQuality::Messages.new(other_messages + [foo_message, bar_message]) }
+      it { is_expected.to be_truthy }
+
+      context "but they are all filtered" do
+        let(:parsed_messages) { QuietQuality::Messages.new(other_messages) }
+        it { is_expected.to be_falsey }
+      end
+    end
+
+    context "when there are no messages from the tool" do
+      let(:parsed_messages) { empty_messages }
       it { is_expected.to be_falsey }
     end
   end
