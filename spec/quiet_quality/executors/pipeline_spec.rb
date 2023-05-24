@@ -29,7 +29,33 @@ RSpec.describe QuietQuality::Executors::Pipeline do
 
   describe "#outcome" do
     subject(:outcome) { pipeline.outcome }
-    it { is_expected.to eq(runner_outcome) }
+
+    shared_examples "it matches the runner outcome, failure status aside" do
+      it "matches the runner outcome, aside from the failure status" do
+        expect(outcome.output).to eq(runner_outcome.output)
+        expect(outcome.logging).to eq(runner_outcome.logging)
+        expect(outcome.tool).to eq(runner_outcome.tool)
+      end
+    end
+
+    context "when there are messages from the tool" do
+      let(:parsed_messages) { QuietQuality::Messages.new(other_messages + [foo_message, bar_message]) }
+
+      include_examples "it matches the runner outcome, failure status aside"
+      it { is_expected.to be_failure }
+
+      context "but they are all filtered" do
+        let(:parsed_messages) { QuietQuality::Messages.new(other_messages) }
+        include_examples "it matches the runner outcome, failure status aside"
+        it { is_expected.not_to be_failure }
+      end
+    end
+
+    context "when there are no messages from the tool" do
+      let(:parsed_messages) { empty_messages }
+      include_examples "it matches the runner outcome, failure status aside"
+      it { is_expected.not_to be_failure }
+    end
   end
 
   describe "#failure?" do
