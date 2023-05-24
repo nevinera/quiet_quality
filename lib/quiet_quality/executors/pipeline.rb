@@ -11,11 +11,16 @@ module QuietQuality
       end
 
       def outcome
-        @_outcome ||= runner.invoke!
+        @_outcome ||= Tools::Outcome.new(
+          tool: runner_outcome.tool,
+          output: runner_outcome.output,
+          logging: runner_outcome.logging,
+          failure: messages.any?
+        )
       end
 
       def failure?
-        messages.any?
+        outcome.failure?
       end
 
       def messages
@@ -29,6 +34,10 @@ module QuietQuality
       private
 
       attr_reader :changed_files, :tool_options
+
+      def runner_outcome
+        @_runner_outcome ||= runner.invoke!
+      end
 
       def limit_targets?
         tool_options.limit_targets?
@@ -44,7 +53,7 @@ module QuietQuality
       end
 
       def parser
-        @_parser ||= tool_options.parser_class.new(outcome.output)
+        @_parser ||= tool_options.parser_class.new(runner_outcome.output)
       end
 
       def relevance_filter
