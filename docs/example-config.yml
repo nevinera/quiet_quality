@@ -1,0 +1,9 @@
+---
+default_tools: ["standardrb", "rubocop", "rspec"]
+executor: concurrent
+comparison_branch: main
+changed_files: true
+filter_messages: true
+brakeman:
+  changed_files: false
+  filter_messages: true
