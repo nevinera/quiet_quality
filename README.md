@@ -40,7 +40,7 @@ server every time you run the tool to see whether you're comparing against
 If you have a configuration set up like that, you might have details specified
 for `rubocop`, `rspec`, `standardrb`, and `brakeman`, but have only `rubocop`,
 `standardrb`, and `rspec` set to run by default. That configuration file would
-look like this (you can copy it from [here](docs/example-config.yml)
+look like this (you can copy it from [here](docs/example-config.yml)):
 
 ```yaml
 ---
