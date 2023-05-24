@@ -29,3 +29,6 @@ jobs:
 
       - name: Run rubocop (complexity checks)
         run: bundle exec rubocop --parallel
+
+      - name: Run markdownlint
+        run: bundle exec mdl .
