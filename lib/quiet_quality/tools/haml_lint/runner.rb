@@ -11,8 +11,9 @@ module QuietQuality
         # encountered"
         FAILURE_STATUS = 65
 
-        def initialize(changed_files: nil)
+        def initialize(changed_files: nil, file_filter: nil)
           @changed_files = changed_files
+          @file_filter = file_filter
         end
 
         def invoke!
@@ -21,7 +22,7 @@ module QuietQuality
 
         private
 
-        attr_reader :changed_files
+        attr_reader :changed_files, :file_filter
 
         def skip_execution?
           changed_files && relevant_files.empty?
@@ -29,7 +30,9 @@ module QuietQuality
 
         def relevant_files
           return nil if changed_files.nil?
-          changed_files.paths.select { |path| path.end_with?(".haml") }
+          changed_files.paths
+            .select { |path| path.end_with?(".haml") }
+            .select { |path| file_filter.nil? || file_filter.match?(path) }
         end
 
         def target_files
