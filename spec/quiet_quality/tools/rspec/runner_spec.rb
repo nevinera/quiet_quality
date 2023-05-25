@@ -1,6 +1,7 @@
 RSpec.describe QuietQuality::Tools::Rspec::Runner do
   let(:changed_files) { nil }
-  subject(:runner) { described_class.new(changed_files: changed_files) }
+  let(:file_filter) { nil }
+  subject(:runner) { described_class.new(changed_files: changed_files, file_filter: file_filter) }
 
   let(:out) { "fake output" }
   let(:err) { "fake error" }
@@ -71,6 +72,27 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
           expect(Open3)
             .to have_received(:capture3)
             .with("rspec", "-f", "json", "a/alpha_spec.rb", "bar_spec.rb")
+        end
+
+        context "but some of them are filtered out" do
+          let(:file_filter) { /pha/ }
+          it { is_expected.to eq(build_success(:rspec, "fake output", "fake error")) }
+
+          it "calls rspec with the correct target" do
+            invoke!
+            expect(Open3)
+              .to have_received(:capture3)
+              .with("rspec", "-f", "json", "a/alpha_spec.rb")
+          end
+        end
+
+        context "but all of them are filtered out" do
+          let(:file_filter) { /nobody/ }
+          it { is_expected.to eq(build_success(:rspec, described_class::NO_FILES_OUTPUT)) }
+
+          it "does not call rspec" do
+            expect(Open3).not_to have_received(:capture3)
+          end
         end
       end
     end
