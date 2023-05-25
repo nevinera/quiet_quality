@@ -5,14 +5,18 @@ module QuietQuality
         @tools = []
         @tool_options = {}
         @global_options = {}
-        @helping = false
+        @helping = @printing_version = false
       end
 
       attr_accessor :tools
-      attr_writer :helping
+      attr_writer :helping, :printing_version
 
       def helping?
         @helping
+      end
+
+      def printing_version?
+        @printing_version
       end
 
       def set_global_option(name, value)
