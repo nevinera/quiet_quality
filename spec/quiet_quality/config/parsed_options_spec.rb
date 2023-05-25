@@ -17,6 +17,19 @@ RSpec.describe QuietQuality::Config::ParsedOptions do
     end
   end
 
+  describe "#printing_version?" do
+    subject(:printing_version?) { parsed_options.printing_version? }
+
+    context "when printing_version is not set" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "when printing_version is set" do
+      before { parsed_options.printing_version = true }
+      it { is_expected.to be_truthy }
+    end
+  end
+
   describe "a global option" do
     it "is nil until set" do
       expect(parsed_options.global_option(:foo)).to be_nil

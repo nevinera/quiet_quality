@@ -10,6 +10,8 @@ module QuietQuality
       def execute
         if helping?
           log_help_text
+        elsif printing_version?
+          log_version_text
         else
           executed
           log_outcomes
@@ -21,7 +23,7 @@ module QuietQuality
       end
 
       def successful?
-        helping? || !executed.any_failure?
+        helping? || printing_version? || !executed.any_failure?
       end
 
       private
@@ -40,8 +42,16 @@ module QuietQuality
         parsed_options.helping?
       end
 
+      def printing_version?
+        parsed_options.printing_version?
+      end
+
       def log_help_text
         error_stream.puts(arg_parser.help_text)
+      end
+
+      def log_version_text
+        error_stream.puts(QuietQuality::VERSION)
       end
 
       def options

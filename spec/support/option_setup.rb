@@ -7,6 +7,7 @@ module OptionSetup
     po = QuietQuality::Config::ParsedOptions.new
     po.tools = attrs.fetch(:tools, [])
     po.helping = attrs.fetch(:helping, false)
+    po.printing_version = attrs.fetch(:printing_version, false)
     set_global_options(po, global_options)
     set_tool_options(po, tool_options)
     po
