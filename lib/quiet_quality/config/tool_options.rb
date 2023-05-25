@@ -1,14 +1,15 @@
 module QuietQuality
   module Config
     class ToolOptions
-      def initialize(tool, limit_targets: true, filter_messages: true)
+      def initialize(tool, limit_targets: true, filter_messages: true, file_filter: nil)
         @tool_name = tool.to_sym
         @limit_targets = limit_targets
         @filter_messages = filter_messages
+        @file_filter = file_filter
       end
 
       attr_reader :tool_name
-      attr_writer :limit_targets, :filter_messages
+      attr_writer :limit_targets, :filter_messages, :file_filter
 
       def limit_targets?
         @limit_targets
@@ -28,6 +29,11 @@ module QuietQuality
 
       def parser_class
         tool_namespace::Parser
+      end
+
+      def file_filter
+        return nil if @file_filter.nil?
+        Regexp.new(@file_filter)
       end
     end
   end

@@ -27,6 +27,17 @@ RSpec.describe QuietQuality::Config::ToolOptions do
     end
   end
 
+  describe "#file_filter" do
+    subject(:file_filter) { tool_options.file_filter }
+    it { is_expected.to be_nil }
+
+    context "when set with a string" do
+      before { tool_options.file_filter = ".*" }
+      it { is_expected.to be_a(Regexp) }
+      it { is_expected.to eq(/.*/) }
+    end
+  end
+
   describe "constants for tools" do
     shared_examples "exposes the expected constants for" do |tool_name, expected_namespace|
       context "for #{tool_name}" do
