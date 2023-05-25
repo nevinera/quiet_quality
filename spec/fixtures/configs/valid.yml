@@ -8,6 +8,7 @@ filter_messages: false
 rspec:
   filter_messages: false
   changed_files: false
+  file_filter: "spec/.*_spec.rb"
 standardrb:
   filter_messages: true
 rubocop:

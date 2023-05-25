@@ -56,6 +56,7 @@ module QuietQuality
         return if entries.nil?
         read_tool_option(opts, tool_name, :filter_messages, as: :boolean)
         read_tool_option(opts, tool_name, :changed_files, as: :boolean)
+        read_tool_option(opts, tool_name, :file_filter, as: :string)
       end
 
       def invalid!(message)

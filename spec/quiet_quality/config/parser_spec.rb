@@ -60,9 +60,9 @@ RSpec.describe QuietQuality::Config::Parser do
         filter_messages: false
       )
       expect_tool_options(
-        rspec: {filter_messages: false, changed_files: false},
-        standardrb: {filter_messages: true, changed_files: nil},
-        rubocop: {filter_messages: nil, changed_files: false}
+        rspec: {filter_messages: false, changed_files: false, file_filter: "spec/.*_spec.rb"},
+        standardrb: {filter_messages: true, changed_files: nil, file_filter: nil},
+        rubocop: {filter_messages: nil, changed_files: false, file_filter: nil}
       )
     end
 
@@ -122,6 +122,11 @@ RSpec.describe QuietQuality::Config::Parser do
         expect_config "an rspec filter_messages", %({rspec: {filter_messages: false}}), globals: {filter_messages: nil}, tools: {rspec: {filter_messages: false}}
         expect_config "both filter_messages", %({filter_messages: true, rspec: {filter_messages: false}}), globals: {filter_messages: true}, tools: {rspec: {filter_messages: false}}
         expect_invalid "a non-boolean filter_messages", %({filter_messages: "yeah"}), /either true or false/
+      end
+
+      describe "file_filter parsing" do
+        expect_config "no settings", %({}), tools: {rspec: {file_filter: nil}, rubocop: {file_filter: nil}}
+        expect_config "an rspec file_filter", %({rspec: {file_filter: "^spec/"}}), tools: {rspec: {file_filter: "^spec/"}, rubocop: {file_filter: nil}}
       end
     end
   end
