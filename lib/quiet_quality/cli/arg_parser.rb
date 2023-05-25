@@ -76,6 +76,10 @@ module QuietQuality
         parser.on("-h", "--help", "Prints this help") do
           @parsed_options.helping = true
         end
+
+        parser.on("-V", "--version", "Print the current version of the gem") do
+          @parsed_options.printing_version = true
+        end
       end
 
       def setup_config_options(parser)
