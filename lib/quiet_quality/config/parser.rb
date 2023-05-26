@@ -38,11 +38,11 @@ module QuietQuality
       end
 
       def store_global_options(opts)
-        read_global_option(opts, :executor, as: :symbol, validate_from: Executors::AVAILABLE)
-        read_global_option(opts, :annotator, as: :symbol, validate_from: Annotators::ANNOTATOR_TYPES)
-        read_global_option(opts, :comparison_branch, as: :string)
-        read_global_option(opts, :changed_files, as: :boolean)
-        read_global_option(opts, :filter_messages, as: :boolean)
+        read_global_option(opts, :executor, :executor, as: :symbol, validate_from: Executors::AVAILABLE)
+        read_global_option(opts, :annotator, :annotator, as: :symbol, validate_from: Annotators::ANNOTATOR_TYPES)
+        read_global_option(opts, :comparison_branch, :comparison_branch, as: :string)
+        read_global_option(opts, :changed_files, :changed_files, as: :boolean)
+        read_global_option(opts, :filter_messages, :filter_messages, as: :boolean)
       end
 
       def store_tool_options(opts)
@@ -70,13 +70,13 @@ module QuietQuality
         [true, false].include?(value)
       end
 
-      def read_global_option(opts, name, as:, validate_from: nil)
+      def read_global_option(opts, name, into, as:, validate_from: nil)
         parsed_value = data.fetch(name.to_sym, nil)
         return if parsed_value.nil?
 
         validate_value(name, parsed_value, as: as, from: validate_from)
         coerced_value = coerce_value(parsed_value, as: as)
-        opts.set_global_option(name, coerced_value)
+        opts.set_global_option(into, coerced_value)
       end
 
       def read_tool_option(opts, tool, name, as:)
