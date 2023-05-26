@@ -7,7 +7,17 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
   let(:messages) { empty_messages }
   let(:outcomes) { [build_success(:rspec), build_success(:rubocop)] }
   let(:any_failure?) { outcomes.any?(&:failure?) }
-  let!(:executor) { instance_double(QuietQuality::Executors::ConcurrentExecutor, execute!: nil, messages: messages, outcomes: outcomes, any_failure?: any_failure?) }
+  let!(:executor) do
+    instance_double(
+      QuietQuality::Executors::ConcurrentExecutor,
+      execute!: nil,
+      messages: messages,
+      outcomes: outcomes,
+      any_failure?: any_failure?,
+      failed_outcomes: outcomes.select(&:failure?),
+      successful_outcomes: outcomes.reject(&:failure?)
+    )
+  end
   before { allow(QuietQuality::Executors::ConcurrentExecutor).to receive(:new).and_return(executor) }
 
   let(:changed_files) { instance_double(QuietQuality::ChangedFiles) }
@@ -91,6 +101,40 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
         it "prints no annotations" do
           execute
           expect(output_stream).not_to have_received(:puts)
+        end
+      end
+
+      context "when logging is quiet" do
+        let(:argv) { ["--quiet"] }
+
+        it "does not print the messages" do
+          execute
+          expect(output_stream).not_to have_received(:puts)
+          expect(error_stream).not_to have_received(:puts)
+        end
+      end
+
+      context "when logging is light" do
+        let(:argv) { ["--light"] }
+
+        it "does not print the messages" do
+          execute
+          expect(error_stream).not_to have_received(:puts).with("  foo.rb:1  Msg1")
+          expect(error_stream).not_to have_received(:puts).with("  bar.rb:2  [Title]  Msg2")
+          expect(error_stream).not_to have_received(:puts).with("  baz.rb:3-7  Msg3")
+        end
+
+        it "does not print the standard outcomes" do
+          execute
+          expect(error_stream).not_to have_received(:puts).with("--- Failed: rspec")
+          expect(error_stream).not_to have_received(:puts).with("--- Passed: rubocop")
+        end
+
+        it "prints the aggregated outcomes" do
+          execute
+          expect(output_stream).to have_received(:puts).with(
+            "2 tools executed: 1 passed, 1 failed (rspec)"
+          )
         end
       end
     end
