@@ -57,8 +57,10 @@ module QuietQuality
       def store_tool_options_for(opts, tool_name)
         entries = data.fetch(tool_name, nil)
         return if entries.nil?
-        read_tool_option(opts, tool_name, :filter_messages, as: :boolean)
-        read_tool_option(opts, tool_name, :changed_files, as: :boolean)
+        read_tool_option(opts, tool_name, :filter_messages, :filter_messages, as: :boolean)
+        read_tool_option(opts, tool_name, :unfiltered, :filter_messages, as: :reversed_boolean)
+        read_tool_option(opts, tool_name, :changed_files, :changed_files, as: :boolean)
+        read_tool_option(opts, tool_name, :all_files, :changed_files, as: :reversed_boolean)
       end
 
       def invalid!(message)
@@ -82,13 +84,13 @@ module QuietQuality
         opts.set_global_option(into, coerced_value)
       end
 
-      def read_tool_option(opts, tool, name, as:)
+      def read_tool_option(opts, tool, name, into, as:)
         parsed_value = data.dig(tool.to_sym, name.to_sym)
         return if parsed_value.nil?
 
         validate_value("#{tool}.#{name}", parsed_value, as: as)
         coerced_value = coerce_value(parsed_value, as: as)
-        opts.set_tool_option(tool, name, coerced_value)
+        opts.set_tool_option(tool, into, coerced_value)
       end
 
       def validate_value(name, value, as:, from: nil)
