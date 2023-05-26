@@ -65,6 +65,7 @@ module QuietQuality
           setup_annotation_options(parser)
           setup_file_target_options(parser)
           setup_filter_messages_options(parser)
+          setup_logging_options(parser)
         end
       end
 
@@ -132,6 +133,16 @@ module QuietQuality
 
         parser.on("-u", "--unfiltered [tool]", "Don't filter messages from tool(s)") do |tool|
           read_tool_or_global_option(:filter_messages, tool, false)
+        end
+      end
+
+      def setup_logging_options(parser)
+        parser.on("-l", "--light", "Print aggregated results only") do
+          set_global_option(:logging, Logging::LIGHT)
+        end
+
+        parser.on("-q", "--quiet", "Don't print results, only return a status code") do
+          set_global_option(:logging, Logging::QUIET)
         end
       end
     end

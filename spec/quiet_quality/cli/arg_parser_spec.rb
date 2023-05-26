@@ -52,6 +52,8 @@ RSpec.describe QuietQuality::Cli::ArgParser do
             -B, --comparison-branch BRANCH   Specify the branch to compare against
             -f, --filter-messages [tool]     Filter messages from tool(s) based on changed lines
             -u, --unfiltered [tool]          Don't filter messages from tool(s)
+            -l, --light                      Print aggregated results only
+            -q, --quiet                      Don't print results, only return a status code
       HELP_OUTPUT
     end
   end
@@ -135,6 +137,15 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       expect_options("-G", ["-G"], global: {annotator: :github_stdout})
       expect_usage_error("--annotate foo_bar", ["--annotate", "foo_bar"], /Unrecognized annotator/i)
       expect_usage_error("-Afoo_bar", ["-Afoo_bar"], /Unrecognized annotator/i)
+    end
+
+    describe "logging options" do
+      expect_options("-l", ["-l"], global: {logging: :light})
+      expect_options("--light", ["--light"], global: {logging: :light})
+      expect_options("-q", ["-q"], global: {logging: :quiet})
+      expect_options("--quiet", ["--quiet"], global: {logging: :quiet})
+      expect_options("-lq", ["-lq"], global: {logging: :quiet})
+      expect_options("-ql", ["-ql"], global: {logging: :light})
     end
 
     describe "file targeting options" do
