@@ -167,5 +167,6 @@ The same options are all available on the CLI, plus some additional ones - run
 
 * `--help/-H`: See a list of the options
 * `--no-config/-N`: Do _not_ load a config file, even if present.
-* `--config/-C` load the supplied config file (instead of the detected one, if
+* `--config/-C`: load the supplied config file (instead of the detected one, if
   found)
+* `--version/-V`: what version of the gem are you using?

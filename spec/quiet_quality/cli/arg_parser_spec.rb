@@ -41,6 +41,7 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       expect(help_text).to eq(<<~HELP_OUTPUT)
         Usage: qq [TOOLS] [GLOBAL_OPTIONS] [TOOL_OPTIONS]
             -h, --help                       Prints this help
+            -V, --version                    Print the current version of the gem
             -C, --config PATH                Load a config file from this path
             -N, --no-config                  Do not load a config file, even if present
             -E, --executor EXECUTOR          Which executor to use
@@ -67,6 +68,18 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       context "with --help passed" do
         let(:args) { ["-a", "--help"] }
         it { is_expected.to be_helping }
+      end
+    end
+
+    describe "version option" do
+      context "without --version passed" do
+        let(:args) { ["-a"] }
+        it { is_expected.not_to be_printing_version }
+      end
+
+      context "with --version passed" do
+        let(:args) { ["-a", "--version"] }
+        it { is_expected.to be_printing_version }
       end
     end
 
