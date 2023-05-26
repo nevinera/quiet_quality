@@ -43,6 +43,7 @@ module QuietQuality
         read_global_option(opts, :comparison_branch, as: :string)
         read_global_option(opts, :changed_files, as: :boolean)
         read_global_option(opts, :filter_messages, as: :boolean)
+        read_global_option(opts, :logging, as: :symbol, validate_from: Logging::AVAILABLE)
       end
 
       def store_tool_options(opts)

@@ -85,6 +85,7 @@ module QuietQuality
           update_annotator
           update_executor
           update_comparison_branch
+          update_logging
         end
 
         def update_annotator
@@ -101,6 +102,10 @@ module QuietQuality
 
         def update_comparison_branch
           set_unless_nil(options, :comparison_branch, apply.global_option(:comparison_branch))
+        end
+
+        def update_logging
+          set_unless_nil(options, :logging, apply.global_option(:logging))
         end
 
         # ---- update the tool options (apply global forms first) -------
