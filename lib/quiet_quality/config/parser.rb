@@ -38,11 +38,14 @@ module QuietQuality
       end
 
       def store_global_options(opts)
-        read_global_option(opts, :executor, as: :symbol, validate_from: Executors::AVAILABLE)
-        read_global_option(opts, :annotator, as: :symbol, validate_from: Annotators::ANNOTATOR_TYPES)
-        read_global_option(opts, :comparison_branch, as: :string)
-        read_global_option(opts, :changed_files, as: :boolean)
-        read_global_option(opts, :filter_messages, as: :boolean)
+        read_global_option(opts, :executor, :executor, as: :symbol, validate_from: Executors::AVAILABLE)
+        read_global_option(opts, :annotator, :annotator, as: :symbol, validate_from: Annotators::ANNOTATOR_TYPES)
+        read_global_option(opts, :annotate, :annotator, as: :symbol, validate_from: Annotators::ANNOTATOR_TYPES)
+        read_global_option(opts, :comparison_branch, :comparison_branch, as: :string)
+        read_global_option(opts, :changed_files, :changed_files, as: :boolean)
+        read_global_option(opts, :all_files, :changed_files, as: :reversed_boolean)
+        read_global_option(opts, :filter_messages, :filter_messages, as: :boolean)
+        read_global_option(opts, :unfiltered, :filter_messages, as: :reversed_boolean)
       end
 
       def store_tool_options(opts)
@@ -54,8 +57,10 @@ module QuietQuality
       def store_tool_options_for(opts, tool_name)
         entries = data.fetch(tool_name, nil)
         return if entries.nil?
-        read_tool_option(opts, tool_name, :filter_messages, as: :boolean)
-        read_tool_option(opts, tool_name, :changed_files, as: :boolean)
+        read_tool_option(opts, tool_name, :filter_messages, :filter_messages, as: :boolean)
+        read_tool_option(opts, tool_name, :unfiltered, :filter_messages, as: :reversed_boolean)
+        read_tool_option(opts, tool_name, :changed_files, :changed_files, as: :boolean)
+        read_tool_option(opts, tool_name, :all_files, :changed_files, as: :reversed_boolean)
       end
 
       def invalid!(message)
@@ -70,27 +75,28 @@ module QuietQuality
         [true, false].include?(value)
       end
 
-      def read_global_option(opts, name, as:, validate_from: nil)
+      def read_global_option(opts, name, into, as:, validate_from: nil)
         parsed_value = data.fetch(name.to_sym, nil)
         return if parsed_value.nil?
 
         validate_value(name, parsed_value, as: as, from: validate_from)
         coerced_value = coerce_value(parsed_value, as: as)
-        opts.set_global_option(name, coerced_value)
+        opts.set_global_option(into, coerced_value)
       end
 
-      def read_tool_option(opts, tool, name, as:)
+      def read_tool_option(opts, tool, name, into, as:)
         parsed_value = data.dig(tool.to_sym, name.to_sym)
         return if parsed_value.nil?
 
         validate_value("#{tool}.#{name}", parsed_value, as: as)
         coerced_value = coerce_value(parsed_value, as: as)
-        opts.set_tool_option(tool, name, coerced_value)
+        opts.set_tool_option(tool, into, coerced_value)
       end
 
       def validate_value(name, value, as:, from: nil)
         case as
         when :boolean then validate_boolean(name, value)
+        when :reversed_boolean then validate_boolean(name, value)
         when :symbol then validate_symbol(name, value, from: from)
         when :string then validate_string(name, value)
         else
@@ -123,6 +129,7 @@ module QuietQuality
       def coerce_value(value, as:)
         case as
         when :boolean then !!value
+        when :reversed_boolean then !value
         when :string then value.to_s
         when :symbol then value.to_sym
         else
