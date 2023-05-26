@@ -40,6 +40,7 @@ module QuietQuality
       def store_global_options(opts)
         read_global_option(opts, :executor, :executor, as: :symbol, validate_from: Executors::AVAILABLE)
         read_global_option(opts, :annotator, :annotator, as: :symbol, validate_from: Annotators::ANNOTATOR_TYPES)
+        read_global_option(opts, :annotate, :annotator, as: :symbol, validate_from: Annotators::ANNOTATOR_TYPES)
         read_global_option(opts, :comparison_branch, :comparison_branch, as: :string)
         read_global_option(opts, :changed_files, :changed_files, as: :boolean)
         read_global_option(opts, :filter_messages, :filter_messages, as: :boolean)

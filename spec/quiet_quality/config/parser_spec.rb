@@ -97,6 +97,8 @@ RSpec.describe QuietQuality::Config::Parser do
         expect_config "a github_stdout annotator", %({annotator: "github_stdout"}), globals: {annotator: :github_stdout}
         expect_invalid "a fooba annotator", %({annotator: "fooba"}), /one of the allowed values/
         expect_invalid "a numeric annotator", %({annotator: 5}), /string or symbol/
+        expect_config "a github_stdout annotate", %({annotate: "github_stdout"}), globals: {annotator: :github_stdout}
+        expect_invalid "a fooba annotate", %({annotate: "fooba"}), /one of the allowed values/
       end
 
       describe "comparison_branch parsing" do
