@@ -43,7 +43,9 @@ module QuietQuality
         read_global_option(opts, :annotate, :annotator, as: :symbol, validate_from: Annotators::ANNOTATOR_TYPES)
         read_global_option(opts, :comparison_branch, :comparison_branch, as: :string)
         read_global_option(opts, :changed_files, :changed_files, as: :boolean)
+        read_global_option(opts, :all_files, :changed_files, as: :reversed_boolean)
         read_global_option(opts, :filter_messages, :filter_messages, as: :boolean)
+        read_global_option(opts, :unfiltered, :filter_messages, as: :reversed_boolean)
       end
 
       def store_tool_options(opts)
@@ -92,6 +94,7 @@ module QuietQuality
       def validate_value(name, value, as:, from: nil)
         case as
         when :boolean then validate_boolean(name, value)
+        when :reversed_boolean then validate_boolean(name, value)
         when :symbol then validate_symbol(name, value, from: from)
         when :string then validate_string(name, value)
         else
@@ -124,6 +127,7 @@ module QuietQuality
       def coerce_value(value, as:)
         case as
         when :boolean then !!value
+        when :reversed_boolean then !value
         when :string then value.to_s
         when :symbol then value.to_sym
         else
