@@ -45,7 +45,6 @@ module QuietQuality
         @_parsed_options ||= arg_parser.parsed_options
       end
 
-      # keep
       def helping?
         parsed_options.helping?
       end
