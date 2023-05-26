@@ -139,6 +139,10 @@ The configuration file supports the following _global_ options (top-level keys):
 * `filter_messages`: defaults to false - should the resulting messages that do
   not refer to lines that were changed or added relative to the comparison
   branch be skipped? Also possible to set for each tool.
+* `logging`: defaults to full messages printed. The `light` option
+  prints a aggregated result (e.g. "3 tools executed: 1 passed, 2 failed
+  (rubocop, standardrb)"). The `quiet` option will only return a status code,
+  printing nothing.
 
 And then each tool can have an entry, within which `changed_files` and
 `filter_messages` can be specified - the tool-specific settings override the
@@ -154,3 +158,5 @@ The same options are all available on the CLI, plus some additional ones - run
 * `--config/-C`: load the supplied config file (instead of the detected one, if
   found)
 * `--version/-V`: what version of the gem are you using?
+* `--light/-l`: Enable light logging.
+* `--quiet/-q: Enable quiet logging.
