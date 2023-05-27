@@ -98,6 +98,8 @@ RSpec.describe QuietQuality::Config::Parser do
         expect_config "a github_stdout annotator", %({annotator: "github_stdout"}), globals: {annotator: :github_stdout}
         expect_invalid "a fooba annotator", %({annotator: "fooba"}), /one of the allowed values/
         expect_invalid "a numeric annotator", %({annotator: 5}), /string or symbol/
+        expect_config "a github_stdout annotate", %({annotate: "github_stdout"}), globals: {annotator: :github_stdout}
+        expect_invalid "a fooba annotate", %({annotate: "fooba"}), /one of the allowed values/
       end
 
       describe "comparison_branch parsing" do
@@ -111,8 +113,10 @@ RSpec.describe QuietQuality::Config::Parser do
         expect_config "no settings", %({}), globals: {changed_files: nil}, tools: {rspec: {changed_files: nil}}
         expect_config "a global changed_files", %({changed_files: true}), globals: {changed_files: true}, tools: {rspec: {changed_files: nil}}
         expect_config "an rspec changed_files", %({rspec: {changed_files: false}}), globals: {changed_files: nil}, tools: {rspec: {changed_files: false}}
-        expect_config "an rspec changed_files", %({rspec: {changed_files: false}}), globals: {changed_files: nil}, tools: {rspec: {changed_files: false}}
+        expect_config "a global all_files", %({all_files: false}), globals: {changed_files: true}, tools: {rspec: {changed_files: nil}}
+        expect_config "an rspec all_files", %({rspec: {all_files: true}}), globals: {changed_files: nil}, tools: {rspec: {changed_files: false}}
         expect_config "both changed_files", %({changed_files: true, rspec: {changed_files: false}}), globals: {changed_files: true}, tools: {rspec: {changed_files: false}}
+        expect_config "both all_files", %({all_files: false, rspec: {all_files: true}}), globals: {changed_files: true}, tools: {rspec: {changed_files: false}}
         expect_invalid "a non-boolean changed_files", %({changed_files: "yeah"}), /either true or false/
       end
 
@@ -120,8 +124,10 @@ RSpec.describe QuietQuality::Config::Parser do
         expect_config "no settings", %({}), globals: {filter_messages: nil}, tools: {rspec: {filter_messages: nil}}
         expect_config "a global filter_messages", %({filter_messages: true}), globals: {filter_messages: true}, tools: {rspec: {filter_messages: nil}}
         expect_config "an rspec filter_messages", %({rspec: {filter_messages: false}}), globals: {filter_messages: nil}, tools: {rspec: {filter_messages: false}}
-        expect_config "an rspec filter_messages", %({rspec: {filter_messages: false}}), globals: {filter_messages: nil}, tools: {rspec: {filter_messages: false}}
+        expect_config "a global unfiltered", %({unfiltered: false}), globals: {filter_messages: true}, tools: {rspec: {filter_messages: nil}}
+        expect_config "an rspec unfiltered", %({rspec: {unfiltered: true}}), globals: {filter_messages: nil}, tools: {rspec: {filter_messages: false}}
         expect_config "both filter_messages", %({filter_messages: true, rspec: {filter_messages: false}}), globals: {filter_messages: true}, tools: {rspec: {filter_messages: false}}
+        expect_config "both unfiltered", %({unfiltered: false, rspec: {unfiltered: true}}), globals: {filter_messages: true}, tools: {rspec: {filter_messages: false}}
         expect_invalid "a non-boolean filter_messages", %({filter_messages: "yeah"}), /either true or false/
       end
 
