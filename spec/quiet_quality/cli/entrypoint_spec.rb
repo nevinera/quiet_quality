@@ -14,6 +14,10 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
   let(:git) { instance_double(QuietQuality::VersionControlSystems::Git, changed_files: changed_files) }
   before { allow(QuietQuality::VersionControlSystems::Git).to receive(:new).and_return(git) }
 
+  let(:options) { build_options(rubocop: {}, rspec: {}) }
+  let(:config_builder) { instance_double(QuietQuality::Config::Builder, options: options) }
+  before { allow(QuietQuality::Config::Builder).to receive(:new).and_return(config_builder) }
+
   describe "#execute" do
     subject(:execute) { entrypoint.execute }
 
@@ -76,6 +80,7 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
 
       context "when annotation is requested" do
         let(:argv) { ["--annotate", "github_stdout"] }
+        let(:options) { build_options(annotator: :github_stdout, rubocop: {}, rspec: {}) }
 
         it "writes the proper annotations to stdout" do
           execute
