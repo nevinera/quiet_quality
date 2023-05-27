@@ -15,6 +15,7 @@ module QuietQuality
     AVAILABLE = {
       brakeman: Brakeman,
       haml_lint: HamlLint,
+      markdown_lint: MarkdownLint,
       rspec: Rspec,
       rubocop: Rubocop,
       standardrb: Standardrb
