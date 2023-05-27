@@ -14,6 +14,10 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
   let(:git) { instance_double(QuietQuality::VersionControlSystems::Git, changed_files: changed_files) }
   before { allow(QuietQuality::VersionControlSystems::Git).to receive(:new).and_return(git) }
 
+  let(:options) { build_options(rubocop: {}, rspec: {}) }
+  let(:config_builder) { instance_double(QuietQuality::Config::Builder, options: options) }
+  before { allow(QuietQuality::Config::Builder).to receive(:new).and_return(config_builder) }
+
   describe "#execute" do
     subject(:execute) { entrypoint.execute }
 
@@ -76,6 +80,7 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
 
       context "when annotation is requested" do
         let(:argv) { ["--annotate", "github_stdout"] }
+        let(:options) { build_options(annotator: :github_stdout, rubocop: {}, rspec: {}) }
 
         it "writes the proper annotations to stdout" do
           execute
@@ -124,6 +129,22 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
       it "prints the help information to the error stream" do
         execute
         expect(error_stream).to have_received(:puts).with(QuietQuality::VERSION)
+      end
+    end
+
+    context "when there are no tools to run" do
+      let(:options) { build_options(annotator: :github_stdout) }
+
+      it "does not run the executor" do
+        execute
+        expect(executor).not_to have_received(:execute!)
+      end
+
+      it "prints the corrective instructions to the error stream" do
+        execute
+        expect(error_stream)
+          .to have_received(:puts)
+          .with(a_string_matching(/specify one or more tools to run/))
       end
     end
   end
