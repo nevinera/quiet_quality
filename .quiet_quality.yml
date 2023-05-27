@@ -1,5 +1,5 @@
 ---
-default_tools: ["standardrb", "rubocop", "rspec"]
+default_tools: ["standardrb", "rubocop", "markdown_lint", "rspec"]
 executor: concurrent
 comparison_branch: main
 changed_files: false
