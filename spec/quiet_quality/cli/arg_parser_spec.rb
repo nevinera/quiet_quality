@@ -146,6 +146,7 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       expect_options("--quiet", ["--quiet"], global: {logging: :quiet})
       expect_options("-lq", ["-lq"], global: {logging: :quiet})
       expect_options("-ql", ["-ql"], global: {logging: :light})
+      expect_options("no logging option passed", [], global: {logging: nil})
     end
 
     describe "file targeting options" do
