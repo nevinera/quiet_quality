@@ -54,6 +54,7 @@ RSpec.describe QuietQuality::Cli::ArgParser do
             -u, --unfiltered [tool]          Don't filter messages from tool(s)
             -l, --light                      Print aggregated results only
             -q, --quiet                      Don't print results, only return a status code
+            -L, --logging LEVEL              Specify logging mode that results will be returned in. Valid options: light, quiet
       HELP_OUTPUT
     end
   end
@@ -147,6 +148,11 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       expect_options("-lq", ["-lq"], global: {logging: :quiet})
       expect_options("-ql", ["-ql"], global: {logging: :light})
       expect_options("no logging option passed", [], global: {logging: nil})
+      expect_options("--logging light", ["--logging", "light"], global: {logging: :light})
+      expect_options("-Llight", ["-Llight"], global: {logging: :light})
+      expect_options("--logging quiet", ["--logging", "quiet"], global: {logging: :quiet})
+      expect_options("-Lquiet", ["-Lquiet"], global: {logging: :quiet})
+      expect_usage_error("-Lshenanigans", ["-Lshenanigans"], /Unrecognized logging level/i)
     end
 
     describe "file targeting options" do

@@ -2,7 +2,7 @@ module QuietQuality
   class Logging
     LIGHT = :light
     QUIET = :quiet
-    AVAILABLE = [LIGHT, QUIET].freeze
+    LEVELS = [LIGHT, QUIET].freeze
 
     attr_accessor :level
 

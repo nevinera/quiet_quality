@@ -144,6 +144,11 @@ module QuietQuality
         parser.on("-q", "--quiet", "Don't print results, only return a status code") do
           set_global_option(:logging, Logging::QUIET)
         end
+
+        parser.on("-L", "--logging LEVEL", "Specify logging mode that results will be returned in. Valid options: light, quiet") do |level|
+          validate_value_from("logging level", level, Logging::LEVELS)
+          set_global_option(:logging, level.to_sym)
+        end
       end
     end
   end

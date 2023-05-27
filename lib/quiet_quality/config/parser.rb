@@ -46,7 +46,7 @@ module QuietQuality
         read_global_option(opts, :all_files, :changed_files, as: :reversed_boolean)
         read_global_option(opts, :filter_messages, :filter_messages, as: :boolean)
         read_global_option(opts, :unfiltered, :filter_messages, as: :reversed_boolean)
-        read_global_option(opts, :logging, :logging, as: :symbol, validate_from: Logging::AVAILABLE)
+        read_global_option(opts, :logging, :logging, as: :symbol, validate_from: Logging::LEVELS)
       end
 
       def store_tool_options(opts)
