@@ -57,7 +57,8 @@ RSpec.describe QuietQuality::Config::Parser do
         annotator: nil,
         comparison_branch: "master",
         changed_files: true,
-        filter_messages: false
+        filter_messages: false,
+        logging: :light
       )
       expect_tool_options(
         rspec: {filter_messages: false, changed_files: false},
@@ -122,6 +123,15 @@ RSpec.describe QuietQuality::Config::Parser do
         expect_config "an rspec filter_messages", %({rspec: {filter_messages: false}}), globals: {filter_messages: nil}, tools: {rspec: {filter_messages: false}}
         expect_config "both filter_messages", %({filter_messages: true, rspec: {filter_messages: false}}), globals: {filter_messages: true}, tools: {rspec: {filter_messages: false}}
         expect_invalid "a non-boolean filter_messages", %({filter_messages: "yeah"}), /either true or false/
+      end
+
+      describe "logging parsing" do
+        expect_config "no logging", %({}), globals: {comparison_branch: nil}
+        expect_config "the valid 'light' logging option", %({logging: "light"}), globals: {logging: :light}
+        expect_config "the valid 'quiet' logging option", %({logging: "quiet"}), globals: {logging: :quiet}
+        expect_invalid "a numeric logging option", %({logging: 5}), /must be a string/
+        expect_invalid "an empty logging option", %({logging: ""}), /option logging must be one of the allowed values/
+        expect_invalid "an invalid logging option", %({logging: shecklackity}), /option logging must be one of the allowed values/
       end
     end
   end
