@@ -48,8 +48,10 @@ module QuietQuality
       end
 
       def runner
-        @_runner ||= tool_options.runner_class
-          .new(changed_files: limit_targets? ? changed_files : nil)
+        @_runner ||= tool_options.runner_class.new(
+          changed_files: limit_targets? ? changed_files : nil,
+          file_filter: tool_options.file_filter
+        )
       end
 
       def parser

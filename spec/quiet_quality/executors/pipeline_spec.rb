@@ -2,7 +2,7 @@ RSpec.describe QuietQuality::Executors::Pipeline do
   let(:limit_targets?) { true }
   let(:filter_messages?) { true }
   let(:tool_name) { :rspec }
-  let(:tool_opts) { tool_options(tool_name, limit_targets: limit_targets?, filter_messages: filter_messages?) }
+  let(:tool_opts) { tool_options(tool_name, limit_targets: limit_targets?, filter_messages: filter_messages?, file_filter: ".*") }
 
   let(:foo_file) { QuietQuality::ChangedFile.new(path: "path/foo.rb", lines: [1, 2, 3, 5, 10]) }
   let(:bar_file) { QuietQuality::ChangedFile.new(path: "path/bar.rb", lines: [5, 6, 7, 14, 15]) }
@@ -10,8 +10,9 @@ RSpec.describe QuietQuality::Executors::Pipeline do
   let(:changed_files) { QuietQuality::ChangedFiles.new([foo_file, bar_file, bug_file]) }
 
   let(:runner_outcome) { build_failure(tool_name, "fake output", "fake logging") }
-  let(:runner) { instance_double(QuietQuality::Tools::Rspec::Runner, invoke!: runner_outcome) }
-  before { allow(QuietQuality::Tools::Rspec::Runner).to receive(:new).and_return(runner) }
+  let(:runner_class) { QuietQuality::Tools::Rspec::Runner }
+  let(:runner) { instance_double(runner_class, invoke!: runner_outcome) }
+  before { allow(runner_class).to receive(:new).and_return(runner) }
 
   let(:other_messages) { generate_messages(4, path: "path/other.rb") }
   let(:foo_message) { generate_message(path: "path/foo.rb", start_line: 3, stop_line: 7, body: "foo text") }
@@ -29,6 +30,30 @@ RSpec.describe QuietQuality::Executors::Pipeline do
 
   describe "#outcome" do
     subject(:outcome) { pipeline.outcome }
+
+    context "when targets are to be limited" do
+      let(:limit_targets?) { true }
+
+      it "sets up the runner correctly" do
+        outcome
+        expect(runner_class).to have_received(:new).with(
+          changed_files: changed_files,
+          file_filter: /.*/
+        )
+      end
+    end
+
+    context "when targets are not to be limited" do
+      let(:limit_targets?) { false }
+
+      it "sets up the runner correctly" do
+        outcome
+        expect(runner_class).to have_received(:new).with(
+          changed_files: nil,
+          file_filter: /.*/
+        )
+      end
+    end
 
     shared_examples "it matches the runner outcome, failure status aside" do
       it "matches the runner outcome, aside from the failure status" do

@@ -109,6 +109,7 @@ module QuietQuality
           options.tools.each do |tool_options|
             update_tool_option(tool_options, :limit_targets)
             update_tool_option(tool_options, :filter_messages)
+            update_tool_option(tool_options, :file_filter)
           end
         end
 

@@ -254,6 +254,29 @@ RSpec.describe QuietQuality::Config::Builder do
           end
         end
       end
+
+      describe "#file_filter" do
+        let(:rspec_tool_option) { tools.detect { |t| t.tool_name == :rspec } }
+        subject(:rspec_file_filter) { rspec_tool_option.file_filter }
+
+        context "with no config file supplied" do
+          it { is_expected.to be_nil }
+        end
+
+        context "with a config file supplied" do
+          let(:global_options) { {config_path: "fake.yml"} }
+
+          context "when the config file sets it" do
+            let(:cfg_tool_options) { {rspec: {file_filter: ".*"}} }
+            it { is_expected.to eq(/.*/) }
+          end
+
+          context "when the config file does not set it" do
+            let(:cfg_tool_options) { {rspec: {filter_messages: false}} }
+            it { is_expected.to be_nil }
+          end
+        end
+      end
     end
 
     describe "config_file parsing" do
