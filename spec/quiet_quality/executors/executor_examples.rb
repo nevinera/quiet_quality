@@ -58,4 +58,18 @@ shared_examples "executes the pipelines" do
       it { is_expected.to be_truthy }
     end
   end
+
+  describe "#failed_outcomes" do
+    subject(:failed_outcomes) { executor.failed_outcomes }
+    let(:rubocop_outcome) { build_failure(:rubocop, "rubocop output") }
+
+    it { is_expected.to contain_exactly(rubocop_outcome) }
+  end
+
+  describe "#successful_outcomes" do
+    subject(:successful_outcomes) { executor.successful_outcomes }
+    let(:rubocop_outcome) { build_failure(:rubocop, "rubocop output") }
+
+    it { is_expected.to contain_exactly(rspec_outcome) }
+  end
 end
