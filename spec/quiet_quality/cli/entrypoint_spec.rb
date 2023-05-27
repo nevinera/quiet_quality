@@ -131,6 +131,22 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
         expect(error_stream).to have_received(:puts).with(QuietQuality::VERSION)
       end
     end
+
+    context "when there are no tools to run" do
+      let(:options) { build_options(annotator: :github_stdout) }
+
+      it "does not run the executor" do
+        execute
+        expect(executor).not_to have_received(:execute!)
+      end
+
+      it "prints the corrective instructions to the error stream" do
+        execute
+        expect(error_stream)
+          .to have_received(:puts)
+          .with(a_string_matching(/specify one or more tools to run/))
+      end
+    end
   end
 
   describe "#successful?" do
