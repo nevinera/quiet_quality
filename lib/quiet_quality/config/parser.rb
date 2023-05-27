@@ -57,7 +57,7 @@ module QuietQuality
       def store_tool_options_for(opts, tool_name)
         entries = data.fetch(tool_name, nil)
         return if entries.nil?
-        
+
         read_tool_option(opts, tool_name, :filter_messages, :filter_messages, as: :boolean)
         read_tool_option(opts, tool_name, :unfiltered, :filter_messages, as: :reversed_boolean)
         read_tool_option(opts, tool_name, :changed_files, :changed_files, as: :boolean)
