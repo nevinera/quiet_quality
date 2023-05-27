@@ -1,0 +1,52 @@
+[
+  {
+    "filename": "README.md",
+    "line": 23,
+    "rule": "MD013",
+    "aliases": [
+      "line-length"
+    ],
+    "description": "Line length",
+    "docs": "https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md#md013---line-length"
+  },
+  {
+    "filename": "testing.markdown",
+    "line": 1,
+    "rule": "MD002",
+    "aliases": [
+      "first-header-h1"
+    ],
+    "description": "First header should be a top level header",
+    "docs": "https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md#md002---first-header-should-be-a-top-level-header"
+  },
+  {
+    "filename": "testing.markdown",
+    "line": 1,
+    "rule": "MD022",
+    "aliases": [
+      "blanks-around-headers"
+    ],
+    "description": "Headers should be surrounded by blank lines",
+    "docs": "https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md#md022---headers-should-be-surrounded-by-blank-lines"
+  },
+  {
+    "filename": "testing.markdown",
+    "line": 3,
+    "rule": "MD032",
+    "aliases": [
+      "blanks-around-lists"
+    ],
+    "description": "Lists should be surrounded by blank lines",
+    "docs": "https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md#md032---lists-should-be-surrounded-by-blank-lines"
+  },
+  {
+    "filename": "testing.markdown",
+    "line": 1,
+    "rule": "MD041",
+    "aliases": [
+      "first-line-h1"
+    ],
+    "description": "First line in file should be a top level header",
+    "docs": "https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md#md041---first-line-in-file-should-be-a-top-level-header"
+  }
+]
