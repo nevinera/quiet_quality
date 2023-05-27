@@ -28,7 +28,7 @@ module QuietQuality
         elsif config_file&.tools&.any?
           config_file.tools
         else
-          Tools::AVAILABLE.keys
+          []
         end
       end
 

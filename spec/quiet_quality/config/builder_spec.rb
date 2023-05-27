@@ -118,9 +118,7 @@ RSpec.describe QuietQuality::Config::Builder do
       context "when there are no tools specified on the cli" do
         let(:tool_names) { [] }
 
-        it "exposes all of the tools" do
-          expect(tools.map(&:tool_name)).to match_array(QuietQuality::Tools::AVAILABLE.keys)
-        end
+        it { is_expected.to be_empty }
 
         context "but there are some specified in a config file" do
           let(:global_options) { {config_path: "fake.yml"} }
