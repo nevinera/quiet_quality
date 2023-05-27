@@ -71,6 +71,15 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
       it { is_expected.to eq(entrypoint) }
       it { is_expected.not_to be_successful }
 
+      shared_examples "annotations are requested" do
+        it "writes the proper annotations to stdout" do
+          execute
+          expect(output_stream).to have_received(:puts).with("::warning file=foo.rb,line=1::Msg1")
+          expect(output_stream).to have_received(:puts).with("::warning file=bar.rb,line=2,title=Title::Msg2")
+          expect(output_stream).to have_received(:puts).with("::warning file=baz.rb,line=5::Msg3")
+        end
+      end
+
       it "logs the outcomes properly" do
         execute
         expect(error_stream).to have_received(:puts).with("--- Failed: rspec")
@@ -87,12 +96,7 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
       context "when annotation is requested" do
         let(:argv) { ["--annotate", "github_stdout"] }
 
-        it "writes the proper annotations to stdout" do
-          execute
-          expect(output_stream).to have_received(:puts).with("::warning file=foo.rb,line=1::Msg1")
-          expect(output_stream).to have_received(:puts).with("::warning file=bar.rb,line=2,title=Title::Msg2")
-          expect(output_stream).to have_received(:puts).with("::warning file=baz.rb,line=5::Msg3")
-        end
+        include_examples "annotations are requested"
       end
 
       context "when annotation is not requested" do
@@ -111,6 +115,12 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
           execute
           expect(output_stream).not_to have_received(:puts)
           expect(error_stream).not_to have_received(:puts)
+        end
+
+        context "with annotations requested" do
+          let(:argv) { ["--quiet", "--annotate", "github_stdout"] }
+
+          include_examples "annotations are requested"
         end
       end
 
@@ -135,6 +145,12 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
           expect(output_stream).to have_received(:puts).with(
             "2 tools executed: 1 passed, 1 failed (rspec)"
           )
+        end
+
+        context "when annotations are requested" do
+          let(:argv) { ["--light", "--annotate", "github_stdout"] }
+
+          include_examples "annotations are requested"
         end
       end
     end

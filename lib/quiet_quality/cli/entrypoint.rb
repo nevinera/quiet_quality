@@ -15,6 +15,7 @@ module QuietQuality
         else
           executed
           log_results
+          annotate_messages
         end
 
         self
@@ -34,7 +35,6 @@ module QuietQuality
 
         log_outcomes
         log_messages
-        annotate_messages
       end
 
       def arg_parser
