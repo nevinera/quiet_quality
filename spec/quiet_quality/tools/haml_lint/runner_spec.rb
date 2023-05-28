@@ -1,94 +1,54 @@
+require_relative "../runner_examples"
+
 RSpec.describe QuietQuality::Tools::HamlLint::Runner do
   let(:changed_files) { nil }
   let(:file_filter) { nil }
   subject(:runner) { described_class.new(changed_files: changed_files, file_filter: file_filter) }
 
-  let(:exitstatus) { 0 }
-  before { stub_capture3(status: exitstatus) }
+  it_behaves_like "a functional RelevantRunner subclass", :haml_lint, {
+    relevant: "foo.html.haml",
+    irrelevant: "foo.html.erb",
+    filter: /foo/,
+    base_command: ["haml-lint", "--reporter", "json"],
+    failure: [65],
+    error: [1, 2, 3, 99]
+  }
 
-  describe "#invoke!" do
-    subject(:invoke!) { runner.invoke! }
+  describe "#tool_name" do
+    subject(:tool_name) { runner.tool_name }
+    it { is_expected.to eq(:haml_lint) }
+  end
 
-    context "when haml-lint fails" do
-      let(:exitstatus) { 3 }
+  describe "#no_files_output" do
+    subject { runner.no_files_output }
+    let(:parsed) { JSON.parse(subject) }
 
-      it "raises an ExecutionError" do
-        expect { invoke! }.to raise_error(QuietQuality::Tools::ExecutionError)
-      end
+    it "contains the expected data" do
+      expect(parsed.dig("files")).to eq([])
+    end
+  end
+
+  describe "#base_command" do
+    subject(:base_command) { runner.base_command }
+    it { is_expected.to eq(["haml-lint", "--reporter", "json"]) }
+  end
+
+  describe "#relevant_path?" do
+    subject(:relevant_path?) { runner.relevant_path?(path) }
+
+    context "for a random other file" do
+      let(:path) { "foo/bar.erb" }
+      it { is_expected.to be_falsey }
     end
 
-    context "when there are linter rules broken" do
-      let(:exitstatus) { 65 }
-      it { is_expected.to eq(build_failure(:haml_lint, "fake output", "fake error")) }
-
-      it "calls haml-lint with no targets" do
-        invoke!
-        expect(Open3).to have_received(:capture3).with("haml-lint", "--reporter", "json")
-      end
+    context "for a haml file" do
+      let(:path) { "foo/bar.haml" }
+      it { is_expected.to be_truthy }
     end
 
-    context "when changed_files is nil" do
-      let(:changed_files) { nil }
-      it { is_expected.to eq(build_success(:haml_lint, "fake output", "fake error")) }
-
-      it "calls haml-lint with no targets" do
-        invoke!
-        expect(Open3).to have_received(:capture3).with("haml-lint", "--reporter", "json")
-      end
-    end
-
-    context "when changed_files is empty" do
-      let(:changed_files) { empty_changed_files }
-      it { is_expected.to eq(build_success(:haml_lint, described_class::NO_FILES_OUTPUT)) }
-
-      it "does not call haml-lint" do
-        expect(Open3).not_to have_received(:capture3)
-      end
-    end
-
-    context "when changed_files is full" do
-      context "but contains no haml files" do
-        let(:changed_files) { generate_changed_files({"foo_spec.ts" => :all, "bar.rb" => [1, 2], "baz_spec.rb.bak" => [5]}) }
-        it { is_expected.to eq(build_success(:haml_lint, described_class::NO_FILES_OUTPUT)) }
-
-        it "does not call haml-lint" do
-          expect(Open3).not_to have_received(:capture3)
-        end
-      end
-
-      context "and contains some haml files" do
-        let(:changed_paths) { ["foo.html", "bar.haml.erb", "baz.html.haml", "bam.haml"] }
-        let(:changed_files) { generate_changed_files(changed_paths.map { |p| [p, :all] }.to_h) }
-        it { is_expected.to eq(build_success(:haml_lint, "fake output", "fake error")) }
-
-        it "calls haml-lint with the correct targets" do
-          invoke!
-          expect(Open3)
-            .to have_received(:capture3)
-            .with("haml-lint", "--reporter", "json", "bam.haml", "baz.html.haml")
-        end
-
-        context "but some of them are filtered out" do
-          let(:file_filter) { /bam/ }
-          it { is_expected.to eq(build_success(:haml_lint, "fake output", "fake error")) }
-
-          it "calls haml-lint with the correct targets" do
-            invoke!
-            expect(Open3)
-              .to have_received(:capture3)
-              .with("haml-lint", "--reporter", "json", "bam.haml")
-          end
-        end
-
-        context "but all of them are filtered out" do
-          let(:file_filter) { /nobody/ }
-          it { is_expected.to eq(build_success(:haml_lint, described_class::NO_FILES_OUTPUT)) }
-
-          it "does not call haml-lint" do
-            expect(Open3).not_to have_received(:capture3)
-          end
-        end
-      end
+    context "for a weirdly named, but non-haml file" do
+      let(:path) { "foo/bar.haml.erb" }
+      it { is_expected.to be_falsey }
     end
   end
 end
