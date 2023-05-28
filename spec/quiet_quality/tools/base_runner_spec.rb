@@ -1,3 +1,5 @@
+require_relative "./runner_examples"
+
 RSpec.describe QuietQuality::Tools::BaseRunner do
   let(:changed_files) { instance_double(QuietQuality::ChangedFiles) }
   let(:file_filter) { instance_double(Regexp) }
@@ -120,5 +122,7 @@ RSpec.describe QuietQuality::Tools::BaseRunner do
         end
       end
     end
+
+    it_behaves_like "a functional BaseRunner subclass", :fake_tool, runner_class_method: :subclass
   end
 end
