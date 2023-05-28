@@ -59,7 +59,7 @@ shared_examples "a functional RelevantRunner subclass" do |tool_name, options|
   relevant_name = opts.fetch(:relevant)
   irrelevant_name = opts.fetch(:irrelevant)
   filter = opts.fetch(:filter)
-  base_command = opts.fetch(:base_command, nil)
+  base_command = opts.fetch(:base_command)
 
   if opts[:runner_class_method]
     let(:runner_class) { send opts[:runner_class_method] }
@@ -93,7 +93,7 @@ shared_examples "a functional RelevantRunner subclass" do |tool_name, options|
   describe "#command" do
     subject(:command) { runner.command }
 
-    if base_command
+    if base_command != :skip
       context "when there are no changes to consider" do
         let(:changed_files) { nil }
         it { is_expected.to eq(base_command) }
