@@ -27,4 +27,4 @@ jobs:
         run: bundle install --jobs 4 --retry 3
 
       - name: Run QuietQuality
-        run: bundle exec bin/qq standardrb rubocop rspec --all-files --unfiltered --annotate github_stdout --comparison-branch origin/main
+        run: bundle exec bin/qq -C .quiet_quality.ci.yml

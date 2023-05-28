@@ -1,6 +1,6 @@
 ---
 default_tools: ["standardrb", "rubocop", "markdown_lint", "rspec"]
 executor: concurrent
-comparison_branch: main
-changed_files: false
-filter_messages: false
+comparison_branch: origin/main
+all_files: true
+unfiltered: true
