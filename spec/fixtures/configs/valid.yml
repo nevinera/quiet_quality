@@ -4,6 +4,7 @@ executor: concurrent
 comparison_branch: master
 changed_files: true
 filter_messages: false
+logging: light
 
 rspec:
   filter_messages: false

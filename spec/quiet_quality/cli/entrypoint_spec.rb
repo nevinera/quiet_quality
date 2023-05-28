@@ -7,7 +7,17 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
   let(:messages) { empty_messages }
   let(:outcomes) { [build_success(:rspec), build_success(:rubocop)] }
   let(:any_failure?) { outcomes.any?(&:failure?) }
-  let!(:executor) { instance_double(QuietQuality::Executors::ConcurrentExecutor, execute!: nil, messages: messages, outcomes: outcomes, any_failure?: any_failure?) }
+  let!(:executor) do
+    instance_double(
+      QuietQuality::Executors::ConcurrentExecutor,
+      execute!: nil,
+      messages: messages,
+      outcomes: outcomes,
+      any_failure?: any_failure?,
+      failed_outcomes: outcomes.select(&:failure?),
+      successful_outcomes: outcomes.reject(&:failure?)
+    )
+  end
   before { allow(QuietQuality::Executors::ConcurrentExecutor).to receive(:new).and_return(executor) }
 
   let(:changed_files) { instance_double(QuietQuality::ChangedFiles) }
@@ -65,6 +75,15 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
       it { is_expected.to eq(entrypoint) }
       it { is_expected.not_to be_successful }
 
+      shared_examples "annotations are requested" do
+        it "writes the proper annotations to stdout" do
+          execute
+          expect(output_stream).to have_received(:puts).with("::warning file=foo.rb,line=1::Msg1")
+          expect(output_stream).to have_received(:puts).with("::warning file=bar.rb,line=2,title=Title::Msg2")
+          expect(output_stream).to have_received(:puts).with("::warning file=baz.rb,line=5::Msg3")
+        end
+      end
+
       it "logs the outcomes properly" do
         execute
         expect(error_stream).to have_received(:puts).with("--- Failed: rspec")
@@ -82,12 +101,7 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
         let(:argv) { ["--annotate", "github_stdout"] }
         let(:options) { build_options(annotator: :github_stdout, rubocop: {}, rspec: {}) }
 
-        it "writes the proper annotations to stdout" do
-          execute
-          expect(output_stream).to have_received(:puts).with("::warning file=foo.rb,line=1::Msg1")
-          expect(output_stream).to have_received(:puts).with("::warning file=bar.rb,line=2,title=Title::Msg2")
-          expect(output_stream).to have_received(:puts).with("::warning file=baz.rb,line=5::Msg3")
-        end
+        include_examples "annotations are requested"
       end
 
       context "when annotation is not requested" do
@@ -96,6 +110,52 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
         it "prints no annotations" do
           execute
           expect(output_stream).not_to have_received(:puts)
+        end
+      end
+
+      context "when logging is quiet" do
+        let(:options) { build_options(logging: :quiet, rubocop: {}) }
+
+        it "does not print the messages" do
+          execute
+          expect(output_stream).not_to have_received(:puts)
+          expect(error_stream).not_to have_received(:puts)
+        end
+
+        context "with annotations requested" do
+          let(:options) { build_options(logging: :quiet, annotator: :github_stdout, rubocop: {}) }
+
+          include_examples "annotations are requested"
+        end
+      end
+
+      context "when logging is light" do
+        let(:options) { build_options(logging: :light, rubocop: {}, rspec: {}) }
+
+        it "does not print the messages" do
+          execute
+          expect(error_stream).not_to have_received(:puts).with("  foo.rb:1  Msg1")
+          expect(error_stream).not_to have_received(:puts).with("  bar.rb:2  [Title]  Msg2")
+          expect(error_stream).not_to have_received(:puts).with("  baz.rb:3-7  Msg3")
+        end
+
+        it "does not print the standard outcomes" do
+          execute
+          expect(error_stream).not_to have_received(:puts).with("--- Failed: rspec")
+          expect(error_stream).not_to have_received(:puts).with("--- Passed: rubocop")
+        end
+
+        it "prints the aggregated outcomes" do
+          execute
+          expect(output_stream).to have_received(:puts).with(
+            "2 tools executed: 1 passed, 1 failed (rspec)"
+          )
+        end
+
+        context "when annotations are requested" do
+          let(:options) { build_options(logging: :light, annotator: :github_stdout, rubocop: {}) }
+
+          include_examples "annotations are requested"
         end
       end
     end

@@ -15,14 +15,22 @@ module OptionSetup
 
   def build_options(**attrs)
     opts = QuietQuality::Config::Options.new
-    opts.comparison_branch = attrs[:comparison_branch]
-    opts.annotator = annotator_from(attrs[:annotator]) if attrs[:annotator]
-    opts.executor = executor_from(attrs[:executor]) if attrs[:executor]
+    [:comparison_branch, :annotator, :executor, :logging].each do |attr|
+      opts.send("#{attr}=", send("#{attr}_from", attrs[attr])) if attrs[attr]
+    end
     opts.tools = tool_options_from(attrs)
     opts
   end
 
   private
+
+  def comparison_branch_from(name)
+    name
+  end
+
+  def logging_from(level)
+    level
+  end
 
   def set_global_options(po, global_options)
     global_options.each_pair { |name, value| po.set_global_option(name, value) }

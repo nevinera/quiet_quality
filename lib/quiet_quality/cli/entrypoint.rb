@@ -16,8 +16,7 @@ module QuietQuality
           log_no_tools_text
         else
           executed
-          log_outcomes
-          log_messages
+          log_results
           annotate_messages
         end
 
@@ -34,6 +33,14 @@ module QuietQuality
 
       attr_reader :argv, :output_stream, :error_stream
 
+      def log_results
+        return if quiet_logging?
+        return log_light_outcomes if light_logging?
+
+        log_outcomes
+        log_messages
+      end
+
       def arg_parser
         @_arg_parser ||= ArgParser.new(argv.dup)
       end
@@ -44,6 +51,14 @@ module QuietQuality
 
       def helping?
         parsed_options.helping?
+      end
+
+      def quiet_logging?
+        options.logging.quiet?
+      end
+
+      def light_logging?
+        options.logging.light?
       end
 
       def printing_version?
@@ -124,6 +139,25 @@ module QuietQuality
         return unless options.annotator
         annotator = options.annotator.new(output_stream: output_stream)
         annotator.annotate!(executed.messages)
+      end
+
+      def log_light_outcomes
+        msg = "#{total_outcomes} tools executed: #{successful_outcomes.count} passed, #{failed_outcomes.count} failed"
+        msg += " (#{failed_outcomes.map(&:tool).uniq.join(", ")})" unless failed_outcomes.empty?
+
+        output_stream.puts msg
+      end
+
+      def total_outcomes
+        @_total_outcomes ||= executed.outcomes.count
+      end
+
+      def successful_outcomes
+        @_successful_outcomes ||= executed.successful_outcomes
+      end
+
+      def failed_outcomes
+        @_failed_outcomes ||= executed.failed_outcomes
       end
     end
   end

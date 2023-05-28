@@ -22,6 +22,14 @@ module QuietQuality
         pipelines.any?(&:failure?)
       end
 
+      def successful_outcomes
+        @_successful_outcomes ||= outcomes.select(&:success?)
+      end
+
+      def failed_outcomes
+        @_failed_outcomes ||= outcomes.select(&:failure?)
+      end
+
       private
 
       attr_reader :tools, :changed_files

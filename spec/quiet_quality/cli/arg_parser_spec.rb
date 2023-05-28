@@ -52,6 +52,9 @@ RSpec.describe QuietQuality::Cli::ArgParser do
             -B, --comparison-branch BRANCH   Specify the branch to compare against
             -f, --filter-messages [tool]     Filter messages from tool(s) based on changed lines
             -u, --unfiltered [tool]          Don't filter messages from tool(s)
+            -l, --light                      Print aggregated results only
+            -q, --quiet                      Don't print results, only return a status code
+            -L, --logging LEVEL              Specify logging mode that results will be returned in. Valid options: light, quiet
       HELP_OUTPUT
     end
   end
@@ -135,6 +138,21 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       expect_options("-G", ["-G"], global: {annotator: :github_stdout})
       expect_usage_error("--annotate foo_bar", ["--annotate", "foo_bar"], /Unrecognized annotator/i)
       expect_usage_error("-Afoo_bar", ["-Afoo_bar"], /Unrecognized annotator/i)
+    end
+
+    describe "logging options" do
+      expect_options("-l", ["-l"], global: {logging: :light})
+      expect_options("--light", ["--light"], global: {logging: :light})
+      expect_options("-q", ["-q"], global: {logging: :quiet})
+      expect_options("--quiet", ["--quiet"], global: {logging: :quiet})
+      expect_options("-lq", ["-lq"], global: {logging: :quiet})
+      expect_options("-ql", ["-ql"], global: {logging: :light})
+      expect_options("no logging option passed", [], global: {logging: nil})
+      expect_options("--logging light", ["--logging", "light"], global: {logging: :light})
+      expect_options("-Llight", ["-Llight"], global: {logging: :light})
+      expect_options("--logging quiet", ["--logging", "quiet"], global: {logging: :quiet})
+      expect_options("-Lquiet", ["-Lquiet"], global: {logging: :quiet})
+      expect_usage_error("-Lshenanigans", ["-Lshenanigans"], /Unrecognized logging level/i)
     end
 
     describe "file targeting options" do
