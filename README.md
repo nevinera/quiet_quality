@@ -160,3 +160,4 @@ The same options are all available on the CLI, plus some additional ones - run
 * `--version/-V`: what version of the gem are you using?
 * `--light/-l`: Enable light logging.
 * `--quiet/-q: Enable quiet logging.
+* `--logging/-L LEVEL: Specify logging mode that results will be returned in. Valid options: light, quiet
