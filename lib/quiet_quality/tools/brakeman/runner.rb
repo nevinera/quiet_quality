@@ -6,8 +6,12 @@ module QuietQuality
         #   https://github.com/presidentbeef/brakeman/blob/main/lib/brakeman.rb#L6-L25
         KNOWN_EXIT_STATUSES = [3, 4, 5, 6, 7, 8].to_set
 
-        def initialize(changed_files: nil)
+        # brakeman does not support being run against a portion of the project, so neither
+        # changed_files nor file_filter is actually used. But they are accepted here because
+        # that is what Runner initializers are required to accept.
+        def initialize(changed_files: nil, file_filter: nil)
           @changed_files = changed_files
+          @file_filter = file_filter
         end
 
         def invoke!

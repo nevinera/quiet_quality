@@ -1,6 +1,7 @@
 RSpec.describe QuietQuality::Tools::Standardrb::Runner do
   let(:changed_files) { nil }
-  subject(:runner) { described_class.new(changed_files: changed_files) }
+  let(:file_filter) { nil }
+  subject(:runner) { described_class.new(changed_files: changed_files, file_filter: file_filter) }
 
   let(:out) { "fake output" }
   let(:err) { "fake error" }
@@ -59,6 +60,7 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
       context "but contains no ruby files" do
         let(:file2) { "bar.js" }
         let(:file3) { "baz.ts" }
+        it { is_expected.to eq(build_success(:standardrb, described_class::NO_FILES_OUTPUT)) }
 
         it "does not call standardrb" do
           invoke!
@@ -74,6 +76,28 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
           expect(Open3)
             .to have_received(:capture3)
             .with("standardrb", "-f", "json", "bar.rb", "baz.rb")
+        end
+
+        context "but some of them are filtered out" do
+          let(:file_filter) { /bar/ }
+          it { is_expected.to eq(build_success(:standardrb, "fake output", "fake error")) }
+
+          it "calls standardrb correctly, with changed and relevant targets" do
+            invoke!
+            expect(Open3)
+              .to have_received(:capture3)
+              .with("standardrb", "-f", "json", "bar.rb")
+          end
+        end
+
+        context "but all of them are filtered out" do
+          let(:file_filter) { /nobody/ }
+          it { is_expected.to eq(build_success(:standardrb, described_class::NO_FILES_OUTPUT)) }
+
+          it "does not call standardrb" do
+            invoke!
+            expect(Open3).not_to have_received(:capture3)
+          end
         end
       end
 

@@ -12,6 +12,8 @@ module QuietQuality
           log_help_text
         elsif printing_version?
           log_version_text
+        elsif no_tools?
+          log_no_tools_text
         else
           executed
           log_results
@@ -22,7 +24,9 @@ module QuietQuality
       end
 
       def successful?
-        helping? || printing_version? || !executed.any_failure?
+        return true if helping? || printing_version?
+        return false if no_tools?
+        !executed.any_failure?
       end
 
       private
@@ -61,12 +65,23 @@ module QuietQuality
         parsed_options.printing_version?
       end
 
+      def no_tools?
+        options.tools.empty?
+      end
+
       def log_help_text
         error_stream.puts(arg_parser.help_text)
       end
 
       def log_version_text
         error_stream.puts(QuietQuality::VERSION)
+      end
+
+      def log_no_tools_text
+        error_stream.puts(<<~TEXT)
+          You must specify one or more tools to run, either on the command-line or in the
+          default_tools key in a configuration file.
+        TEXT
       end
 
       def options

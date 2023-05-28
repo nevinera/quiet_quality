@@ -148,6 +148,22 @@ And then each tool can have an entry, within which `changed_files` and
 `filter_messages` can be specified - the tool-specific settings override the
 global ones.
 
+The tools have one additional setting that is not available at a global level:
+`file_filter`. This is a string that will be turned into a _ruby regex_, and
+used to limit what file paths are passed to the tool. For example, if you are
+working in a rails engine `engines/foo/`, and you touch one of the rspec tests
+there, you would not want `qq` in the root of the repository to run
+`rspec engines/foo/spec/foo/thing_spec.rb` - that probably won't work, as your
+engine will have its own test setup code and Gemfile. This setting is mostly
+intended to be used like this:
+
+```yaml
+rspec:
+  changed_files: true
+  filter_messages: false
+  file_filter: "^spec/"
+```
+
 ### CLI Options
 
 The same options are all available on the CLI, plus some additional ones - run

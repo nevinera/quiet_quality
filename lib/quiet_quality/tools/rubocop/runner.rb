@@ -10,8 +10,9 @@ module QuietQuality
         end
 
         # Supplying changed_files: nil means "run against all files".
-        def initialize(changed_files: nil)
+        def initialize(changed_files: nil, file_filter: nil)
           @changed_files = changed_files
+          @file_filter = file_filter
         end
 
         def invoke!
@@ -20,7 +21,7 @@ module QuietQuality
 
         private
 
-        attr_reader :changed_files
+        attr_reader :changed_files, :file_filter
 
         # If we were told that _no files changed_ (which is distinct from not being told that
         # any files changed - a [] instead of a nil), then we shouldn't run rubocop at all.
@@ -38,7 +39,9 @@ module QuietQuality
 
         def relevant_files
           return nil if changed_files.nil?
-          changed_files.paths.select { |path| path.end_with?(".rb") }
+          changed_files.paths
+            .select { |path| path.end_with?(".rb") }
+            .select { |path| file_filter.nil? || file_filter.match?(path) }
         end
 
         def target_files

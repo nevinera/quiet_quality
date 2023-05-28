@@ -61,9 +61,9 @@ RSpec.describe QuietQuality::Config::Parser do
         logging: :light
       )
       expect_tool_options(
-        rspec: {filter_messages: false, changed_files: false},
-        standardrb: {filter_messages: true, changed_files: nil},
-        rubocop: {filter_messages: nil, changed_files: false}
+        rspec: {filter_messages: false, changed_files: false, file_filter: "spec/.*_spec.rb"},
+        standardrb: {filter_messages: true, changed_files: nil, file_filter: nil},
+        rubocop: {filter_messages: nil, changed_files: false, file_filter: nil}
       )
     end
 
@@ -138,6 +138,11 @@ RSpec.describe QuietQuality::Config::Parser do
         expect_invalid "a numeric logging option", %({logging: 5}), /must be a string/
         expect_invalid "an empty logging option", %({logging: ""}), /option logging must be one of the allowed values/
         expect_invalid "an invalid logging option", %({logging: shecklackity}), /option logging must be one of the allowed values/
+      end
+
+      describe "file_filter parsing" do
+        expect_config "no settings", %({}), tools: {rspec: {file_filter: nil}, rubocop: {file_filter: nil}}
+        expect_config "an rspec file_filter", %({rspec: {file_filter: "^spec/"}}), tools: {rspec: {file_filter: "^spec/"}, rubocop: {file_filter: nil}}
       end
     end
   end

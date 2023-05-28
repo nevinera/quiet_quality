@@ -13,6 +13,16 @@ module OptionSetup
     po
   end
 
+  def build_options(**attrs)
+    opts = QuietQuality::Config::Options.new
+    opts.comparison_branch = attrs[:comparison_branch]
+    opts.annotator = annotator_from(attrs[:annotator]) if attrs[:annotator]
+    opts.executor = executor_from(attrs[:executor]) if attrs[:executor]
+    opts.logging = attrs[:logging]
+    opts.tools = tool_options_from(attrs)
+    opts
+  end
+
   private
 
   def set_global_options(po, global_options)
@@ -23,6 +33,22 @@ module OptionSetup
     tool_options.each_pair do |tool, specifics|
       specifics.each_pair { |name, value| po.set_tool_option(tool, name, value) }
     end
+  end
+
+  def annotator_from(name)
+    QuietQuality::Annotators::ANNOTATOR_TYPES.fetch(name)
+  end
+
+  def executor_from(name)
+    QuietQuality::Executors::AVAILABLE.fetch(name)
+  end
+
+  def tool_options_from(attrs)
+    tool_options = []
+    QuietQuality::Tools::AVAILABLE.each_key do |tool_name|
+      tool_options << tool_options(tool_name, **attrs[tool_name]) if attrs[tool_name]
+    end
+    tool_options
   end
 end
 

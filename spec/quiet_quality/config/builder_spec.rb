@@ -118,9 +118,7 @@ RSpec.describe QuietQuality::Config::Builder do
       context "when there are no tools specified on the cli" do
         let(:tool_names) { [] }
 
-        it "exposes all of the tools" do
-          expect(tools.map(&:tool_name)).to match_array(QuietQuality::Tools::AVAILABLE.keys)
-        end
+        it { is_expected.to be_empty }
 
         context "but there are some specified in a config file" do
           let(:global_options) { {config_path: "fake.yml"} }
@@ -285,6 +283,29 @@ RSpec.describe QuietQuality::Config::Builder do
               let(:cli_logging) { :quiet }
               it { is_expected.to eq(:quiet) }
             end
+          end
+        end
+      end
+
+      describe "#file_filter" do
+        let(:rspec_tool_option) { tools.detect { |t| t.tool_name == :rspec } }
+        subject(:rspec_file_filter) { rspec_tool_option.file_filter }
+
+        context "with no config file supplied" do
+          it { is_expected.to be_nil }
+        end
+
+        context "with a config file supplied" do
+          let(:global_options) { {config_path: "fake.yml"} }
+
+          context "when the config file sets it" do
+            let(:cfg_tool_options) { {rspec: {file_filter: ".*"}} }
+            it { is_expected.to eq(/.*/) }
+          end
+
+          context "when the config file does not set it" do
+            let(:cfg_tool_options) { {rspec: {filter_messages: false}} }
+            it { is_expected.to be_nil }
           end
         end
       end

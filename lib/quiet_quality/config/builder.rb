@@ -28,7 +28,7 @@ module QuietQuality
         elsif config_file&.tools&.any?
           config_file.tools
         else
-          Tools::AVAILABLE.keys
+          []
         end
       end
 
@@ -114,6 +114,7 @@ module QuietQuality
           options.tools.each do |tool_options|
             update_tool_option(tool_options, :limit_targets)
             update_tool_option(tool_options, :filter_messages)
+            update_tool_option(tool_options, :file_filter)
           end
         end
 

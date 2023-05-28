@@ -1,6 +1,7 @@
 RSpec.describe QuietQuality::Tools::HamlLint::Runner do
   let(:changed_files) { nil }
-  subject(:runner) { described_class.new(changed_files: changed_files) }
+  let(:file_filter) { nil }
+  subject(:runner) { described_class.new(changed_files: changed_files, file_filter: file_filter) }
 
   let(:exitstatus) { 0 }
   before { stub_capture3(status: exitstatus) }
@@ -65,6 +66,27 @@ RSpec.describe QuietQuality::Tools::HamlLint::Runner do
           expect(Open3)
             .to have_received(:capture3)
             .with("haml-lint", "--reporter", "json", "bam.haml", "baz.html.haml")
+        end
+
+        context "but some of them are filtered out" do
+          let(:file_filter) { /bam/ }
+          it { is_expected.to eq(build_success(:haml_lint, "fake output", "fake error")) }
+
+          it "calls haml-lint with the correct targets" do
+            invoke!
+            expect(Open3)
+              .to have_received(:capture3)
+              .with("haml-lint", "--reporter", "json", "bam.haml")
+          end
+        end
+
+        context "but all of them are filtered out" do
+          let(:file_filter) { /nobody/ }
+          it { is_expected.to eq(build_success(:haml_lint, described_class::NO_FILES_OUTPUT)) }
+
+          it "does not call haml-lint" do
+            expect(Open3).not_to have_received(:capture3)
+          end
         end
       end
     end
