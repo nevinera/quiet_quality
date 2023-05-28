@@ -1,93 +1,79 @@
+require_relative "../runner_examples"
+
 RSpec.describe QuietQuality::Tools::MarkdownLint::Runner do
   let(:changed_files) { nil }
   let(:file_filter) { nil }
   subject(:runner) { described_class.new(changed_files: changed_files, file_filter: file_filter) }
 
-  let(:exitstatus) { 0 }
-  before { stub_capture3(status: exitstatus) }
+  it_behaves_like "a functional RelevantRunner subclass", :markdown_lint, {
+    relevant: "foo.md",
+    irrelevant: "foo.txt",
+    filter: /foo/,
+    base_command: :skip
+  }
 
-  describe "#invoke!" do
-    subject(:invoke!) { runner.invoke! }
+  describe "#tool_name" do
+    subject(:tool_name) { runner.tool_name }
+    it { is_expected.to eq(:markdown_lint) }
+  end
 
-    context "when mdl fails" do
-      let(:exitstatus) { 3 }
+  describe "#no_files_output" do
+    subject { runner.no_files_output }
+    let(:parsed) { JSON.parse(subject) }
 
-      it "raises an ExecutionError" do
-        expect { invoke! }.to raise_error(QuietQuality::Tools::ExecutionError)
-      end
+    it "contains an empty array" do
+      expect(parsed).to eq([])
+    end
+  end
+
+  describe "#relevant_path?" do
+    subject(:relevant_path?) { runner.relevant_path?(path) }
+
+    context "for a random other file" do
+      let(:path) { "foo/bar.txt" }
+      it { is_expected.to be_falsey }
     end
 
-    context "when there are linter rules broken" do
-      let(:exitstatus) { 1 }
-      it { is_expected.to eq(build_failure(:markdown_lint, "fake output", "fake error")) }
-
-      it "calls mdl with no targets" do
-        invoke!
-        expect(Open3).to have_received(:capture3).with("mdl", "--json", ".")
-      end
+    context "for a markdown file" do
+      let(:path) { "foo/bar.md" }
+      it { is_expected.to be_truthy }
     end
 
-    context "when changed_files is nil" do
+    context "for a weirdly named, but non-markdown file" do
+      let(:path) { "foo/bar.md.txt" }
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  describe "#command" do
+    subject(:command) { runner.command }
+
+    context "when there are no changed to consider" do
       let(:changed_files) { nil }
-      it { is_expected.to eq(build_success(:markdown_lint, "fake output", "fake error")) }
-
-      it "calls mdl on the current directory" do
-        invoke!
-        expect(Open3).to have_received(:capture3).with("mdl", "--json", ".")
-      end
+      it { is_expected.to eq(["mdl", "--json", "."]) }
     end
 
-    context "when changed_files is empty" do
-      let(:changed_files) { empty_changed_files }
-      it { is_expected.to eq(build_success(:markdown_lint, described_class::NO_FILES_OUTPUT)) }
-
-      it "does not call mdl" do
-        expect(Open3).not_to have_received(:capture3)
-      end
-    end
-
-    context "when changed_files is full" do
-      context "but contains no markdown files" do
-        let(:changed_files) { generate_changed_files({"foo_spec.ts" => :all, "bar.rb" => [1, 2], "baz.md.bak" => [5]}) }
-        it { is_expected.to eq(build_success(:markdown_lint, described_class::NO_FILES_OUTPUT)) }
-
-        it "does not call mdl" do
-          expect(Open3).not_to have_received(:capture3)
-        end
+    context "when there are changed to consider" do
+      context "but they are empty" do
+        let(:changed_files) { empty_changed_files }
+        it { is_expected.to be_nil }
       end
 
-      context "and contains some markdown files" do
-        let(:changed_paths) { ["foo.md", "bar.haml.erb", "baz.md", "bam.haml"] }
-        let(:changed_files) { generate_changed_files(changed_paths.map { |p| [p, :all] }.to_h) }
-        it { is_expected.to eq(build_success(:markdown_lint, "fake output", "fake error")) }
+      context "but they contain no markdown files" do
+        let(:changed_files) { fully_changed_files("foo.txt") }
+        it { is_expected.to be_nil }
+      end
 
-        it "calls mdl with the correct targets" do
-          invoke!
-          expect(Open3)
-            .to have_received(:capture3)
-            .with("mdl", "--json", "baz.md", "foo.md")
-        end
+      context "but they contain no files matching the file_filter" do
+        let(:file_filter) { /baz/ }
+        let(:changed_files) { fully_changed_files("foo.md", "bar.md") }
+        it { is_expected.to be_nil }
+      end
 
-        context "but some of them are filtered out" do
-          let(:file_filter) { /foo/ }
-          it { is_expected.to eq(build_success(:markdown_lint, "fake output", "fake error")) }
-
-          it "calls mdl with the correct targets" do
-            invoke!
-            expect(Open3)
-              .to have_received(:capture3)
-              .with("mdl", "--json", "foo.md")
-          end
-        end
-
-        context "but all of them are filtered out" do
-          let(:file_filter) { /nobody/ }
-          it { is_expected.to eq(build_success(:markdown_lint, described_class::NO_FILES_OUTPUT)) }
-
-          it "does not call mdl" do
-            expect(Open3).not_to have_received(:capture3)
-          end
-        end
+      context "and they contain some files that are relevant" do
+        let(:file_filter) { /foo|bar/ }
+        let(:changed_files) { fully_changed_files("foo.md", "bar.md", "baz.md", "foo.txt") }
+        it { is_expected.to eq(["mdl", "--json", "bar.md", "foo.md"]) }
       end
     end
   end
