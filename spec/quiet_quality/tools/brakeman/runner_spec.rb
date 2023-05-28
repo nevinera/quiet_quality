@@ -13,8 +13,8 @@ RSpec.describe QuietQuality::Tools::Brakeman::Runner do
     context "when the brakeman command fails" do
       let(:stat) { instance_double(Process::Status, success?: false, exitstatus: 14) }
 
-      it "raises a Brakeman::ExecutionError" do
-        expect { invoke! }.to raise_error(QuietQuality::Tools::Brakeman::ExecutionError)
+      it "raises an ExecutionError" do
+        expect { invoke! }.to raise_error(QuietQuality::Tools::ExecutionError)
       end
     end
 

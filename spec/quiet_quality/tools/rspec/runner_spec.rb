@@ -14,8 +14,8 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
     context "when the rspec command fails" do
       let(:stat) { instance_double(Process::Status, success?: false, exitstatus: 14) }
 
-      it "raises an Rspec::ExecutionError" do
-        expect { invoke! }.to raise_error(QuietQuality::Tools::Rspec::ExecutionError)
+      it "raises an ExecutionError" do
+        expect { invoke! }.to raise_error(QuietQuality::Tools::ExecutionError)
       end
     end
 

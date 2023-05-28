@@ -1,8 +1,6 @@
 module QuietQuality
   module Tools
     module MarkdownLint
-      ExecutionError = Class.new(Tools::Error)
-      ParsingError = Class.new(Tools::Error)
     end
   end
 end

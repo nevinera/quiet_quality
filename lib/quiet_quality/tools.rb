@@ -3,6 +3,8 @@ require "open3"
 module QuietQuality
   module Tools
     Error = Class.new(::QuietQuality::Error)
+    ExecutionError = Class.new(Error)
+    ParsingError = Class.new(Error)
   end
 end
 

@@ -3,8 +3,6 @@ require_relative "./rubocop"
 module QuietQuality
   module Tools
     module Brakeman
-      ExecutionError = Class.new(Tools::Error)
-      ParsingError = Class.new(Tools::Error)
     end
   end
 end

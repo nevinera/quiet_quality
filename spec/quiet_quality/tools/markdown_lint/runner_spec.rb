@@ -12,8 +12,8 @@ RSpec.describe QuietQuality::Tools::MarkdownLint::Runner do
     context "when mdl fails" do
       let(:exitstatus) { 3 }
 
-      it "raises a MarkdownLint::ExecutionError" do
-        expect { invoke! }.to raise_error(QuietQuality::Tools::MarkdownLint::ExecutionError)
+      it "raises an ExecutionError" do
+        expect { invoke! }.to raise_error(QuietQuality::Tools::ExecutionError)
       end
     end
 

@@ -41,7 +41,7 @@ RSpec.describe QuietQuality::Tools::Brakeman::Parser do
 
       it "raises a ParsingError" do
         expect { messages }.to raise_error(
-          QuietQuality::Tools::Brakeman::ParsingError,
+          QuietQuality::Tools::ParsingError,
           /Found 2 errors/
         )
       end

@@ -14,8 +14,8 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
     context "when the standardrb command _fails_" do
       let(:stat) { instance_double(Process::Status, success?: false, exitstatus: 14) }
 
-      it "raises a Rubocop::ExecutionError" do
-        expect { invoke! }.to raise_error(QuietQuality::Tools::Rubocop::ExecutionError)
+      it "raises an ExecutionError" do
+        expect { invoke! }.to raise_error(QuietQuality::Tools::ExecutionError)
       end
     end
 
