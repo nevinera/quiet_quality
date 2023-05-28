@@ -3,8 +3,12 @@ require "open3"
 module QuietQuality
   module Tools
     Error = Class.new(::QuietQuality::Error)
+    ExecutionError = Class.new(Error)
+    ParsingError = Class.new(Error)
   end
 end
+
+require_relative "./tools/base_runner"
 
 glob = File.expand_path("../tools/*.rb", __FILE__)
 Dir.glob(glob).sort.each { |f| require f }

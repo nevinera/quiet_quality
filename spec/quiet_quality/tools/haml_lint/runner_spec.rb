@@ -12,8 +12,8 @@ RSpec.describe QuietQuality::Tools::HamlLint::Runner do
     context "when haml-lint fails" do
       let(:exitstatus) { 3 }
 
-      it "raises a HamlLint::ExecutionError" do
-        expect { invoke! }.to raise_error(QuietQuality::Tools::HamlLint::ExecutionError)
+      it "raises an ExecutionError" do
+        expect { invoke! }.to raise_error(QuietQuality::Tools::ExecutionError)
       end
     end
 
