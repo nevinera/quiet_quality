@@ -1,3 +1,5 @@
+require_relative "./runner_examples"
+
 RSpec.describe QuietQuality::Tools::RelevantRunner do
   let(:changed_files) { nil }
   let(:file_filter) { /\.rb$/ }
@@ -99,7 +101,7 @@ RSpec.describe QuietQuality::Tools::RelevantRunner do
     end
 
     describe "#invoke!" do
-      subject(:invoke!) { runner.invoke!}
+      subject(:invoke!) { runner.invoke! }
 
       let(:out) { "fake stdout" }
       let(:err) { "fake stderr" }
@@ -146,5 +148,13 @@ RSpec.describe QuietQuality::Tools::RelevantRunner do
         end
       end
     end
+
+    it_behaves_like "a functional RelevantRunner subclass", :fake_tool, {
+      runner_class_method: :subclass,
+      relevant: "foo.rb",
+      irrelevant: "bar.rb",
+      filter: /\.rb/,
+      base_command: ["fake", "command"]
+    }
   end
 end
