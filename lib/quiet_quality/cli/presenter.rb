@@ -32,13 +32,13 @@ module QuietQuality
       end
 
       def log_light_outcomes
-        msg = "%d tools executed: %d passed, %d failed" % [
+        line = "%d tools executed: %d passed, %d failed" % [
           outcomes.count,
           successful_outcomes.count,
           failed_outcomes.count
         ]
-        msg += " (#{failed_outcomes.map(&:tool).join(", ")})" if failed_outcomes.any?
-        logger.puts msg
+        line += " (#{failed_outcomes.map(&:tool).join(", ")})" if failed_outcomes.any?
+        logger.puts line
       end
 
       def log_outcomes
