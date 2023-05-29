@@ -147,7 +147,7 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
 
         it "prints the aggregated outcomes" do
           execute
-          expect(output_stream).to have_received(:puts).with(
+          expect(error_stream).to have_received(:puts).with(
             "2 tools executed: 1 passed, 1 failed (rspec)"
           )
         end
