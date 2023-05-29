@@ -33,6 +33,10 @@ module QuietQuality
 
       attr_reader :argv, :output_stream, :error_stream
 
+      def logger
+        @_logger ||= QuietQuality::Logger.new(stream: error_stream, logging: options.logging)
+      end
+
       def log_results
         return if quiet_logging?
         return log_light_outcomes if light_logging?
@@ -70,15 +74,15 @@ module QuietQuality
       end
 
       def log_help_text
-        error_stream.puts(arg_parser.help_text)
+        logger.puts(arg_parser.help_text)
       end
 
       def log_version_text
-        error_stream.puts(QuietQuality::VERSION)
+        logger.puts(QuietQuality::VERSION)
       end
 
       def log_no_tools_text
-        error_stream.puts(<<~TEXT)
+        logger.puts(<<~TEXT)
           You must specify one or more tools to run, either on the command-line or in the
           default_tools key in a configuration file.
         TEXT
@@ -113,7 +117,7 @@ module QuietQuality
       def log_outcomes
         executed.outcomes.each do |outcome|
           result = outcome.success? ? "Passed" : "Failed"
-          error_stream.puts "--- #{result}: #{outcome.tool}"
+          logger.puts "--- #{result}: #{outcome.tool}"
         end
       end
 
@@ -126,12 +130,12 @@ module QuietQuality
           end
         rule_string = msg.rule ? "  [#{msg.rule}]" : ""
         truncated_body = msg.body.gsub(/ *\n */, "\\n").slice(0, 120)
-        error_stream.puts "  #{msg.path}:#{line_range}#{rule_string}  #{truncated_body}"
+        logger.puts "  #{msg.path}:#{line_range}#{rule_string}  #{truncated_body}"
       end
 
       def log_messages
         return unless executed.messages.any?
-        error_stream.puts "\n\n#{executed.messages.count} messages:"
+        logger.puts "\n\n#{executed.messages.count} messages:"
         executed.messages.each { |msg| log_message(msg) }
       end
 
