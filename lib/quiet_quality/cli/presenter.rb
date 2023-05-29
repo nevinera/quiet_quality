@@ -62,10 +62,14 @@ module QuietQuality
         end
       end
 
+      def reduce_text(s, length)
+        s.gsub(/ *\n */, "\\n").slice(0, length)
+      end
+
       def log_message(msg)
         line_range = line_range_for(msg)
         rule_string = msg.rule ? "  [#{msg.rule}]" : ""
-        truncated_body = msg.body.gsub(/ *\n */, "\\n").slice(0, 120)
+        truncated_body = reduce_text(msg.body, 120)
         logger.puts "  #{msg.path}:#{line_range}#{rule_string}  #{truncated_body}"
       end
     end
