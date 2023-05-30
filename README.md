@@ -14,11 +14,13 @@ that too.
 
 So far, we have support for the following tools:
 
-* rubocop
-* standardrb
-* rspec
-* haml-lint
-* brakeman (though there's no way to run this against only changed files)
+* [rubocop](https://github.com/rubocop/rubocop)
+* [standardrb](https://github.com/standardrb/standard)
+* [rspec](https://rspec.info/)
+* [haml-lint](https://github.com/sds/haml-lint)
+* [markdownlint](https://github.com/markdownlint/markdownlint)
+* [brakeman](https://brakemanscanner.org/) (though there's no way to run this
+  against only changed files)
 
 Supporting more tools is relatively straightforward - they're implemented by
 wrapping cli invocations and parsing output files (which overall seem to be much
