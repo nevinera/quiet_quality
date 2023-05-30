@@ -9,6 +9,7 @@ module QuietQuality
 end
 
 require_relative "./tools/base_runner"
+require_relative "./tools/relevant_runner"
 
 glob = File.expand_path("../tools/*.rb", __FILE__)
 Dir.glob(glob).sort.each { |f| require f }
