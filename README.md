@@ -128,6 +128,9 @@ And then run `qq -C config/quiet_quality/linters_workflow.yml`
 
 The configuration file supports the following _global_ options (top-level keys):
 
+* `default_tools`: Which tools should be run when you `qq` without specifying?
+  Valid values are: `rubocop`, `rspec`, `standardrb`, `haml_lint`, `brakeman`,
+  and `markdown_lint`.
 * `executor`: 'serial' or 'concurrent' (the latter is the default)
 * `annotator`: none set by default, and `github_stdout` is the only supported
   value so far.
