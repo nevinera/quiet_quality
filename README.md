@@ -171,15 +171,32 @@ rspec:
 
 ### CLI Options
 
-The same options are all available on the CLI, plus some additional ones - run
-`qq --help` for a detailed list of the options, but the notable additions are:
+To specify which _tools_ to run (and if any are specified, the `default_tools`
+from the configuration file will be ignored), you supply them as positional
+arguments: `qq rubocop rspec --all-files -L` will run the `rubocop` and `rspec`
+tools, for example.
 
-* `--help/-H`: See a list of the options
-* `--no-config/-N`: Do _not_ load a config file, even if present.
-* `--config/-C`: load the supplied config file (instead of the detected one, if
-  found)
-* `--version/-V`: what version of the gem are you using?
-* `--light/-l`: Enable light logging.
-* `--quiet/-q: Enable quiet logging.
-* `--logging/-L LEVEL: Specify logging mode that results will be returned in.
-  Valid options: light, quiet
+Run `qq --help` for a detailed list of the CLI options, they largely agree with
+those in the configuration file, but there are some differences. There's no way
+to specify a `file_filter` for a tool on the command-line, and there are some
+additional options available focused on managing the interactions with
+configuration files.
+
+```text
+Usage: qq [TOOLS] [GLOBAL_OPTIONS] [TOOL_OPTIONS]
+    -h, --help                       Prints this help
+    -V, --version                    Print the current version of the gem
+    -C, --config PATH                Load a config file from this path
+    -N, --no-config                  Do not load a config file, even if present
+    -E, --executor EXECUTOR          Which executor to use
+    -A, --annotate ANNOTATOR         Annotate with this annotator
+    -G, --annotate-github-stdout     Annotate with GitHub Workflow commands
+    -a, --all-files [tool]           Use the tool(s) on all files
+    -c, --changed-files [tool]       Use the tool(s) only on changed files
+    -B, --comparison-branch BRANCH   Specify the branch to compare against
+    -f, --filter-messages [tool]     Filter messages from tool(s) based on changed lines
+    -u, --unfiltered [tool]          Don't filter messages from tool(s)
+    -l, --light                      Print aggregated results only
+    -q, --quiet                      Don't print results, only return a status code
+    -L, --logging LEVEL              Specify logging mode that results will be returned in. Valid options: light, quiet
+```
