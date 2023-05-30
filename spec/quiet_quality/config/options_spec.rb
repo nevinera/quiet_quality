@@ -6,7 +6,7 @@ RSpec.describe QuietQuality::Config::Options do
     expect(options.executor).to eq(QuietQuality::Executors::ConcurrentExecutor)
     expect(options.comparison_branch).to be_nil
     expect(options.tools).to be_nil
-    expect(options.logging).to be_a(QuietQuality::Logging)
+    expect(options.logging).to be_a(QuietQuality::Config::Logging)
   end
 
   it { is_expected.to respond_to(:tools=) }

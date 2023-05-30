@@ -1,4 +1,4 @@
-RSpec.describe QuietQuality::Logging do
+RSpec.describe QuietQuality::Config::Logging do
   describe "#light?" do
     subject { described_class.new(level: level).light? }
 

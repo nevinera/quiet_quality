@@ -33,12 +33,21 @@ module QuietQuality
 
       attr_reader :argv, :output_stream, :error_stream
 
-      def log_results
-        return if quiet_logging?
-        return log_light_outcomes if light_logging?
+      def logger
+        @_logger ||= QuietQuality::Logger.new(stream: error_stream, logging: options.logging)
+      end
 
-        log_outcomes
-        log_messages
+      def presenter
+        @_presenter ||= Presenter.new(
+          logger: logger,
+          logging: options.logging,
+          outcomes: executor.outcomes,
+          messages: executor.messages
+        )
+      end
+
+      def log_results
+        presenter.log_results
       end
 
       def arg_parser
@@ -70,15 +79,15 @@ module QuietQuality
       end
 
       def log_help_text
-        error_stream.puts(arg_parser.help_text)
+        logger.puts(arg_parser.help_text)
       end
 
       def log_version_text
-        error_stream.puts(QuietQuality::VERSION)
+        logger.puts(QuietQuality::VERSION)
       end
 
       def log_no_tools_text
-        error_stream.puts(<<~TEXT)
+        logger.puts(<<~TEXT)
           You must specify one or more tools to run, either on the command-line or in the
           default_tools key in a configuration file.
         TEXT
@@ -110,54 +119,10 @@ module QuietQuality
         @_executed = executor
       end
 
-      def log_outcomes
-        executed.outcomes.each do |outcome|
-          result = outcome.success? ? "Passed" : "Failed"
-          error_stream.puts "--- #{result}: #{outcome.tool}"
-        end
-      end
-
-      def log_message(msg)
-        line_range =
-          if msg.start_line == msg.stop_line
-            msg.start_line.to_s
-          else
-            "#{msg.start_line}-#{msg.stop_line}"
-          end
-        rule_string = msg.rule ? "  [#{msg.rule}]" : ""
-        truncated_body = msg.body.gsub(/ *\n */, "\\n").slice(0, 120)
-        error_stream.puts "  #{msg.path}:#{line_range}#{rule_string}  #{truncated_body}"
-      end
-
-      def log_messages
-        return unless executed.messages.any?
-        error_stream.puts "\n\n#{executed.messages.count} messages:"
-        executed.messages.each { |msg| log_message(msg) }
-      end
-
       def annotate_messages
         return unless options.annotator
         annotator = options.annotator.new(output_stream: output_stream)
         annotator.annotate!(executed.messages)
-      end
-
-      def log_light_outcomes
-        msg = "#{total_outcomes} tools executed: #{successful_outcomes.count} passed, #{failed_outcomes.count} failed"
-        msg += " (#{failed_outcomes.map(&:tool).uniq.join(", ")})" unless failed_outcomes.empty?
-
-        output_stream.puts msg
-      end
-
-      def total_outcomes
-        @_total_outcomes ||= executed.outcomes.count
-      end
-
-      def successful_outcomes
-        @_successful_outcomes ||= executed.successful_outcomes
-      end
-
-      def failed_outcomes
-        @_failed_outcomes ||= executed.failed_outcomes
       end
     end
   end
