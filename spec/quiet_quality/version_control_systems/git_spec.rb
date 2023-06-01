@@ -110,6 +110,17 @@ RSpec.describe QuietQuality::VersionControlSystems::Git do
           it "should not include the untracked line numbers" do
             expect(changed_files.file("j.txt").entire?).to eq true
           end
+
+          context "when capture3 fails" do
+            before { stub_capture3(status: 28) }
+
+            it "raises an appropriate exception" do
+              expect { changed_files }.to raise_error(
+                QuietQuality::VersionControlSystems::Git::Error,
+                "git ls-files failed"
+              )
+            end
+          end
         end
       end
     end
