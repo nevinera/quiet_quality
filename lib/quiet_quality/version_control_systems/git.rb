@@ -66,12 +66,6 @@ module QuietQuality
 
       private
 
-      def changed_lines_for(diff)
-        GitDiffParser.parse(diff).flat_map do |parsed_diff|
-          parsed_diff.changed_line_numbers.to_set
-        end
-      end
-
       def committed_changed_files(base, sha)
         ChangedFiles.new(committed_changes(base, sha))
       end
