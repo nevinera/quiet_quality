@@ -25,10 +25,6 @@ module QuietQuality
 
       attr_reader :from
 
-      def config_path_within(dir)
-        File.join(dir, CONFIG_FILENAME)
-      end
-
       def each_successive_enclosing_directory(max_depth: 100, &block)
         d = Pathname.new(from)
         depth = 0
