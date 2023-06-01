@@ -4,7 +4,29 @@ require "pry"
 
 if ENV["SIMPLECOV"]
   require "simplecov"
+
+  class ProblemsFormatter
+    def format(result)
+      warn result.groups.map { |name, files| format_group(name, files) }
+    end
+
+    private
+
+    def format_group(name, files)
+      problem_files = files.select { |f| f.covered_percent < 100.0 }
+      if problem_files.any?
+        header = "#{name}: coverage missing\n"
+        rows = problem_files.map { |f| "    #{f.filename} (#{f.covered_percent.round(2)}%)\n" }
+        ([header] + rows).join
+      else
+        "#{name}: fully covered\n"
+      end
+    end
+  end
+
   SimpleCov.start do
+    formatter(ProblemsFormatter) if ENV["SIMPLECOV_TEXT"]
+    add_group "Tools", "lib/quiet_quality/tools/"
     minimum_coverage line: 100
     add_filter "spec/"
   end
