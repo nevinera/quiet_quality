@@ -4,7 +4,9 @@ require "pry"
 
 if ENV["SIMPLECOV"]
   require "simplecov"
-  SimpleCov.start
+  SimpleCov.start do
+    minimum_coverage line: 100
+  end
 end
 
 require File.expand_path("../../lib/quiet_quality", __FILE__)
