@@ -100,10 +100,7 @@ module QuietQuality
 
       def untracked_paths
         out, err, stat = Open3.capture3("git", "-C", path, "ls-files", "--others", "--exclude-standard")
-        unless stat.success?
-          warn err
-          fail(Error, "git ls-files failed")
-        end
+        fail(Error, "git ls-files failed") unless stat.success?
         out.split
       end
     end
