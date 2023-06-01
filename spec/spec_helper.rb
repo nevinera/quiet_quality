@@ -2,6 +2,11 @@ require "rspec"
 require "rspec/its"
 require "pry"
 
+if ENV["SIMPLECOV"]
+  require "simplecov"
+  SimpleCov.start
+end
+
 require File.expand_path("../../lib/quiet_quality", __FILE__)
 
 gem_root = File.expand_path("../..", __FILE__)
