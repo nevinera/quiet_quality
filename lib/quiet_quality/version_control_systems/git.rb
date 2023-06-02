@@ -66,12 +66,6 @@ module QuietQuality
 
       private
 
-      def changed_lines_for(diff)
-        GitDiffParser.parse(diff).flat_map do |parsed_diff|
-          parsed_diff.changed_line_numbers.to_set
-        end
-      end
-
       def committed_changed_files(base, sha)
         ChangedFiles.new(committed_changes(base, sha))
       end
@@ -105,11 +99,8 @@ module QuietQuality
       end
 
       def untracked_paths
-        out, err, stat = Open3.capture3("git", "-C", path, "ls-files", "--others", "--exclude-standard")
-        unless stat.success?
-          warn err
-          fail(Error, "git ls-files failed")
-        end
+        out, _err, stat = Open3.capture3("git", "-C", path, "ls-files", "--others", "--exclude-standard")
+        fail(Error, "git ls-files failed") unless stat.success?
         out.split
       end
     end

@@ -15,7 +15,7 @@ module MessageSetup
   end
 
   def generate_message(**attrs)
-    QuietQuality::Message.new(**generate_message_attributes(attrs))
+    QuietQuality::Message.load(generate_message_attributes(attrs))
   end
 
   def generate_messages(count, **attrs)

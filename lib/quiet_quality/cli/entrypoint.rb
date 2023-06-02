@@ -62,14 +62,6 @@ module QuietQuality
         parsed_options.helping?
       end
 
-      def quiet_logging?
-        options.logging.quiet?
-      end
-
-      def light_logging?
-        options.logging.light?
-      end
-
       def printing_version?
         parsed_options.printing_version?
       end

@@ -1,8 +1,8 @@
 RSpec.describe QuietQuality::Messages do
   let(:m1_data) { {path: "/foo/1", body: "body1", start_line: 1, level: "high"} }
   let(:m2_data) { {path: "/foo/2", body: "body2", start_line: 2, stop_line: 5} }
-  let(:m1) { QuietQuality::Message.new(**m1_data) }
-  let(:m2) { QuietQuality::Message.new(**m2_data) }
+  let(:m1) { QuietQuality::Message.load(m1_data) }
+  let(:m2) { QuietQuality::Message.load(m2_data) }
   let(:supplied_messages) { [m1, m2] }
   subject(:messages) { described_class.new(supplied_messages) }
 

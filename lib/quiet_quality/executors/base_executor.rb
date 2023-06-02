@@ -7,7 +7,7 @@ module QuietQuality
       end
 
       def execute!
-        fail NoMethodError, "execute! should be implemented by the subclass of BaseExecutor"
+        pipelines.none?(&:failure?)
       end
 
       def outcomes
@@ -38,16 +38,6 @@ module QuietQuality
         @_pipelines ||= tools.map do |topts|
           Pipeline.new(tool_options: topts, changed_files: changed_files)
         end
-      end
-
-      def pipeline_by_tool
-        @_pipeline_by_tool ||= pipelines
-          .map { |p| [p.tool_name, p] }
-          .to_h
-      end
-
-      def pipeline_for(tool)
-        pipeline_by_tool.fetch(tool.to_sym)
       end
     end
   end

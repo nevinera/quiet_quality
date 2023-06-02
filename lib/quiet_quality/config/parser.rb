@@ -102,8 +102,6 @@ module QuietQuality
         when :reversed_boolean then validate_boolean(name, value)
         when :symbol then validate_symbol(name, value, from: from)
         when :string then validate_string(name, value)
-        else
-          fail ArgumentError, "validate_value does not handle type #{as}"
         end
       end
 
@@ -135,8 +133,6 @@ module QuietQuality
         when :reversed_boolean then !value
         when :string then value.to_s
         when :symbol then value.to_sym
-        else
-          fail ArgumentError, "coerce_value does not handle type #{as}"
         end
       end
     end

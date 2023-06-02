@@ -15,21 +15,22 @@ module OptionSetup
 
   def build_options(**attrs)
     opts = QuietQuality::Config::Options.new
-    [:comparison_branch, :annotator, :executor, :logging].each do |attr|
-      opts.send("#{attr}=", send("#{attr}_from", attrs[attr])) if attrs[attr]
-    end
+    maybe_set_option(opts, attrs, :comparison_branch)
+    maybe_set_option(opts, attrs, :logging)
+    maybe_set_option(opts, attrs, :annotator, :annotator_from)
+    maybe_set_option(opts, attrs, :executor, :executor_from)
     opts.tools = tool_options_from(attrs)
     opts
   end
 
   private
 
-  def comparison_branch_from(name)
-    name
-  end
+  def maybe_set_option(opts, attrs, key, transform = nil)
+    value = attrs[key]
+    return unless value
 
-  def logging_from(level)
-    level
+    value = send(transform, value) if transform
+    opts.send("#{key}=", value)
   end
 
   def set_global_options(po, global_options)
