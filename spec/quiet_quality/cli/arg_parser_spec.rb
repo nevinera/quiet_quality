@@ -52,6 +52,7 @@ RSpec.describe QuietQuality::Cli::ArgParser do
             -B, --comparison-branch BRANCH   Specify the branch to compare against
             -f, --filter-messages [tool]     Filter messages from tool(s) based on changed lines
             -u, --unfiltered [tool]          Don't filter messages from tool(s)
+                --[no-]colorize              Colorize the logging output
             -n, --normal                     Print outcomes and messages
             -l, --light                      Print aggregated results only
             -q, --quiet                      Don't print results, only return a status code
@@ -161,6 +162,12 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       expect_options("--logging normal", ["--logging", "normal"], global: {logging: :normal})
       expect_options("-Lnormal", ["-Lnormal"], global: {logging: :normal})
       expect_usage_error("-Lshenanigans", ["-Lshenanigans"], /Unrecognized logging level/i)
+    end
+
+    describe "logging color options" do
+      expect_options("no color options", [], global: {colorize: nil})
+      expect_options("--colorize", ["--colorize"], global: {colorize: true})
+      expect_options("--no-colorize", ["--no-colorize"], global: {colorize: false})
     end
 
     describe "file targeting options" do

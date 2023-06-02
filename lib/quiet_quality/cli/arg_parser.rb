@@ -65,6 +65,7 @@ module QuietQuality
           setup_annotation_options(parser)
           setup_file_target_options(parser)
           setup_filter_messages_options(parser)
+          setup_colorization_options(parser)
           setup_logging_options(parser)
         end
       end
@@ -133,6 +134,12 @@ module QuietQuality
 
         parser.on("-u", "--unfiltered [tool]", "Don't filter messages from tool(s)") do |tool|
           read_tool_or_global_option(name: :filter_messages, into: :filter_messages, tool: tool, value: false)
+        end
+      end
+
+      def setup_colorization_options(parser)
+        parser.on("--[no-]colorize", "Colorize the logging output") do |value|
+          set_global_option(:colorize, value)
         end
       end
 
