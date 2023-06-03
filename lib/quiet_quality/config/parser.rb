@@ -42,8 +42,8 @@ module QuietQuality
         read_global_option(opts, :annotator, :annotator, as: :symbol, validate_from: Annotators::ANNOTATOR_TYPES)
         read_global_option(opts, :annotate, :annotator, as: :symbol, validate_from: Annotators::ANNOTATOR_TYPES)
         read_global_option(opts, :comparison_branch, :comparison_branch, as: :string)
-        read_global_option(opts, :changed_files, :changed_files, as: :boolean)
-        read_global_option(opts, :all_files, :changed_files, as: :reversed_boolean)
+        read_global_option(opts, :changed_files, :limit_targets, as: :boolean)
+        read_global_option(opts, :all_files, :limit_targets, as: :reversed_boolean)
         read_global_option(opts, :filter_messages, :filter_messages, as: :boolean)
         read_global_option(opts, :unfiltered, :filter_messages, as: :reversed_boolean)
         read_global_option(opts, :logging, :logging, as: :symbol, validate_from: Logging::LEVELS)
@@ -61,8 +61,8 @@ module QuietQuality
 
         read_tool_option(opts, tool_name, :filter_messages, :filter_messages, as: :boolean)
         read_tool_option(opts, tool_name, :unfiltered, :filter_messages, as: :reversed_boolean)
-        read_tool_option(opts, tool_name, :changed_files, :changed_files, as: :boolean)
-        read_tool_option(opts, tool_name, :all_files, :changed_files, as: :reversed_boolean)
+        read_tool_option(opts, tool_name, :changed_files, :limit_targets, as: :boolean)
+        read_tool_option(opts, tool_name, :all_files, :limit_targets, as: :reversed_boolean)
         read_tool_option(opts, tool_name, :file_filter, :file_filter, as: :string)
       end
 

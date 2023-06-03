@@ -56,14 +56,14 @@ RSpec.describe QuietQuality::Config::Parser do
         executor: :concurrent,
         annotator: nil,
         comparison_branch: "master",
-        changed_files: true,
+        limit_targets: true,
         filter_messages: false,
         logging: :light
       )
       expect_tool_options(
-        rspec: {filter_messages: false, changed_files: false, file_filter: "spec/.*_spec.rb"},
-        standardrb: {filter_messages: true, changed_files: nil, file_filter: nil},
-        rubocop: {filter_messages: nil, changed_files: false, file_filter: nil}
+        rspec: {filter_messages: false, limit_targets: false, file_filter: "spec/.*_spec.rb"},
+        standardrb: {filter_messages: true, limit_targets: nil, file_filter: nil},
+        rubocop: {filter_messages: nil, limit_targets: false, file_filter: nil}
       )
     end
 
@@ -75,7 +75,7 @@ RSpec.describe QuietQuality::Config::Parser do
       context "that is simple but correct" do
         let(:yaml) { "{changed_files: true}" }
         it { is_expected.to be_a(QuietQuality::Config::ParsedOptions) }
-        expect_global_options(changed_files: true, executor: nil, annotator: nil)
+        expect_global_options(limit_targets: true, executor: nil, annotator: nil)
       end
 
       describe "the default_tools parsing" do
@@ -110,13 +110,13 @@ RSpec.describe QuietQuality::Config::Parser do
       end
 
       describe "changed_files parsing" do
-        expect_config "no settings", %({}), globals: {changed_files: nil}, tools: {rspec: {changed_files: nil}}
-        expect_config "a global changed_files", %({changed_files: true}), globals: {changed_files: true}, tools: {rspec: {changed_files: nil}}
-        expect_config "an rspec changed_files", %({rspec: {changed_files: false}}), globals: {changed_files: nil}, tools: {rspec: {changed_files: false}}
-        expect_config "a global all_files", %({all_files: false}), globals: {changed_files: true}, tools: {rspec: {changed_files: nil}}
-        expect_config "an rspec all_files", %({rspec: {all_files: true}}), globals: {changed_files: nil}, tools: {rspec: {changed_files: false}}
-        expect_config "both changed_files", %({changed_files: true, rspec: {changed_files: false}}), globals: {changed_files: true}, tools: {rspec: {changed_files: false}}
-        expect_config "both all_files", %({all_files: false, rspec: {all_files: true}}), globals: {changed_files: true}, tools: {rspec: {changed_files: false}}
+        expect_config "no settings", %({}), globals: {limit_targets: nil}, tools: {rspec: {limit_targets: nil}}
+        expect_config "a global changed_files", %({changed_files: true}), globals: {limit_targets: true}, tools: {rspec: {limit_targets: nil}}
+        expect_config "an rspec changed_files", %({rspec: {changed_files: false}}), globals: {limit_targets: nil}, tools: {rspec: {limit_targets: false}}
+        expect_config "a global all_files", %({all_files: false}), globals: {limit_targets: true}, tools: {rspec: {limit_targets: nil}}
+        expect_config "an rspec all_files", %({rspec: {all_files: true}}), globals: {limit_targets: nil}, tools: {rspec: {limit_targets: false}}
+        expect_config "both changed_files", %({changed_files: true, rspec: {changed_files: false}}), globals: {limit_targets: true}, tools: {rspec: {limit_targets: false}}
+        expect_config "both all_files", %({all_files: false, rspec: {all_files: true}}), globals: {limit_targets: true}, tools: {rspec: {limit_targets: false}}
         expect_invalid "a non-boolean changed_files", %({changed_files: "yeah"}), /either true or false/
       end
 
