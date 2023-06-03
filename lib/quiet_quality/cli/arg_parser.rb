@@ -45,12 +45,12 @@ module QuietQuality
       # options; if they don't, they are global options. (optparse allows an optional argument
       # to a flag if the string representing it is not a 'string in all caps'. So `[FOO]` or `foo`
       # would be optional, but `FOO` would be required. This helper simplifies handling those.
-      def read_tool_or_global_option(name, tool, value)
+      def read_tool_or_global_option(name:, into:, tool:, value:)
         if tool
           validate_value_from("tool", tool, Tools::AVAILABLE)
-          set_tool_option(tool, name, value)
+          set_tool_option(tool, into, value)
         else
-          set_global_option(name, value)
+          set_global_option(into, value)
         end
       end
 
@@ -114,11 +114,11 @@ module QuietQuality
 
       def setup_file_target_options(parser)
         parser.on("-a", "--all-files [tool]", "Use the tool(s) on all files") do |tool|
-          read_tool_or_global_option(:all_files, tool, true)
+          read_tool_or_global_option(name: :all_files, into: :limit_targets, tool: tool, value: false)
         end
 
         parser.on("-c", "--changed-files [tool]", "Use the tool(s) only on changed files") do |tool|
-          read_tool_or_global_option(:all_files, tool, false)
+          read_tool_or_global_option(name: :all_files, into: :limit_targets, tool: tool, value: true)
         end
 
         parser.on("-B", "--comparison-branch BRANCH", "Specify the branch to compare against") do |branch|
@@ -128,11 +128,11 @@ module QuietQuality
 
       def setup_filter_messages_options(parser)
         parser.on("-f", "--filter-messages [tool]", "Filter messages from tool(s) based on changed lines") do |tool|
-          read_tool_or_global_option(:filter_messages, tool, true)
+          read_tool_or_global_option(name: :filter_messages, into: :filter_messages, tool: tool, value: true)
         end
 
         parser.on("-u", "--unfiltered [tool]", "Don't filter messages from tool(s)") do |tool|
-          read_tool_or_global_option(:filter_messages, tool, false)
+          read_tool_or_global_option(name: :filter_messages, into: :filter_messages, tool: tool, value: false)
         end
       end
 
