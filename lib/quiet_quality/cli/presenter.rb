@@ -70,7 +70,7 @@ module QuietQuality
         line_range = line_range_for(msg)
         rule_string = msg.rule ? "  [#{msg.rule}]" : ""
         truncated_body = reduce_text(msg.body, 120)
-        logger.puts "  #{msg.path}:#{line_range}#{rule_string}  #{truncated_body}"
+        logger.puts "#{msg.tool_name}  #{msg.path}:#{line_range}#{rule_string}  #{truncated_body}"
       end
     end
   end

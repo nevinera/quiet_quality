@@ -37,7 +37,14 @@ module QuietQuality
           line = warning.fetch(:line)
           level = warning.fetch(:confidence, nil)
           rule = warning.fetch(:warning_type)
-          Message.new(path: path, body: body, start_line: line, level: level, rule: rule)
+          Message.new(
+            path: path,
+            body: body,
+            start_line: line,
+            level: level,
+            rule: rule,
+            tool_name: TOOL_NAME
+          )
         end
       end
     end

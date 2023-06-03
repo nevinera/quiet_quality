@@ -33,6 +33,7 @@ RSpec.describe QuietQuality::Tools::Brakeman::Parser do
         expect(m.start_line).to eq(3)
         expect(m.level).to eq("High")
         expect(m.rule).to eq("SQL Injection")
+        expect(m.tool_name).to eq(:brakeman)
       end
     end
 

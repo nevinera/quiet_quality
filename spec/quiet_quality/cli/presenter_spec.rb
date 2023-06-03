@@ -7,8 +7,8 @@ RSpec.describe QuietQuality::Cli::Presenter do
   let(:haml_lint_outcome) { build_failure(:haml_lint, "haml_lint output", "haml_lint logging") }
   let(:outcomes) { [rspec_outcome, haml_lint_outcome] }
 
-  let(:message_1) { generate_message(path: "foo.rb", body: "foo \n  body", start_line: 55, stop_line: 55, rule: "foorule") }
-  let(:message_2) { generate_message(path: "bar.rb", body: "barbody" + "x" * 200, start_line: 8, stop_line: 14, rule: "barule") }
+  let(:message_1) { generate_message(path: "foo.rb", body: "foo \n  body", start_line: 55, stop_line: 55, rule: "foorule", tool_name: :ai_fixes_ur_code) }
+  let(:message_2) { generate_message(path: "bar.rb", body: "barbody" + "x" * 200, start_line: 8, stop_line: 14, rule: "barule", tool_name: :sudo_make_me_a_sandwhich) }
   let(:messages) { QuietQuality::Messages.new([message_1, message_2]) }
 
   subject(:presenter) { described_class.new(logger: logger, logging: logging, outcomes: outcomes, messages: messages) }
@@ -43,8 +43,8 @@ RSpec.describe QuietQuality::Cli::Presenter do
         expect(logger).to have_received(:puts).with("--- Passed: rspec").ordered
         expect(logger).to have_received(:puts).with("--- Failed: haml_lint").ordered
         expect(logger).to have_received(:puts).with("\n\n2 messages:").ordered
-        expect(logger).to have_received(:puts).with("  foo.rb:55  [foorule]  foo\\nbody").ordered
-        expect(logger).to have_received(:puts).with("  bar.rb:8-14  [barule]  barbody" + "x" * 113).ordered
+        expect(logger).to have_received(:puts).with("ai_fixes_ur_code  foo.rb:55  [foorule]  foo\\nbody").ordered
+        expect(logger).to have_received(:puts).with("sudo_make_me_a_sandwhich  bar.rb:8-14  [barule]  barbody" + "x" * 113).ordered
       end
     end
   end

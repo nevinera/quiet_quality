@@ -36,7 +36,8 @@ module QuietQuality
             body: offense.fetch(:message),
             start_line: offense.dig(:location, :line),
             level: offense.fetch(:severity, nil),
-            rule: offense.fetch(:linter_name, nil)
+            rule: offense.fetch(:linter_name, nil),
+            tool_name: TOOL_NAME
           )
         end
       end

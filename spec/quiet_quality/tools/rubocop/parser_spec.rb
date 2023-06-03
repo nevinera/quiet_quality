@@ -33,6 +33,7 @@ RSpec.describe QuietQuality::Tools::Rubocop::Parser do
         expect(messages.first.stop_line).to eq(10)
         expect(messages.first.level).to eq("convention")
         expect(messages.first.rule).to eq("Style/EmptyMethod")
+        expect(messages.first.tool_name).to eq(:rubocop)
       end
     end
   end

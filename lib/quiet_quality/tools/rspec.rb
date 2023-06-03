@@ -1,6 +1,7 @@
 module QuietQuality
   module Tools
     module Rspec
+      TOOL_NAME = :rspec
     end
   end
 end

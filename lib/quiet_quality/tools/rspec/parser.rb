@@ -37,7 +37,13 @@ module QuietQuality
           body = example.dig(:exception, :message) || example.fetch(:description)
           line = example.fetch(:line_number)
           rule = example.dig(:exception, :class) || "Failed Example"
-          Message.new(path: path, body: body, start_line: line, rule: rule)
+          Message.new(
+            path: path,
+            body: body,
+            start_line: line,
+            rule: rule,
+            tool_name: TOOL_NAME
+          )
         end
       end
     end

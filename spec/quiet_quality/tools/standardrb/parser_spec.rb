@@ -34,6 +34,7 @@ RSpec.describe QuietQuality::Tools::Standardrb::Parser do
         expect(messages.first.stop_line).to eq(10)
         expect(messages.first.level).to eq("convention")
         expect(messages.first.rule).to eq("Style/EmptyMethod")
+        expect(messages.first.tool_name).to eq(:standardrb)
       end
     end
   end

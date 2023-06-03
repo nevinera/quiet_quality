@@ -32,6 +32,7 @@ RSpec.describe QuietQuality::Tools::HamlLint::Parser do
         expect(messages.first.start_line).to eq(1)
         expect(messages.first.level).to eq("warning")
         expect(messages.first.rule).to eq("ImplicitDiv")
+        expect(messages.first.tool_name).to eq(:haml_lint)
       end
     end
   end

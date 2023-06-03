@@ -37,8 +37,13 @@ module QuietQuality
             start_line: offense.dig(:location, :start_line),
             stop_line: offense.dig(:location, :last_line),
             level: offense.fetch(:severity, nil),
-            rule: offense.fetch(:cop_name, nil)
+            rule: offense.fetch(:cop_name, nil),
+            tool_name: tool_name
           )
+        end
+
+        def tool_name
+          TOOL_NAME
         end
       end
     end

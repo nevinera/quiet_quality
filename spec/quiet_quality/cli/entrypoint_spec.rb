@@ -75,9 +75,9 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
 
     context "when some of the tools fail" do
       let(:outcomes) { [build_failure(:rspec), build_success(:rubocop)] }
-      let(:m1) { QuietQuality::Message.new(path: "foo.rb", body: "Msg1", start_line: 1) }
-      let(:m2) { QuietQuality::Message.new(path: "bar.rb", body: "Msg2", start_line: 2, rule: "Title") }
-      let(:m3) { QuietQuality::Message.new(path: "baz.rb", body: "Msg3", start_line: 3, stop_line: 7, annotated_line: 5) }
+      let(:m1) { QuietQuality::Message.new(path: "foo.rb", body: "Msg1", start_line: 1, tool_name: :just_delete_everything) }
+      let(:m2) { QuietQuality::Message.new(path: "bar.rb", body: "Msg2", start_line: 2, rule: "Title", tool_name: :complexity_checks_that_make_things_worse) }
+      let(:m3) { QuietQuality::Message.new(path: "baz.rb", body: "Msg3", start_line: 3, stop_line: 7, annotated_line: 5, tool_name: :not_enough_extra_newlines) }
       let(:messages) { QuietQuality::Messages.new([m1, m2, m3]) }
 
       it { is_expected.to be_a(described_class) }
@@ -101,9 +101,9 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
 
         it "writes the proper annotations to stdout" do
           execute
-          expect(output_stream).to have_received(:puts).with("::warning file=foo.rb,line=1::Msg1")
-          expect(output_stream).to have_received(:puts).with("::warning file=bar.rb,line=2,title=Title::Msg2")
-          expect(output_stream).to have_received(:puts).with("::warning file=baz.rb,line=5::Msg3")
+          expect(output_stream).to have_received(:puts).with("::warning file=foo.rb,line=1,title=just_delete_everything::Msg1")
+          expect(output_stream).to have_received(:puts).with("::warning file=bar.rb,line=2,title=complexity_checks_that_make_things_worse Title::Msg2")
+          expect(output_stream).to have_received(:puts).with("::warning file=baz.rb,line=5,title=not_enough_extra_newlines::Msg3")
         end
       end
 

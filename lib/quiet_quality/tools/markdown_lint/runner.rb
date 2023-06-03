@@ -3,7 +3,7 @@ module QuietQuality
     module MarkdownLint
       class Runner < RelevantRunner
         def tool_name
-          :markdown_lint
+          TOOL_NAME
         end
 
         def no_files_output

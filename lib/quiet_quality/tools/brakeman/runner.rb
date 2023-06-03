@@ -3,7 +3,7 @@ module QuietQuality
     module Brakeman
       class Runner < BaseRunner
         def tool_name
-          :brakeman
+          TOOL_NAME
         end
 
         def command

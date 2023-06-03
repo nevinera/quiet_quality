@@ -32,6 +32,7 @@ RSpec.describe QuietQuality::Tools::MarkdownLint::Parser do
         expect(m.stop_line).to eq(23)
         expect(m.rule).to eq("Line length")
         expect(m.body).to eq("https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md#md013---line-length")
+        expect(m.tool_name).to eq(:markdown_lint)
       end
     end
   end
