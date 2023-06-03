@@ -25,6 +25,10 @@ module QuietQuality
       @_body ||= @attrs.fetch("body")
     end
 
+    def tool_name
+      @_tool_name ||= @attrs.fetch("tool_name")
+    end
+
     def start_line
       @_start_line ||= @attrs.fetch("start_line")
     end
@@ -43,10 +47,6 @@ module QuietQuality
 
     def rule
       @_rule ||= @attrs.fetch("rule", nil)
-    end
-
-    def tool_name
-      @_tool_name ||= @attrs.fetch("tool_name")
     end
 
     private
