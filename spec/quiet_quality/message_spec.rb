@@ -25,9 +25,9 @@ RSpec.describe QuietQuality::Message do
 
   it { is_expected.to be_a(QuietQuality::Message) }
 
-  shared_examples "raises a KeyError" do
-    it "raises a KeyError" do
-      expect { subject }.to raise_error(KeyError)
+  shared_examples "raises an ArgumentError" do
+    it "raises an ArgumentError" do
+      expect { subject }.to raise_error(ArgumentError)
     end
   end
 
@@ -38,7 +38,7 @@ RSpec.describe QuietQuality::Message do
 
       context "when #{binding_name} isn't supplied" do
         let(binding_name) { nil }
-        include_examples "raises a KeyError"
+        include_examples "raises an ArgumentError"
       end
     end
   end

@@ -1,6 +1,6 @@
 RSpec.describe QuietQuality::Messages do
-  let(:m1_data) { {path: "/foo/1", body: "body1", start_line: 1, level: "high"} }
-  let(:m2_data) { {path: "/foo/2", body: "body2", start_line: 2, stop_line: 5} }
+  let(:m1_data) { {path: "/foo/1", body: "body1", start_line: 1, level: "high", tool_name: "baz"} }
+  let(:m2_data) { {path: "/foo/2", body: "body2", start_line: 2, stop_line: 5, tool_name: "qux"} }
   let(:m1) { QuietQuality::Message.load(m1_data) }
   let(:m2) { QuietQuality::Message.load(m2_data) }
   let(:supplied_messages) { [m1, m2] }
@@ -21,8 +21,8 @@ RSpec.describe QuietQuality::Messages do
     let(:json) do
       <<~JSON
         [
-          {"path": "/foo/1", "body": "body1", "start_line": 1, "level": "high"},
-          {"path": "/foo/2", "body": "body2", "start_line": 2, "stop_line": 5}
+          {"path": "/foo/1", "body": "body1", "start_line": 1, "level": "high", "tool_name": "baz"},
+          {"path": "/foo/2", "body": "body2", "start_line": 2, "stop_line": 5, "tool_name": "qux"}
         ]
       JSON
     end
@@ -44,10 +44,12 @@ RSpec.describe QuietQuality::Messages do
           body: body1
           start_line: 1
           level: high
+          tool_name: baz
         - path: "/foo/2"
           body: body2
           start_line: 2
           stop_line: 5
+          tool_name: qux
       YAML
     end
     subject(:loaded_yaml) { described_class.load_yaml(yaml) }
@@ -70,8 +72,8 @@ RSpec.describe QuietQuality::Messages do
 
     it "includes the expected data in each" do
       expect(to_hashes).to eq([
-        {"path" => "/foo/1", "body" => "body1", "start_line" => 1, "level" => "high"},
-        {"path" => "/foo/2", "body" => "body2", "start_line" => 2, "stop_line" => 5}
+        {"path" => "/foo/1", "body" => "body1", "start_line" => 1, "level" => "high", "tool_name" => "baz"},
+        {"path" => "/foo/2", "body" => "body2", "start_line" => 2, "stop_line" => 5, "tool_name" => "qux"}
       ])
     end
   end

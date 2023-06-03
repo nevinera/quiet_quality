@@ -6,7 +6,7 @@ RSpec.describe QuietQuality::AnnotationLocator do
   subject(:locator) { described_class.new(changed_files: changed_files) }
 
   def build_message(path, body, start, stop = nil)
-    QuietQuality::Message.new(path: path, body: body, start_line: start, stop_line: stop)
+    generate_message(path: path, body: body, start_line: start, stop_line: stop)
   end
 
   describe "#update!" do

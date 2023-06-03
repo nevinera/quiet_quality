@@ -1,5 +1,7 @@
 module QuietQuality
   class Message
+    REQUIRED_ATTRS = %w[path body start_line tool_name].freeze
+
     attr_writer :annotated_line
 
     def self.load(hash)
@@ -8,6 +10,7 @@ module QuietQuality
 
     def initialize(**attrs)
       @attrs = attrs.map { |k, v| [k.to_s, v] }.to_h
+      validate_attrs!
     end
 
     def to_h
@@ -44,6 +47,14 @@ module QuietQuality
 
     def tool_name
       @_tool_name ||= @attrs.fetch("tool_name")
+    end
+
+    private
+
+    def validate_attrs!
+      REQUIRED_ATTRS.each do |attr|
+        raise ArgumentError, "Missing required attribute #{attr}" unless @attrs[attr]
+      end
     end
   end
 end
