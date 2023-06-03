@@ -3,7 +3,7 @@ module QuietQuality
     module Standardrb
       class Runner < RelevantRunner
         def tool_name
-          :standardrb
+          TOOL_NAME
         end
 
         def no_files_output

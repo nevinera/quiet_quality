@@ -25,7 +25,8 @@ module QuietQuality
             path: entry.fetch(:filename),
             start_line: entry.fetch(:line),
             rule: entry.fetch(:description),
-            body: entry.fetch(:docs)
+            body: entry.fetch(:docs),
+            tool_name: TOOL_NAME
           )
         end
       end

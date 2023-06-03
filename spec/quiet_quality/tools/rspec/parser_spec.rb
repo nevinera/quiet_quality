@@ -44,6 +44,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Parser do
         expect(m.start_line).to eq(73)
         expect(m.rule).to eq("Failed Example")
         expect(m.body).to eq("is expected to eq \"wrong fake output\"")
+        expect(m.tool_name).to eq(:rspec)
       end
     end
   end
