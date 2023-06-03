@@ -10,7 +10,8 @@ module MessageSetup
       stop_line: attrs.fetch(:stop_line, start_line + Random.rand(4)),
       annotated_line: attrs.fetch(:annotated_line, nil),
       level: attrs.fetch(:level, "Moderate"),
-      rule: attrs.fetch(:rule, "FakeRule")
+      rule: attrs.fetch(:rule, "FakeRule"),
+      tool_name: attrs.fetch(:tool_name, "fake_tool")
     }
   end
 

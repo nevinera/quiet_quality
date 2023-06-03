@@ -9,7 +9,8 @@ RSpec.describe QuietQuality::Message do
       stop_line: stop_line,
       annotated_line: annotated_line,
       level: level,
-      rule: rule
+      rule: rule,
+      tool_name: tool_name
     }.compact
   end
 
@@ -20,6 +21,7 @@ RSpec.describe QuietQuality::Message do
   let(:annotated_line) { 12 }
   let(:level) { "serious" }
   let(:rule) { "You Shall Not Pass" }
+  let(:tool_name) { :one_ring_to_rule_them_all }
 
   it { is_expected.to be_a(QuietQuality::Message) }
 
@@ -64,6 +66,7 @@ RSpec.describe QuietQuality::Message do
   include_examples "required field", :path, :path
   include_examples "required field", :body, :body
   include_examples "required field", :start_line, :start_line
+  include_examples "required field", :tool_name, :tool_name
   include_examples "field with default", :stop_line, default_binding: :start_line
   include_examples "field with default", :level, default_value: nil
   include_examples "field with default", :rule, default_value: nil
@@ -81,7 +84,8 @@ RSpec.describe QuietQuality::Message do
           "stop_line",
           "annotated_line",
           "level",
-          "rule"
+          "rule",
+          "tool_name"
         )
       end
     end
@@ -96,7 +100,8 @@ RSpec.describe QuietQuality::Message do
           "body",
           "start_line",
           "annotated_line",
-          "rule"
+          "rule",
+          "tool_name"
         )
       end
     end
