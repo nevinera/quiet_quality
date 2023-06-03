@@ -1,5 +1,16 @@
 # Changelog
 
+## Release 1.2.1
+
+* Fix the handling of the various ways to specify whether tools should limit
+  their targets to changed files or run against the entire repository. The
+  configuration systems had disagreements on what to call the options in
+  question, which resulted in some configuration entries being ignored. We
+  enforce a set of validations on reads and writes now to avoid such a problem
+  in the future (#89, resolves #88)
+* Add coverage-checking, and then improve test coverage and remove unreferenced
+  code as a result. (#87)
+
 ## Release 1.2.0
 
 * Support `--light`, `--quiet`, and `--logging LEVEL` arguments for less output

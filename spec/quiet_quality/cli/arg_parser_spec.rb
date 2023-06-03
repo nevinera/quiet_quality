@@ -114,7 +114,7 @@ RSpec.describe QuietQuality::Cli::ArgParser do
     end
 
     describe "config file options" do
-      expect_options("(none)", [], global: {config_path: nil, skip_config: nil})
+      expect_options("(none)", [], global: {config_path: nil, no_config: nil})
       expect_options("-Cbar.yml", ["-Cbar.yml"], global: {config_path: "bar.yml"})
       expect_options("--config bar.yml", ["--config", "bar.yml"], global: {config_path: "bar.yml"})
       expect_options("-N", ["-N"], global: {no_config: true})
@@ -156,19 +156,19 @@ RSpec.describe QuietQuality::Cli::ArgParser do
     end
 
     describe "file targeting options" do
-      def self.expect_all_files(desc, arguments, globally:, **tools)
-        tool_args = tools.each_pair.map { |tool, value| [tool, {all_files: value}] }.to_h
-        expect_options(desc, arguments, global: {all_files: globally}, **tool_args)
+      def self.expect_limit_targets(desc, arguments, globally:, **tools)
+        tool_args = tools.each_pair.map { |tool, value| [tool, {limit_targets: value}] }.to_h
+        expect_options(desc, arguments, global: {limit_targets: globally}, **tool_args)
       end
 
-      expect_all_files("nothing", [], globally: nil, standardrb: nil, rubocop: nil, rspec: nil)
-      expect_all_files("--all-files", ["--all-files"], globally: true)
-      expect_all_files("-a", ["-a"], globally: true)
-      expect_all_files("--changed-files", ["--changed-files"], globally: false)
-      expect_all_files("-c", ["-c"], globally: false)
-      expect_all_files("--all-files standardrb", ["--all-files", "standardrb"], globally: nil, standardrb: true, rubocop: nil, rspec: nil)
-      expect_all_files("-a -crspec", ["-a", "-crspec"], globally: true, rspec: false, standardrb: nil, rubocop: nil)
-      expect_all_files("-arspec -crubocop", ["-arspec", "-crubocop"], globally: nil, rspec: true, rubocop: false, standardrb: nil)
+      expect_limit_targets("nothing", [], globally: nil, standardrb: nil, rubocop: nil, rspec: nil)
+      expect_limit_targets("--all-files", ["--all-files"], globally: false)
+      expect_limit_targets("-a", ["-a"], globally: false)
+      expect_limit_targets("--changed-files", ["--changed-files"], globally: true)
+      expect_limit_targets("-c", ["-c"], globally: true)
+      expect_limit_targets("--all-files standardrb", ["--all-files", "standardrb"], globally: nil, standardrb: false, rubocop: nil, rspec: nil)
+      expect_limit_targets("-a -crspec", ["-a", "-crspec"], globally: false, rspec: true, standardrb: nil, rubocop: nil)
+      expect_limit_targets("-arspec -crubocop", ["-arspec", "-crubocop"], globally: nil, rspec: false, rubocop: true, standardrb: nil)
 
       expect_usage_error("--all-files fooba", ["--all-files", "fooba"], /Unrecognized tool/)
       expect_usage_error("-afooba", ["-afooba"], /Unrecognized tool/)
