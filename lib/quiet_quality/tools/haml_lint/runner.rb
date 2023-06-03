@@ -3,7 +3,7 @@ module QuietQuality
     module HamlLint
       class Runner < RelevantRunner
         def tool_name
-          :haml_lint
+          TOOL_NAME
         end
 
         def no_files_output

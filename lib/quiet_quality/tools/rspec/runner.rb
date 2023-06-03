@@ -3,7 +3,7 @@ module QuietQuality
     module Rspec
       class Runner < RelevantRunner
         def tool_name
-          :rspec
+          TOOL_NAME
         end
 
         def no_files_output

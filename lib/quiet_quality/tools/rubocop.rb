@@ -1,6 +1,7 @@
 module QuietQuality
   module Tools
     module Rubocop
+      TOOL_NAME = :rubocop
     end
   end
 end

@@ -3,6 +3,7 @@ require_relative "./rubocop"
 module QuietQuality
   module Tools
     module Standardrb
+      TOOL_NAME = :standardrb
     end
   end
 end

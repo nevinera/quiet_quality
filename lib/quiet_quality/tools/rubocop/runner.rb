@@ -3,7 +3,7 @@ module QuietQuality
     module Rubocop
       class Runner < RelevantRunner
         def tool_name
-          :rubocop
+          TOOL_NAME
         end
 
         def no_files_output

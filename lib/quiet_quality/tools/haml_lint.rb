@@ -1,6 +1,7 @@
 module QuietQuality
   module Tools
     module HamlLint
+      TOOL_NAME = :haml_lint
     end
   end
 end

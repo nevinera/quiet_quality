@@ -3,6 +3,7 @@ require_relative "./rubocop"
 module QuietQuality
   module Tools
     module Brakeman
+      TOOL_NAME = :brakeman
     end
   end
 end

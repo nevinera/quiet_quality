@@ -1,6 +1,7 @@
 module QuietQuality
   module Tools
     module MarkdownLint
+      TOOL_NAME = :markdown_lint
     end
   end
 end
