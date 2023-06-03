@@ -86,6 +86,16 @@ RSpec.describe QuietQuality::Config::ParsedOptions do
       expect(parsed_options.tool_option(:spade, :zam)).to eq(true)
     end
 
+    it "cannot be set with an unexpected name" do
+      expect { parsed_options.set_tool_option(:spade, :blargh, true) }
+        .to raise_error(described_class::InvalidOptionName)
+    end
+
+    it "cannot be fetched with an unexpected name" do
+      expect { parsed_options.tool_option(:spade, :blargh) }
+        .to raise_error(described_class::InvalidOptionName)
+    end
+
     it "can be set multiple times" do
       parsed_options.set_tool_option(:spade, :zam, :bar)
       parsed_options.set_tool_option(:spade, :zam, :baz)
