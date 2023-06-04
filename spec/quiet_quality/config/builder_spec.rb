@@ -260,7 +260,7 @@ RSpec.describe QuietQuality::Config::Builder do
 
         context "when global_options[:logging] is unset" do
           let(:global_options) { {} }
-          it { is_expected.to be_nil }
+          it { is_expected.to eq(:normal) }
         end
 
         context "when global_options[:logging] is specified" do
