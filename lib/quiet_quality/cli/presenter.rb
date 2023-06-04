@@ -3,17 +3,17 @@ module QuietQuality
     class Presenter
       COLORS = {red: 31, green: 32, yellow: 33}.freeze
 
-      def initialize(logger:, logging:, outcomes:, messages:)
-        @logger = logger
-        @logging = logging
+      def initialize(stream:, options:, outcomes:, messages:)
+        @stream = stream
+        @options = options
         @outcomes = outcomes
         @messages = messages
       end
 
       def log_results
-        return if logging.quiet?
+        return if options.quiet?
 
-        if logging.light?
+        if options.light?
           log_light_outcomes
         else
           log_outcomes
@@ -23,7 +23,7 @@ module QuietQuality
 
       private
 
-      attr_reader :logger, :logging, :outcomes, :messages
+      attr_reader :stream, :options, :outcomes, :messages
 
       def failed_outcomes
         @_failed_outcomes ||= outcomes.select(&:failure?)
@@ -34,7 +34,7 @@ module QuietQuality
       end
 
       def colorize(color, s)
-        return s unless logging.colorize?
+        return s unless options.colorize?
         color_code = COLORS.fetch(color)
         "\e[#{color_code}m#{s}\e[0m"
       end
@@ -50,22 +50,22 @@ module QuietQuality
           failed_outcomes.count
         ]
         line += failed_tools_text if failed_outcomes.any?
-        logger.puts line
+        stream.puts line
       end
 
       def log_outcomes
         outcomes.each do |outcome|
           if outcome.success?
-            logger.puts "--- " + colorize(:green, "Passed: #{outcome.tool}")
+            stream.puts "--- " + colorize(:green, "Passed: #{outcome.tool}")
           else
-            logger.puts "--- " + colorize(:red, "Failed: #{outcome.tool}")
+            stream.puts "--- " + colorize(:red, "Failed: #{outcome.tool}")
           end
         end
       end
 
       def log_messages
         return unless messages.any?
-        logger.puts "\n\n#{messages.count} messages:"
+        stream.puts "\n\n#{messages.count} messages:"
         messages.each { |msg| log_message(msg) }
       end
 
@@ -86,7 +86,7 @@ module QuietQuality
         line_range = line_range_for(msg)
         rule_string = msg.rule ? "  [#{colorize(:yellow, msg.rule)}]" : ""
         truncated_body = reduce_text(msg.body, 120)
-        logger.puts "#{tool}  #{msg.path}:#{line_range}#{rule_string}  #{truncated_body}"
+        stream.puts "#{tool}  #{msg.path}:#{line_range}#{rule_string}  #{truncated_body}"
       end
     end
   end
