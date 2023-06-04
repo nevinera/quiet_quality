@@ -137,6 +137,10 @@ module QuietQuality
       end
 
       def setup_logging_options(parser)
+        parser.on("-n", "--normal", "Print outcomes and messages") do
+          set_global_option(:logging, Config::Logging::NORMAL)
+        end
+
         parser.on("-l", "--light", "Print aggregated results only") do
           set_global_option(:logging, Config::Logging::LIGHT)
         end

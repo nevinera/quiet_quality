@@ -52,6 +52,7 @@ RSpec.describe QuietQuality::Cli::ArgParser do
             -B, --comparison-branch BRANCH   Specify the branch to compare against
             -f, --filter-messages [tool]     Filter messages from tool(s) based on changed lines
             -u, --unfiltered [tool]          Don't filter messages from tool(s)
+            -n, --normal                     Print outcomes and messages
             -l, --light                      Print aggregated results only
             -q, --quiet                      Don't print results, only return a status code
             -L, --logging LEVEL              Specify logging mode that results will be returned in. Valid options: light, quiet
@@ -145,13 +146,20 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       expect_options("--light", ["--light"], global: {logging: :light})
       expect_options("-q", ["-q"], global: {logging: :quiet})
       expect_options("--quiet", ["--quiet"], global: {logging: :quiet})
+      expect_options("-n", ["-n"], global: {logging: :normal})
+      expect_options("--normal", ["--normal"], global: {logging: :normal})
+
       expect_options("-lq", ["-lq"], global: {logging: :quiet})
-      expect_options("-ql", ["-ql"], global: {logging: :light})
+      expect_options("-nl", ["-nl"], global: {logging: :light})
+      expect_options("-qn", ["-qn"], global: {logging: :normal})
+
       expect_options("no logging option passed", [], global: {logging: nil})
       expect_options("--logging light", ["--logging", "light"], global: {logging: :light})
       expect_options("-Llight", ["-Llight"], global: {logging: :light})
       expect_options("--logging quiet", ["--logging", "quiet"], global: {logging: :quiet})
       expect_options("-Lquiet", ["-Lquiet"], global: {logging: :quiet})
+      expect_options("--logging normal", ["--logging", "normal"], global: {logging: :normal})
+      expect_options("-Lnormal", ["-Lnormal"], global: {logging: :normal})
       expect_usage_error("-Lshenanigans", ["-Lshenanigans"], /Unrecognized logging level/i)
     end
 

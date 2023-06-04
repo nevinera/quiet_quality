@@ -3,11 +3,12 @@ module QuietQuality
     class Logging
       LIGHT = :light
       QUIET = :quiet
-      LEVELS = [LIGHT, QUIET].freeze
+      NORMAL = :normal
+      LEVELS = [LIGHT, QUIET, NORMAL].freeze
 
       attr_accessor :level
 
-      def initialize(level: nil)
+      def initialize(level: NORMAL)
         @level = level
       end
 
