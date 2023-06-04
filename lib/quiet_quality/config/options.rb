@@ -15,6 +15,10 @@ module QuietQuality
       def logging=(level)
         @logging.level = level
       end
+
+      def colorize=(value)
+        @logging.colorize = value
+      end
     end
   end
 end
