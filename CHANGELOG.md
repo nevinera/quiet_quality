@@ -1,5 +1,16 @@
 # Changelog
 
+## Release 1.2.2
+
+* Add some code to the Rspec::Parser that _cleans_ the json of certain text that
+  simplecov may write into the rspec json output. (#91, resolves #86)
+* Include the name of the originating tool in the printed message, and the
+  annotation, when a warning is presented. (#90 resolves #72)
+* Support `normal` as a logging level, and the `--normal` and `-n` cli
+  arguments. This is the default value, so this really only matters if your
+  config file sets another value and you want to override it from the cli.
+  (#91, resolves #86)
+
 ## Release 1.2.1
 
 * Fix the handling of the various ways to specify whether tools should limit

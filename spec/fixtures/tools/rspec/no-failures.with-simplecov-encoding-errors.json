@@ -1,0 +1,45 @@
+{
+  "version": "3.12.2",
+  "seed": 64304,
+  "examples": [
+    {
+      "id": "./spec/quiet_quality/tools/standardrb/runner_spec.rb[1:1:4:3:2]",
+      "description": "calls standardrb correctly, with no targets",
+      "full_description": "QuietQuality::Tools::Standardrb::Runner#invoke! when changed_files is full and contains too many ruby files calls standardrb correctly, with no targets",
+      "status": "passed",
+      "file_path": "./spec/quiet_quality/tools/standardrb/runner_spec.rb",
+      "line_number": 75,
+      "run_time": 0.000185,
+      "pending_message": null
+    },
+    {
+      "id": "./spec/quiet_quality/tools/standardrb/runner_spec.rb[1:1:4:1:1]",
+      "description": "does not call standardrb",
+      "full_description": "QuietQuality::Tools::Standardrb::Runner#invoke! when changed_files is full but contains no ruby files does not call standardrb",
+      "status": "passed",
+      "file_path": "./spec/quiet_quality/tools/standardrb/runner_spec.rb",
+      "line_number": 54,
+      "run_time": 0.000125,
+      "pending_message": null
+    },
+    {
+      "id": "./spec/quiet_quality/tools/standardrb/runner_spec.rb[1:1:4:2:2]",
+      "description": "calls standardrb correctly, with changed and relevant targets",
+      "full_description": "QuietQuality::Tools::Standardrb::Runner#invoke! when changed_files is full and contains some ruby files calls standardrb correctly, with changed and relevant targets",
+      "status": "passed",
+      "file_path": "./spec/quiet_quality/tools/standardrb/runner_spec.rb",
+      "line_number": 63,
+      "run_time": 0.000148,
+      "pending_message": null
+    }
+  ],
+  "summary": {
+    "duration": 0.018751,
+    "example_count": 3,
+    "failure_count": 0,
+    "pending_count": 0,
+    "errors_outside_of_examples_count": 0
+  },
+  "summary_line": "89 examples, 0 failures"
+}Encoding problems with file foo.rb. Simplecov/ERB can't handle non ASCII characters in filenames. Error: Fake error.
+Encoding problems with file bar.rb. Simplecov/ERB can't handle non ASCII characters in filenames. Error: Fake error.
