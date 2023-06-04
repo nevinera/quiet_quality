@@ -1,5 +1,12 @@
 # Changelog
 
+## Release 1.2.2
+
+* Add some code to the Rspec::Parser that _cleans_ the json of certain text that
+  simplecov may write into the rspec json output. (#91, resolves #86)
+* Include the name of the originating tool in the printed message, and the
+  annotation, when a warning is presented. (#90 resolves #72)
+
 ## Release 1.2.1
 
 * Fix the handling of the various ways to specify whether tools should limit
