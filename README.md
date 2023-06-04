@@ -148,6 +148,9 @@ The configuration file supports the following _global_ options (top-level keys):
   prints a aggregated result (e.g. "3 tools executed: 1 passed, 2 failed
   (rubocop, standardrb)"). The `quiet` option will only return a status code,
   printing nothing.
+* `colorize`: by default, `bin/qq` will include color codes in its output, to
+  make failing tools easier to spot, and messages easier to read. But you can
+  supply `colorize: false` to tell it not to do that if you don't want them.
 
 And then each tool can have an entry, within which `changed_files` and
 `filter_messages` can be specified - the tool-specific settings override the
@@ -196,6 +199,7 @@ Usage: qq [TOOLS] [GLOBAL_OPTIONS] [TOOL_OPTIONS]
     -B, --comparison-branch BRANCH   Specify the branch to compare against
     -f, --filter-messages [tool]     Filter messages from tool(s) based on changed lines
     -u, --unfiltered [tool]          Don't filter messages from tool(s)
+        --[no-]colorize              Colorize the logging output
     -l, --light                      Print aggregated results only
     -q, --quiet                      Don't print results, only return a status code
     -L, --logging LEVEL              Specify logging mode that results will be returned in. Valid options: light, quiet
