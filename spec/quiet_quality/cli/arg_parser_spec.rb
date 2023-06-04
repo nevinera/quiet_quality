@@ -56,7 +56,7 @@ RSpec.describe QuietQuality::Cli::ArgParser do
             -n, --normal                     Print outcomes and messages
             -l, --light                      Print aggregated results only
             -q, --quiet                      Don't print results, only return a status code
-            -L, --logging LEVEL              Specify logging mode that results will be returned in. Valid options: light, quiet
+            -L, --logging LEVEL              Specify logging mode (from normal/light/quiet)
       HELP_OUTPUT
     end
   end

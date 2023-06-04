@@ -156,7 +156,7 @@ module QuietQuality
           set_global_option(:logging, Config::Logging::QUIET)
         end
 
-        parser.on("-L", "--logging LEVEL", "Specify logging mode that results will be returned in. Valid options: light, quiet") do |level|
+        parser.on("-L", "--logging LEVEL", "Specify logging mode (from normal/light/quiet)") do |level|
           validate_value_from("logging level", level, Config::Logging::LEVELS)
           set_global_option(:logging, level.to_sym)
         end
