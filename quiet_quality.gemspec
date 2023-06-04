@@ -40,6 +40,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry", "~> 0.14"
   spec.add_development_dependency "standard", "~> 1.28"
   spec.add_development_dependency "rubocop", "~> 1.50"
-  spec.add_development_dependency "debug"
+  spec.add_development_dependency "debug", "~> 1.7"
   spec.add_development_dependency "mdl", "~> 0.12"
 end
