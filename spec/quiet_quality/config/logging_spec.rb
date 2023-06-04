@@ -1,9 +1,16 @@
 RSpec.describe QuietQuality::Config::Logging do
-  describe "#light?" do
-    subject { described_class.new(level: level).light? }
+  subject(:logging) { described_class.new(level: level) }
 
-    context "level is nil" do
-      let(:level) { nil }
+  describe "#light?" do
+    subject { logging.light? }
+
+    context "level is not supplied" do
+      let(:logging) { described_class.new }
+      it { is_expected.to be(false) }
+    end
+
+    context "level is :normal" do
+      let(:level) { described_class::NORMAL }
       it { is_expected.to be(false) }
     end
 
@@ -19,10 +26,15 @@ RSpec.describe QuietQuality::Config::Logging do
   end
 
   describe "#quiet?" do
-    subject { described_class.new(level: level).quiet? }
+    subject { logging.quiet? }
 
-    context "level is nil" do
-      let(:level) { nil }
+    context "level is not supplied" do
+      let(:logging) { described_class.new }
+      it { is_expected.to be(false) }
+    end
+
+    context "level is :normal" do
+      let(:level) { described_class::NORMAL }
       it { is_expected.to be(false) }
     end
 
@@ -41,14 +53,17 @@ RSpec.describe QuietQuality::Config::Logging do
     it "returns the level" do
       expect(described_class.new(level: :light).level).to eq(:light)
       expect(described_class.new(level: :quiet).level).to eq(:quiet)
-      expect(described_class.new.level).to be_nil
+      expect(described_class.new.level).to eq(:normal)
     end
   end
 
   describe "#level=" do
+    let(:level) { described_class::NORMAL }
+
     it "sets the level" do
-      logging = described_class.new
-      expect { logging.level = :light }.to change { logging.level }.from(nil).to(:light)
+      expect { logging.level = :light }
+        .to change { logging.level }
+        .from(:normal).to(:light)
     end
   end
 end
