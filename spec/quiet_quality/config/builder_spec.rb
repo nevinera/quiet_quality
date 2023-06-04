@@ -112,6 +112,38 @@ RSpec.describe QuietQuality::Config::Builder do
       end
     end
 
+    describe "#logging" do
+      subject(:logging) { options.logging.level }
+
+      context "when global_options[:logging] is unset" do
+        let(:global_options) { {} }
+        it { is_expected.to eq(:normal) }
+      end
+
+      context "when global_options[:logging] is specified" do
+        let(:global_options) { {logging: :quiet} }
+        it { is_expected.to eq(:quiet) }
+      end
+
+      context "when a config file is passed" do
+        let(:global_options) { {config_path: "/fake.yml", logging: cli_logging} }
+
+        context "when the config file sets the logging" do
+          let(:cfg_global_options) { {logging: :light} }
+
+          context "and the cli does not" do
+            let(:cli_logging) { nil }
+            it { is_expected.to eq(:light) }
+          end
+
+          context "and the cli sets a different one" do
+            let(:cli_logging) { :quiet }
+            it { is_expected.to eq(:quiet) }
+          end
+        end
+      end
+    end
+
     describe "#tools" do
       subject(:tools) { options.tools }
 
@@ -250,38 +282,6 @@ RSpec.describe QuietQuality::Config::Builder do
             context "but the cli specifically disables it" do
               let(:tool_options) { {rspec: {filter_messages: false}} }
               it { is_expected.to be_falsey }
-            end
-          end
-        end
-      end
-
-      describe "#logging" do
-        subject(:logging) { options.logging.level }
-
-        context "when global_options[:logging] is unset" do
-          let(:global_options) { {} }
-          it { is_expected.to eq(:normal) }
-        end
-
-        context "when global_options[:logging] is specified" do
-          let(:global_options) { {logging: :quiet} }
-          it { is_expected.to eq(:quiet) }
-        end
-
-        context "when a config file is passed" do
-          let(:global_options) { {config_path: "/fake.yml", logging: cli_logging} }
-
-          context "when the config file sets the logging" do
-            let(:cfg_global_options) { {logging: :light} }
-
-            context "and the cli does not" do
-              let(:cli_logging) { nil }
-              it { is_expected.to eq(:light) }
-            end
-
-            context "and the cli sets a different one" do
-              let(:cli_logging) { :quiet }
-              it { is_expected.to eq(:quiet) }
             end
           end
         end
