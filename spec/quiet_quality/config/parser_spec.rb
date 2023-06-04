@@ -135,6 +135,7 @@ RSpec.describe QuietQuality::Config::Parser do
         expect_config "no logging", %({}), globals: {comparison_branch: nil}
         expect_config "the valid 'light' logging option", %({logging: "light"}), globals: {logging: :light}
         expect_config "the valid 'quiet' logging option", %({logging: "quiet"}), globals: {logging: :quiet}
+        expect_config "the valid 'normal' logging option", %({logging: "normal"}), globals: {logging: :normal}
         expect_invalid "a numeric logging option", %({logging: 5}), /must be a string/
         expect_invalid "an empty logging option", %({logging: ""}), /option logging must be one of the allowed values/
         expect_invalid "an invalid logging option", %({logging: shecklackity}), /option logging must be one of the allowed values/
