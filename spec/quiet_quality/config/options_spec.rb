@@ -4,27 +4,75 @@ RSpec.describe QuietQuality::Config::Options do
   it "has the expected default values" do
     expect(options.annotator).to be_nil
     expect(options.executor).to eq(QuietQuality::Executors::ConcurrentExecutor)
-    expect(options.comparison_branch).to be_nil
     expect(options.tools).to be_nil
-    expect(options.logging).to be_a(QuietQuality::Config::Logging)
+    expect(options.comparison_branch).to be_nil
+    expect(options.colorize?).to be(true)
+    expect(options.logging).to eq(:normal)
   end
 
   it { is_expected.to respond_to(:tools=) }
   it { is_expected.to respond_to(:annotator=) }
   it { is_expected.to respond_to(:executor=) }
   it { is_expected.to respond_to(:comparison_branch=) }
+  it { is_expected.to respond_to(:colorize=) }
 
   describe "#logging=" do
-    it "sets the logging level" do
-      options.logging = :light
-      expect(options.logging.light?).to be true
+    it "updates the logging value" do
+      expect { options.logging = :light }
+        .to change(options, :logging)
+        .from(:normal).to(:light)
+    end
+
+    it "rejects an unrecognized level" do
+      expect { options.logging = :ultra }
+        .to raise_error(ArgumentError, /Unrecognized logging level 'ultra'/)
+    end
+
+    it "accepts a string" do
+      expect { options.logging = "quiet" }
+        .to change(options, :logging)
+        .from(:normal).to(:quiet)
     end
   end
 
-  describe "#colorize=" do
-    it "sets the logging colorization" do
-      options.colorize = true
-      expect(options.logging.colorize?).to be true
+  describe "#colorize?" do
+    subject(:colorize?) { options.colorize? }
+
+    context "by default" do
+      it { is_expected.to be_truthy }
+    end
+
+    context "when set to false" do
+      before { options.colorize = false }
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  describe "#quiet?" do
+    subject(:quiet?) { options.quiet? }
+
+    context "when set to :light" do
+      before { options.logging = :light }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when set to :quiet" do
+      before { options.logging = :quiet }
+      it { is_expected.to be_truthy }
+    end
+  end
+
+  describe "#light?" do
+    subject(:light?) { options.light? }
+
+    context "when set to :light" do
+      before { options.logging = :light }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when set to :quiet" do
+      before { options.logging = :quiet }
+      it { is_expected.to be_falsey }
     end
   end
 end
