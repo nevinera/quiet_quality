@@ -8,7 +8,7 @@ module QuietQuality
 
       attr_accessor :level, :colorize
 
-      def initialize(level: NORMAL, colorize: nil)
+      def initialize(level: NORMAL, colorize: true)
         @level = level
         @colorize = colorize
       end

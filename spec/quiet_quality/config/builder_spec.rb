@@ -152,28 +152,33 @@ RSpec.describe QuietQuality::Config::Builder do
 
         context "when global_options[:colorize] is unset" do
           let(:global_options) { {} }
-          it { is_expected.to be_nil }
+          it { is_expected.to be_truthy }
         end
 
-        context "when global_options[:colorize] is specified" do
+        context "when global_options[:colorize] is specified as true" do
           let(:global_options) { {colorize: true} }
           it { is_expected.to be_truthy }
+        end
+
+        context "when global_options[:colorize] is specified as false" do
+          let(:global_options) { {colorize: false} }
+          it { is_expected.to be_falsey }
         end
 
         context "when a config file is passed" do
           let(:global_options) { {config_path: "/fake.yml", colorize: cli_colorize}.compact }
 
           context "when the config file sets colorize" do
-            let(:cfg_global_options) { {colorize: true} }
+            let(:cfg_global_options) { {colorize: false} }
 
             context "and the cli does not" do
               let(:cli_colorize) { nil }
-              it { is_expected.to be_truthy }
+              it { is_expected.to be_falsey }
             end
 
             context "and the cli sets it differently" do
-              let(:cli_colorize) { false }
-              it { is_expected.to be_falsey }
+              let(:cli_colorize) { true }
+              it { is_expected.to be_truthy }
             end
           end
         end

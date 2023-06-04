@@ -1,6 +1,6 @@
 RSpec.describe QuietQuality::Config::Logging do
   let(:level) { described_class::NORMAL }
-  let(:colorize) { nil }
+  let(:colorize) { true }
   subject(:logging) { described_class.new(level: level, colorize: colorize) }
 
   describe "#light?" do
@@ -74,17 +74,23 @@ RSpec.describe QuietQuality::Config::Logging do
 
     context "when not supplied" do
       let(:logging) { described_class.new }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when supplied as false" do
+      let(:colorize) { false }
       it { is_expected.to be_falsey }
     end
 
-    context "when supplied" do
+    context "when supplied as true" do
       let(:colorize) { true }
       it { is_expected.to be_truthy }
     end
 
-    context "when set after creation" do
-      before { logging.colorize = true }
-      it { is_expected.to be_truthy }
+    it "can be changed after creation" do
+      expect { logging.colorize = false }
+        .to change { logging.colorize? }
+        .from(true).to(false)
     end
   end
 end
