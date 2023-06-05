@@ -1,8 +1,6 @@
 module QuietQuality
   module Cli
     class Presenter
-      COLORS = {red: 31, green: 32, yellow: 33}.freeze
-
       def initialize(stream:, options:, outcomes:, messages:)
         @stream = stream
         @options = options
@@ -33,10 +31,9 @@ module QuietQuality
         @_successful_outcomes ||= outcomes.select(&:success?)
       end
 
-      def colorize(color, s)
+      def colorize(color_name, s)
         return s unless options.colorize?
-        color_code = COLORS.fetch(color)
-        "\e[#{color_code}m#{s}\e[0m"
+        Colorize.colorize(s, color: color_name)
       end
 
       def failed_tools_text
