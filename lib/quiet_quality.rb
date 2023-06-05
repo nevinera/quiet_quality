@@ -17,5 +17,6 @@ module QuietQuality
 end
 
 require_relative "./quiet_quality/logger"
+require_relative "./quiet_quality/logging"
 glob = File.expand_path("../quiet_quality/*.rb", __FILE__)
 Dir.glob(glob).sort.each { |f| require f }
