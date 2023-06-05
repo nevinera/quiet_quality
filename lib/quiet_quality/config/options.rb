@@ -32,6 +32,26 @@ module QuietQuality
       def light?
         logging == :light
       end
+
+      def to_h
+        {
+          annotator: annotator,
+          executor: executor.name,
+          comparison_branch: comparison_branch,
+          colorize: colorize?,
+          logging: logging,
+          tools: tool_hashes_by_name
+        }
+      end
+
+      private
+
+      def tool_hashes_by_name
+        return {} unless tools
+        tools
+          .map { |tool_option| [tool_option.tool_name, tool_option.to_h] }
+          .to_h
+      end
     end
   end
 end

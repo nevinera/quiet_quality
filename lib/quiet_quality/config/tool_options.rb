@@ -35,6 +35,15 @@ module QuietQuality
         return nil if @file_filter.nil?
         Regexp.new(@file_filter)
       end
+
+      def to_h
+        {
+          tool_name: tool_name,
+          limit_targets: limit_targets?,
+          filter_messages: filter_messages?,
+          file_filter: file_filter&.to_s
+        }
+      end
     end
   end
 end

@@ -55,4 +55,34 @@ RSpec.describe QuietQuality::Config::ToolOptions do
     include_examples "exposes the expected constants for", :rubocop, QuietQuality::Tools::Rubocop
     include_examples "exposes the expected constants for", :standardrb, QuietQuality::Tools::Standardrb
   end
+
+  describe "#to_h" do
+    subject(:to_h) { tool_options.to_h }
+
+    context "with all attributes supplied" do
+      let(:tool_options) { described_class.new(:rspec, limit_targets: true, filter_messages: false, file_filter: /^foo.*$/i) }
+
+      it "produces the expected hash" do
+        expect(to_h).to eq({
+          tool_name: :rspec,
+          limit_targets: true,
+          filter_messages: false,
+          file_filter: "(?i-mx:^foo.*$)"
+        })
+      end
+    end
+
+    context "with some attributes not specified" do
+      let(:tool_options) { described_class.new(:standardrb, filter_messages: false) }
+
+      it "produces the expected hash" do
+        expect(to_h).to eq({
+          tool_name: :standardrb,
+          limit_targets: true,
+          filter_messages: false,
+          file_filter: nil
+        })
+      end
+    end
+  end
 end
