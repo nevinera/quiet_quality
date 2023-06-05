@@ -65,6 +65,7 @@ module QuietQuality
           setup_annotation_options(parser)
           setup_file_target_options(parser)
           setup_filter_messages_options(parser)
+          setup_colorization_options(parser)
           setup_logging_options(parser)
         end
       end
@@ -136,6 +137,12 @@ module QuietQuality
         end
       end
 
+      def setup_colorization_options(parser)
+        parser.on("--[no-]colorize", "Colorize the logging output") do |value|
+          set_global_option(:colorize, value)
+        end
+      end
+
       def setup_logging_options(parser)
         parser.on("-n", "--normal", "Print outcomes and messages") do
           set_global_option(:logging, Config::Logging::NORMAL)
@@ -149,7 +156,7 @@ module QuietQuality
           set_global_option(:logging, Config::Logging::QUIET)
         end
 
-        parser.on("-L", "--logging LEVEL", "Specify logging mode that results will be returned in. Valid options: light, quiet") do |level|
+        parser.on("-L", "--logging LEVEL", "Specify logging mode (from normal/light/quiet)") do |level|
           validate_value_from("logging level", level, Config::Logging::LEVELS)
           set_global_option(:logging, level.to_sym)
         end

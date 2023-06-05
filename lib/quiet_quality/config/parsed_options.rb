@@ -9,6 +9,7 @@ module QuietQuality
         :annotator,
         :executor,
         :comparison_branch,
+        :colorize,
         :logging,
         :limit_targets,
         :filter_messages,

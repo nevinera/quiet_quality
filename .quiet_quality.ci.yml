@@ -4,3 +4,4 @@ executor: concurrent
 comparison_branch: origin/main
 all_files: true
 unfiltered: true
+colorize: true

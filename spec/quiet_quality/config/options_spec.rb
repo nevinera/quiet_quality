@@ -20,4 +20,11 @@ RSpec.describe QuietQuality::Config::Options do
       expect(options.logging.light?).to be true
     end
   end
+
+  describe "#colorize=" do
+    it "sets the logging colorization" do
+      options.colorize = true
+      expect(options.logging.colorize?).to be true
+    end
+  end
 end

@@ -5,3 +5,4 @@ comparison_branch: main
 changed_files: false
 filter_messages: false
 logging: light
+colorize: true
