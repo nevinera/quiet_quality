@@ -10,7 +10,12 @@ require "set" # rubocop:disable Lint/RedundantRequireStatement
 
 module QuietQuality
   Error = Class.new(StandardError)
+
+  def self.logger
+    @_logger ||= QuietQuality::Logger.new
+  end
 end
 
+require_relative "./quiet_quality/logger"
 glob = File.expand_path("../quiet_quality/*.rb", __FILE__)
 Dir.glob(glob).sort.each { |f| require f }
