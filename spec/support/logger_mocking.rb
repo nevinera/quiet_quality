@@ -14,6 +14,12 @@ module LoggerMocking
   def expect_debug(message, data: nil)
     expect_logged(:debug, message, data: data)
   end
+
+  def expect_not_logged(level, regex)
+    expect(QuietQuality.logger)
+      .not_to have_received(level)
+      .with(a_string_matching(regex), data: anything)
+  end
 end
 
 RSpec.configure do |config|

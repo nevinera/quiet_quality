@@ -27,10 +27,7 @@ module QuietQuality
 
       def messages
         return @_messages if defined?(@_messages)
-        @_messages = parser.messages
-        @_messages = relevance_filter.filter(@_messages) if filter_messages? && changed_files
-        @_messages.each { |m| locator.update!(m) } if changed_files
-        @_messages
+        @_messages = relocated(filtered(parser.messages))
       end
 
       private
@@ -71,6 +68,23 @@ module QuietQuality
 
       def locator
         @_locator ||= AnnotationLocator.new(changed_files: changed_files)
+      end
+
+      def filtered(messages_object)
+        if filter_messages? && changed_files
+          original_count = messages_object.count
+          messages_object = relevance_filter.filter(messages_object)
+          info("Messages for #{tool_name} filtered from #{original_count} to #{messages_object.count}")
+        end
+        messages_object
+      end
+
+      def relocated(messages_object)
+        if changed_files && !messages_object.empty?
+          messages_object.each { |m| locator.update!(m) }
+          info("Messages for #{tool_name} positioned into the diff for annotation purposes")
+        end
+        messages_object
       end
     end
   end
