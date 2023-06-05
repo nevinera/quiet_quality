@@ -204,4 +204,5 @@ Usage: qq [TOOLS] [GLOBAL_OPTIONS] [TOOL_OPTIONS]
     -l, --light                      Print aggregated results only
     -q, --quiet                      Don't print results, only return a status code
     -L, --logging LEVEL              Specify logging mode (from light/quiet/normal)
+    -v, --verbose                    Log more verbosely - multiple times is more verbose
 ```

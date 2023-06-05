@@ -67,6 +67,7 @@ module QuietQuality
           setup_filter_messages_options(parser)
           setup_colorization_options(parser)
           setup_logging_options(parser)
+          setup_verbosity_options(parser)
         end
       end
 
@@ -159,6 +160,12 @@ module QuietQuality
         parser.on("-L", "--logging LEVEL", "Specify logging mode (from normal/light/quiet)") do |level|
           validate_value_from("logging level", level.to_sym, Config::Options::LOGGING_LEVELS)
           set_global_option(:logging, level.to_sym)
+        end
+      end
+
+      def setup_verbosity_options(parser)
+        parser.on("-v", "--verbose", "Log more verbosely - multiple times is more verbose") do
+          QuietQuality.logger.increase_level!
         end
       end
     end
