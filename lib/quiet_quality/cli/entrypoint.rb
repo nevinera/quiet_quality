@@ -1,6 +1,8 @@
 module QuietQuality
   module Cli
     class Entrypoint
+      include Logging
+
       def initialize(argv:, output_stream: $stdout, error_stream: $stderr)
         @argv = argv
         @output_stream = output_stream
@@ -15,6 +17,7 @@ module QuietQuality
         elsif no_tools?
           log_no_tools_text
         else
+          log_options
           executed
           log_results
           annotate_messages
@@ -40,6 +43,10 @@ module QuietQuality
           outcomes: executor.outcomes,
           messages: executor.messages
         )
+      end
+
+      def log_options
+        debug("Complete Options object:", data: options.to_h)
       end
 
       def log_results
@@ -109,6 +116,7 @@ module QuietQuality
 
       def annotate_messages
         return unless options.annotator
+        info("Annotating with #{options.annotator}")
         annotator = options.annotator.new(output_stream: output_stream)
         annotator.annotate!(executed.messages)
       end
