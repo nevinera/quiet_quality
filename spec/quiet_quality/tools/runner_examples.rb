@@ -26,6 +26,12 @@ shared_examples "a functional BaseRunner subclass" do |tool_name, options|
       context "with a (successful) exit status of #{success_status}" do
         let(:stat) { mock_status(success_status) }
         it { is_expected.to eq(build_outcome(tool: runner.tool_name, output: out, logging: err, failure: false)) }
+
+        it "logs the performance" do
+          invoke!
+          expect_info("Runner #{runner.tool_name} exited with #{success_status}")
+          expect_debug("Runner logs from #{runner.tool_name}:", data: ["fake stderr"])
+        end
       end
     end
 
@@ -33,6 +39,12 @@ shared_examples "a functional BaseRunner subclass" do |tool_name, options|
       context "with a (failing) exit status of #{failure_status}" do
         let(:stat) { mock_status(failure_status) }
         it { is_expected.to eq(build_outcome(tool: runner.tool_name, output: out, logging: err, failure: true)) }
+
+        it "logs the performance" do
+          invoke!
+          expect_info("Runner #{runner.tool_name} exited with #{failure_status}")
+          expect_debug("Runner logs from #{runner.tool_name}:", data: ["fake stderr"])
+        end
       end
     end
 
@@ -45,6 +57,12 @@ shared_examples "a functional BaseRunner subclass" do |tool_name, options|
             QuietQuality::Tools::ExecutionError,
             /Execution of #{runner.tool_name} failed with #{error_status}/
           )
+        end
+
+        it "logs the performance" do
+          expect { invoke! }.to raise_error(QuietQuality::Error)
+          expect_info("Runner #{runner.tool_name} exited with #{error_status}")
+          expect_debug("Runner logs from #{runner.tool_name}:", data: ["fake stderr"])
         end
       end
     end
@@ -156,6 +174,11 @@ shared_examples "a functional RelevantRunner subclass" do |tool_name, options|
         invoke!
         expect(Open3).not_to have_received(:capture3)
       end
+
+      it "logs the skip" do
+        invoke!
+        expect_info("Runner #{runner.tool_name} was skipped")
+      end
     end
 
     context "when there are no changes to consider" do
@@ -193,6 +216,12 @@ shared_examples "a functional RelevantRunner subclass" do |tool_name, options|
       context "with a (successful) exit status of #{success_status}" do
         let(:stat) { mock_status(success_status) }
         it { is_expected.to eq(build_outcome(tool: runner.tool_name, output: out, logging: err, failure: false)) }
+
+        it "logs the performance" do
+          invoke!
+          expect_info("Runner #{runner.tool_name} exited with #{success_status}")
+          expect_debug("Runner logs from #{runner.tool_name}:", data: ["fake stderr"])
+        end
       end
     end
 
@@ -200,6 +229,12 @@ shared_examples "a functional RelevantRunner subclass" do |tool_name, options|
       context "with a (failing) exit status of #{failure_status}" do
         let(:stat) { mock_status(failure_status) }
         it { is_expected.to eq(build_outcome(tool: runner.tool_name, output: out, logging: err, failure: true)) }
+
+        it "logs the performance" do
+          invoke!
+          expect_info("Runner #{runner.tool_name} exited with #{failure_status}")
+          expect_debug("Runner logs from #{runner.tool_name}:", data: ["fake stderr"])
+        end
       end
     end
 
@@ -212,6 +247,12 @@ shared_examples "a functional RelevantRunner subclass" do |tool_name, options|
             QuietQuality::Tools::ExecutionError,
             /Execution of #{runner.tool_name} failed with #{error_status}/
           )
+        end
+
+        it "logs the performance" do
+          expect { invoke! }.to raise_error(QuietQuality::Error)
+          expect_info("Runner #{runner.tool_name} exited with #{error_status}")
+          expect_debug("Runner logs from #{runner.tool_name}:", data: ["fake stderr"])
         end
       end
     end

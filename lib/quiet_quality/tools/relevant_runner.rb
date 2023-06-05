@@ -48,6 +48,7 @@ module QuietQuality
       end
 
       def skipped_outcome
+        info("Runner #{tool_name} was skipped")
         Outcome.new(tool: tool_name, output: no_files_output)
       end
     end
