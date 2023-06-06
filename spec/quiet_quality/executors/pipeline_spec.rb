@@ -11,7 +11,7 @@ RSpec.describe QuietQuality::Executors::Pipeline do
 
   let(:runner_outcome) { build_failure(tool_name, "fake output", "fake logging") }
   let(:runner_class) { QuietQuality::Tools::Rspec::Runner }
-  let(:runner) { instance_double(runner_class, invoke!: runner_outcome) }
+  let(:runner) { instance_double(runner_class, invoke!: runner_outcome, tool_name: :rspec, command: ["foo", "bar"]) }
   before { allow(runner_class).to receive(:new).and_return(runner) }
 
   let(:other_messages) { generate_messages(4, path: "path/other.rb") }
@@ -30,6 +30,12 @@ RSpec.describe QuietQuality::Executors::Pipeline do
 
   describe "#outcome" do
     subject(:outcome) { pipeline.outcome }
+
+    it "logs the runner command" do
+      outcome
+      expect_info("Runner rspec command: `foo bar`")
+      expect_debug("Full command for rspec", data: ["foo", "bar"])
+    end
 
     context "when targets are to be limited" do
       let(:limit_targets?) { true }

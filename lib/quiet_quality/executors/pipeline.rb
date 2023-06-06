@@ -1,6 +1,8 @@
 module QuietQuality
   module Executors
     class Pipeline
+      include Logging
+
       def initialize(tool_options:, changed_files: nil)
         @tool_options = tool_options
         @changed_files = changed_files
@@ -51,7 +53,12 @@ module QuietQuality
         @_runner ||= tool_options.runner_class.new(
           changed_files: limit_targets? ? changed_files : nil,
           file_filter: tool_options.file_filter
-        )
+        ).tap { |r| log_runner(r) }
+      end
+
+      def log_runner(r)
+        info("Runner #{r.tool_name} command: `#{r.command.join(" ")}`")
+        debug("Full command for #{r.tool_name}", data: r.command)
       end
 
       def parser

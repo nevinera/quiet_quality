@@ -57,6 +57,7 @@ RSpec.describe QuietQuality::Cli::ArgParser do
             -l, --light                      Print aggregated results only
             -q, --quiet                      Don't print results, only return a status code
             -L, --logging LEVEL              Specify logging mode (from normal/light/quiet)
+            -v, --verbose                    Log more verbosely - multiple times is more verbose
       HELP_OUTPUT
     end
   end
@@ -214,6 +215,46 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       expect_usage_error("-ffooba", ["-ffooba"], /Unrecognized tool/)
       expect_usage_error("--unfiltered fooba", ["--unfiltered", "fooba"], /Unrecognized tool/)
       expect_usage_error("-ufooba", ["-ufooba"], /Unrecognized tool/)
+    end
+  end
+
+  describe "verbosity options" do
+    let(:logger) { QuietQuality.logger }
+
+    context "with no arguments" do
+      let(:args) { [] }
+
+      it "does not increase the verbosity level" do
+        parsed
+        expect(logger).not_to have_received(:increase_level!)
+      end
+    end
+
+    context "with -v passed" do
+      let(:args) { ["-v"] }
+
+      it "increases verbosity once" do
+        parsed
+        expect(logger).to have_received(:increase_level!).once
+      end
+    end
+
+    context "with -v passed twice" do
+      let(:args) { ["-vv"] }
+
+      it "increases verbosity twice" do
+        parsed
+        expect(logger).to have_received(:increase_level!).twice
+      end
+    end
+
+    context "with -v passed alongside --verbose" do
+      let(:args) { ["-v", "--verbose"] }
+
+      it "increases verbosity twice" do
+        parsed
+        expect(logger).to have_received(:increase_level!).twice
+      end
     end
   end
 end

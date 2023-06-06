@@ -35,6 +35,11 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
   describe "#execute" do
     subject(:execute) { entrypoint.execute }
 
+    it "logs the options (at debug level)" do
+      execute
+      expect_debug("Complete Options object:", data: options.to_h)
+    end
+
     context "when the tools all pass" do
       let(:messages) { empty_messages }
       let(:outcomes) { [build_success(:rspec), build_success(:rubocop)] }

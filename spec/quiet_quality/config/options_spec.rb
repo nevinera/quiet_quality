@@ -75,4 +75,33 @@ RSpec.describe QuietQuality::Config::Options do
       it { is_expected.to be_falsey }
     end
   end
+
+  describe "#to_h" do
+    let(:options) { build_options(colorize: true, rspec: {limit_targets: true}, standardrb: {filter_messages: false}) }
+    subject(:to_h) { options.to_h }
+
+    it "produces the expected data" do
+      expect(to_h).to eq({
+        annotator: nil,
+        colorize: true,
+        comparison_branch: nil,
+        executor: "QuietQuality::Executors::ConcurrentExecutor",
+        logging: :normal,
+        tools: {
+          rspec: {
+            tool_name: :rspec,
+            file_filter: nil,
+            filter_messages: true,
+            limit_targets: true
+          },
+          standardrb: {
+            tool_name: :standardrb,
+            file_filter: nil,
+            filter_messages: false,
+            limit_targets: true
+          }
+        }
+      })
+    end
+  end
 end
