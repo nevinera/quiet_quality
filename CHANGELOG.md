@@ -1,5 +1,14 @@
 # Changelog
 
+## Release 1.3.0
+
+* Support (and enable by default) colorizing the console stderr output from
+  `bin/qq` - disable with the `--no-colorize` flag or the `colorize: false`
+  configuration entry. (#94, resolved #36)
+* Introduce a Logging facility, and add the `--verbose/-v` flag - supply it
+  either once or twice to enable (colorized) logging in either `info` or `debug`
+  level, providing much more detail about what's going on during execution.
+
 ## Release 1.2.2
 
 * Add some code to the Rspec::Parser that _cleans_ the json of certain text that
