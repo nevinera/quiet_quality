@@ -1,6 +1,8 @@
 module QuietQuality
   module Tools
     class BaseRunner
+      include Logging
+
       # In general, we don't want to supply a huge number of arguments to a command-line tool.
       MAX_FILES = 100
 
@@ -36,6 +38,8 @@ module QuietQuality
 
       def performed_outcome
         out, err, stat = Open3.capture3(*command)
+        log_performance(err, stat)
+
         if success_status?(stat)
           Outcome.new(tool: tool_name, output: out, logging: err)
         elsif failure_status?(stat)
@@ -43,6 +47,11 @@ module QuietQuality
         else
           fail(ExecutionError, "Execution of #{tool_name} failed with #{stat.exitstatus}")
         end
+      end
+
+      def log_performance(err, stat)
+        info("Runner #{tool_name} exited with #{stat.exitstatus}")
+        debug("Runner logs from #{tool_name}:", data: err&.split("\n"))
       end
     end
   end

@@ -115,6 +115,12 @@ RSpec.describe QuietQuality::Executors::Pipeline do
       let(:changed_files) { nil }
       it { is_expected.to be_a(QuietQuality::Messages) }
       it { is_expected.to eq(parsed_messages) }
+
+      it "doesn't log the filtering" do
+        messages
+        expect_not_logged(:info, /filtered from/)
+        expect_not_logged(:info, /positioned/)
+      end
     end
 
     context "with filter_messages disabled" do
@@ -131,6 +137,12 @@ RSpec.describe QuietQuality::Executors::Pipeline do
           end
         end
       end
+
+      it "doesn't log the filtering, but does log repositioning" do
+        messages
+        expect_not_logged(:info, /filtered from/)
+        expect_info("Messages for rspec positioned into the diff for annotation purposes")
+      end
     end
 
     context "with filter_messages enabled" do
@@ -144,6 +156,12 @@ RSpec.describe QuietQuality::Executors::Pipeline do
 
       it "locates those messages properly" do
         expect(messages.first.annotated_line).to eq(5)
+      end
+
+      it "logs the filtering properly" do
+        messages
+        expect_info("Messages for rspec filtered from 6 to 1")
+        expect_info("Messages for rspec positioned into the diff for annotation purposes")
       end
     end
   end
