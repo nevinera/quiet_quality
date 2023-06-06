@@ -71,12 +71,12 @@ module QuietQuality
       end
 
       def filtered(messages_object)
-        if filter_messages? && changed_files
-          original_count = messages_object.count
-          messages_object = relevance_filter.filter(messages_object)
-          info("Messages for #{tool_name} filtered from #{original_count} to #{messages_object.count}")
+        return messages_object unless filter_messages? && changed_files
+
+        original_count = messages_object.count
+        relevance_filter.filter(messages_object).tap do |filtered|
+          info("Messages for #{tool_name} filtered from #{original_count} to #{filtered.count}")
         end
-        messages_object
       end
 
       def relocated(messages_object)
