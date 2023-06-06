@@ -145,19 +145,19 @@ module QuietQuality
 
       def setup_logging_options(parser)
         parser.on("-n", "--normal", "Print outcomes and messages") do
-          set_global_option(:logging, Config::Logging::NORMAL)
+          set_global_option(:logging, :normal)
         end
 
         parser.on("-l", "--light", "Print aggregated results only") do
-          set_global_option(:logging, Config::Logging::LIGHT)
+          set_global_option(:logging, :light)
         end
 
         parser.on("-q", "--quiet", "Don't print results, only return a status code") do
-          set_global_option(:logging, Config::Logging::QUIET)
+          set_global_option(:logging, :quiet)
         end
 
         parser.on("-L", "--logging LEVEL", "Specify logging mode (from normal/light/quiet)") do |level|
-          validate_value_from("logging level", level, Config::Logging::LEVELS)
+          validate_value_from("logging level", level.to_sym, Config::Options::LOGGING_LEVELS)
           set_global_option(:logging, level.to_sym)
         end
       end

@@ -46,8 +46,8 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
       it "presents the outcomes properly" do
         execute
         expect(presenter_class).to have_received(:new).with(
-          logger: an_instance_of(QuietQuality::Logger),
-          logging: options.logging,
+          stream: error_stream,
+          options: options,
           outcomes: outcomes,
           messages: messages
         )
@@ -87,8 +87,8 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
       it "presents the outcomes properly" do
         execute
         expect(presenter_class).to have_received(:new).with(
-          logger: an_instance_of(QuietQuality::Logger),
-          logging: options.logging,
+          stream: error_stream,
+          options: options,
           outcomes: outcomes,
           messages: messages
         )

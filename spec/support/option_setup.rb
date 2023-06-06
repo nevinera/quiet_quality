@@ -17,6 +17,7 @@ module OptionSetup
     opts = QuietQuality::Config::Options.new
     maybe_set_option(opts, attrs, :comparison_branch)
     maybe_set_option(opts, attrs, :logging)
+    maybe_set_option(opts, attrs, :colorize)
     maybe_set_option(opts, attrs, :annotator, :annotator_from)
     maybe_set_option(opts, attrs, :executor, :executor_from)
     opts.tools = tool_options_from(attrs)
@@ -27,7 +28,7 @@ module OptionSetup
 
   def maybe_set_option(opts, attrs, key, transform = nil)
     value = attrs[key]
-    return unless value
+    return if value.nil?
 
     value = send(transform, value) if transform
     opts.send("#{key}=", value)

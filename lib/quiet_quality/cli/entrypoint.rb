@@ -33,14 +33,10 @@ module QuietQuality
 
       attr_reader :argv, :output_stream, :error_stream
 
-      def logger
-        @_logger ||= QuietQuality::Logger.new(stream: error_stream, logging: options.logging)
-      end
-
       def presenter
         @_presenter ||= Presenter.new(
-          logger: logger,
-          logging: options.logging,
+          stream: error_stream,
+          options: options,
           outcomes: executor.outcomes,
           messages: executor.messages
         )
@@ -71,15 +67,15 @@ module QuietQuality
       end
 
       def log_help_text
-        logger.puts(arg_parser.help_text)
+        error_stream.puts(arg_parser.help_text)
       end
 
       def log_version_text
-        logger.puts(QuietQuality::VERSION)
+        error_stream.puts(QuietQuality::VERSION)
       end
 
       def log_no_tools_text
-        logger.puts(<<~TEXT)
+        error_stream.puts(<<~TEXT)
           You must specify one or more tools to run, either on the command-line or in the
           default_tools key in a configuration file.
         TEXT

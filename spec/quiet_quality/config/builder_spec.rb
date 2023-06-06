@@ -115,71 +115,67 @@ RSpec.describe QuietQuality::Config::Builder do
     describe "#logging" do
       subject(:logging) { options.logging }
 
-      describe "#level" do
-        subject(:level) { logging.level }
+      context "when global_options[:logging] is unset" do
+        let(:global_options) { {} }
+        it { is_expected.to eq(:normal) }
+      end
 
-        context "when global_options[:logging] is unset" do
-          let(:global_options) { {} }
-          it { is_expected.to eq(:normal) }
-        end
+      context "when global_options[:logging] is specified" do
+        let(:global_options) { {logging: :quiet} }
+        it { is_expected.to eq(:quiet) }
+      end
 
-        context "when global_options[:logging] is specified" do
-          let(:global_options) { {logging: :quiet} }
-          it { is_expected.to eq(:quiet) }
-        end
+      context "when a config file is passed" do
+        let(:global_options) { {config_path: "/fake.yml", logging: cli_logging} }
 
-        context "when a config file is passed" do
-          let(:global_options) { {config_path: "/fake.yml", logging: cli_logging} }
+        context "when the config file sets the logging" do
+          let(:cfg_global_options) { {logging: :light} }
 
-          context "when the config file sets the logging" do
-            let(:cfg_global_options) { {logging: :light} }
+          context "and the cli does not" do
+            let(:cli_logging) { nil }
+            it { is_expected.to eq(:light) }
+          end
 
-            context "and the cli does not" do
-              let(:cli_logging) { nil }
-              it { is_expected.to eq(:light) }
-            end
-
-            context "and the cli sets a different one" do
-              let(:cli_logging) { :quiet }
-              it { is_expected.to eq(:quiet) }
-            end
+          context "and the cli sets a different one" do
+            let(:cli_logging) { :quiet }
+            it { is_expected.to eq(:quiet) }
           end
         end
       end
+    end
 
-      describe "#colorize" do
-        subject(:colorize?) { logging.colorize? }
+    describe "#colorize" do
+      subject(:colorize?) { options.colorize? }
 
-        context "when global_options[:colorize] is unset" do
-          let(:global_options) { {} }
-          it { is_expected.to be_truthy }
-        end
+      context "when global_options[:colorize] is unset" do
+        let(:global_options) { {} }
+        it { is_expected.to be_truthy }
+      end
 
-        context "when global_options[:colorize] is specified as true" do
-          let(:global_options) { {colorize: true} }
-          it { is_expected.to be_truthy }
-        end
+      context "when global_options[:colorize] is specified as true" do
+        let(:global_options) { {colorize: true} }
+        it { is_expected.to be_truthy }
+      end
 
-        context "when global_options[:colorize] is specified as false" do
-          let(:global_options) { {colorize: false} }
-          it { is_expected.to be_falsey }
-        end
+      context "when global_options[:colorize] is specified as false" do
+        let(:global_options) { {colorize: false} }
+        it { is_expected.to be_falsey }
+      end
 
-        context "when a config file is passed" do
-          let(:global_options) { {config_path: "/fake.yml", colorize: cli_colorize}.compact }
+      context "when a config file is passed" do
+        let(:global_options) { {config_path: "/fake.yml", colorize: cli_colorize}.compact }
 
-          context "when the config file sets colorize" do
-            let(:cfg_global_options) { {colorize: false} }
+        context "when the config file sets colorize" do
+          let(:cfg_global_options) { {colorize: false} }
 
-            context "and the cli does not" do
-              let(:cli_colorize) { nil }
-              it { is_expected.to be_falsey }
-            end
+          context "and the cli does not" do
+            let(:cli_colorize) { nil }
+            it { is_expected.to be_falsey }
+          end
 
-            context "and the cli sets it differently" do
-              let(:cli_colorize) { true }
-              it { is_expected.to be_truthy }
-            end
+          context "and the cli sets it differently" do
+            let(:cli_colorize) { true }
+            it { is_expected.to be_truthy }
           end
         end
       end
