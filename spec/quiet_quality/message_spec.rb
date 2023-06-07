@@ -1,4 +1,4 @@
-RSpec.describe QuietQuality::Message do
+RSpec.describe QuietQuality::Message, cover_it: true do
   subject(:message) { described_class.new(**attributes) }
 
   let(:attributes) do
