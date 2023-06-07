@@ -37,7 +37,7 @@ gem_root = File.expand_path("../..", __FILE__)
 FIXTURES_DIRECTORY = File.join(gem_root, "spec", "fixtures")
 TEMP_DIRECTORY = File.join(gem_root, "tmp")
 
-RSpec::CoverIt.setup(filter: gem_root)
+RSpec::CoverIt.setup(filter: gem_root, autoenforce: true)
 
 require File.expand_path("../../lib/quiet_quality", __FILE__)
 
