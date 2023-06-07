@@ -1,4 +1,4 @@
-RSpec.describe QuietQuality do
+RSpec.describe QuietQuality, covers_path: "../lib/quiet_quality.rb" do
   describe ".logger" do
     subject(:logger) { described_class.logger }
     it { is_expected.to be_a(QuietQuality::Logger) }
