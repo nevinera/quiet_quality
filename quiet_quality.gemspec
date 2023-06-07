@@ -42,4 +42,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop", "~> 1.50"
   spec.add_development_dependency "debug", "~> 1.7"
   spec.add_development_dependency "mdl", "~> 0.12"
+  spec.add_development_dependency "rspec-cover_it", "~> 0.0.1"
 end
