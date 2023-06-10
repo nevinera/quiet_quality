@@ -1,10 +1,14 @@
+module QuietQuality
+  module Annotators
+    Unrecognized = Class.new(Error)
+  end
+end
+
 glob = File.expand_path("../annotators/*.rb", __FILE__)
 Dir.glob(glob).sort.each { |f| require(f) }
 
 module QuietQuality
   module Annotators
-    Unrecognized = Class.new(Error)
-
     ANNOTATOR_TYPES = {
       github_stdout: Annotators::GithubStdout
     }.freeze
