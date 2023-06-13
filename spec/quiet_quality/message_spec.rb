@@ -1,4 +1,19 @@
 RSpec.describe QuietQuality::Message do
+  describe ".load" do
+    let(:data) { {path: "foo.rb", body: "some text", tool_name: :rspec, start_line: 52, level: "high"} }
+    subject(:loaded) { described_class.load(data) }
+    it { is_expected.to be_a(described_class) }
+
+    it "has the supplied attributes" do
+      expect(loaded.path).to eq("foo.rb")
+      expect(loaded.body).to eq("some text")
+      expect(loaded.tool_name).to eq(:rspec)
+      expect(loaded.start_line).to eq(52)
+      expect(loaded.level).to eq("high")
+      expect(loaded.rule).to be_nil
+    end
+  end
+
   subject(:message) { described_class.new(**attributes) }
 
   let(:attributes) do

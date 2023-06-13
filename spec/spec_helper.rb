@@ -1,5 +1,6 @@
 require "rspec"
 require "rspec/its"
+require "rspec/cover_it"
 require "pry"
 
 if ENV["SIMPLECOV"]
@@ -32,11 +33,13 @@ if ENV["SIMPLECOV"]
   end
 end
 
-require File.expand_path("../../lib/quiet_quality", __FILE__)
-
 gem_root = File.expand_path("../..", __FILE__)
 FIXTURES_DIRECTORY = File.join(gem_root, "spec", "fixtures")
 TEMP_DIRECTORY = File.join(gem_root, "tmp")
+
+RSpec::CoverIt.setup(filter: gem_root, autoenforce: true)
+
+require File.expand_path("../../lib/quiet_quality", __FILE__)
 
 support_glob = File.join(gem_root, "spec", "support", "**", "*.rb")
 Dir[support_glob].sort.each { |f| require f }
