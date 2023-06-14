@@ -61,6 +61,16 @@ RSpec.describe QuietQuality::Executors::Pipeline do
       end
     end
 
+    context "when the runner is skipping" do
+      before { allow(runner).to receive(:command).and_return(nil) }
+
+      it "logs the empty command" do
+        outcome
+        expect_info("Runner rspec command: (skipped)")
+        expect_debug("Full command for rspec", data: nil)
+      end
+    end
+
     shared_examples "it matches the runner outcome, failure status aside" do
       it "matches the runner outcome, aside from the failure status" do
         expect(outcome.output).to eq(runner_outcome.output)
