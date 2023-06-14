@@ -1,5 +1,10 @@
 # Changelog
 
+## Release 1.3.1
+
+* Fix a bug around the logging of nil commands when runners are skipped (#104
+  resolves #103)
+
 ## Release 1.3.0
 
 * Support (and enable by default) colorizing the console stderr output from

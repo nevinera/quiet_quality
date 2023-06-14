@@ -54,7 +54,8 @@ module QuietQuality
       end
 
       def log_runner(r)
-        info("Runner #{r.tool_name} command: `#{r.command.join(" ")}`")
+        command_string = r.command ? "`#{r.command.join(" ")}`" : "(skipped)"
+        info("Runner #{r.tool_name} command: #{command_string}")
         debug("Full command for #{r.tool_name}", data: r.command)
       end
 
