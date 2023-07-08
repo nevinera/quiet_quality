@@ -19,6 +19,15 @@ module QuietQuality
           end
         end
 
+        def exec_command
+          return nil if skip_execution?
+          if target_files.any?
+            ["mdl"] + target_files.sort
+          else
+            ["mdl", "."]
+          end
+        end
+
         def relevant_path?(path)
           path.end_with?(".md")
         end

@@ -14,6 +14,10 @@ module QuietQuality
           ["rubocop", "-f", "json"]
         end
 
+        def base_exec_command
+          ["rubocop"]
+        end
+
         def relevant_path?(path)
           path.end_with?(".rb")
         end

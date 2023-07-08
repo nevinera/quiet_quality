@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+require_relative "../lib/quiet_quality"
+command, message = QuietQuality::Cli::ToolExecutor.new(argv: ARGV).executable_command
+if command
+  exec(*command)
+else
+  warn(message)
+end

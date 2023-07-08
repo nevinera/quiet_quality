@@ -16,12 +16,21 @@ module QuietQuality
         base_command + target_files.sort
       end
 
+      def exec_command
+        return nil if skip_execution?
+        base_exec_command + target_files.sort
+      end
+
       def relevant_path?(path)
         fail(NoMethodError, "RelevantRunner subclass must implement `relevant_path?`")
       end
 
       def base_command
         fail(NoMethodError, "RelevantRunner subclass must implement either `command` or `base_command`")
+      end
+
+      def base_exec_command
+        fail(NoMethodError, "RelevantRunner subclass must implement either `exec_command` or `base_exec_command`")
       end
 
       def no_files_output

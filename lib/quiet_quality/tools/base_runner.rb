@@ -23,6 +23,10 @@ module QuietQuality
         fail(NoMethodError, "BaseRunner subclass must implement `command`")
       end
 
+      def exec_command
+        fail(NoMethodError, "BaseRunner subclass must implement `exec_command`")
+      end
+
       def success_status?(stat)
         stat.success?
       end

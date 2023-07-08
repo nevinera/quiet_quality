@@ -14,6 +14,10 @@ module QuietQuality
           ["standardrb", "-f", "json"]
         end
 
+        def base_exec_command
+          ["standardrb"]
+        end
+
         def relevant_path?(path)
           path.end_with?(".rb")
         end
