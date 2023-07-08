@@ -8,8 +8,9 @@ module QuietQuality
         @file_filter = file_filter
       end
 
+      attr_accessor :file_filter
       attr_reader :tool_name
-      attr_writer :limit_targets, :filter_messages, :file_filter
+      attr_writer :limit_targets, :filter_messages
 
       def limit_targets?
         @limit_targets
@@ -31,17 +32,13 @@ module QuietQuality
         tool_namespace::Parser
       end
 
-      def file_filter
-        return nil if @file_filter.nil?
-        Regexp.new(@file_filter)
-      end
-
       def to_h
         {
           tool_name: tool_name,
           limit_targets: limit_targets?,
           filter_messages: filter_messages?,
-          file_filter: file_filter&.to_s
+          file_filter: file_filter&.regex&.to_s,
+          excludes: file_filter&.excludes&.map(&:to_s)
         }
       end
     end

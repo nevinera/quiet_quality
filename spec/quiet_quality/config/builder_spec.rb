@@ -334,10 +334,11 @@ RSpec.describe QuietQuality::Config::Builder do
 
         context "with a config file supplied" do
           let(:global_options) { {config_path: "fake.yml"} }
+          let(:file_filter) { QuietQuality::Config::FileFilter.new(regex: ".*", excludes: ["foo", "bar"]) }
 
           context "when the config file sets it" do
-            let(:cfg_tool_options) { {rspec: {file_filter: ".*"}} }
-            it { is_expected.to eq(/.*/) }
+            let(:cfg_tool_options) { {rspec: {file_filter: file_filter}} }
+            it { is_expected.to eq(file_filter) }
           end
 
           context "when the config file does not set it" do

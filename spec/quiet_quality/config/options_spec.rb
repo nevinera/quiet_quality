@@ -91,12 +91,14 @@ RSpec.describe QuietQuality::Config::Options do
           rspec: {
             tool_name: :rspec,
             file_filter: nil,
+            excludes: nil,
             filter_messages: true,
             limit_targets: true
           },
           standardrb: {
             tool_name: :standardrb,
             file_filter: nil,
+            excludes: nil,
             filter_messages: false,
             limit_targets: true
           }
