@@ -38,6 +38,7 @@ module QuietQuality
       end
 
       def validated_tool_name(remaining_serial_args)
+        return if helping? || printing_version?
         fail(UsageError, "A tool name must be supplied") if remaining_serial_args.length < 1
         fail(UsageError, "Only one tool name may be supplied") if remaining_serial_args.length > 1
         remaining_serial_args.first.tap do |name|
