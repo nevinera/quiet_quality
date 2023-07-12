@@ -1,5 +1,10 @@
 # Changelog
 
+## Release 1.4.0
+
+* Support specifying `excludes` per-tool, so that certain files won't be passed
+  to those tools on the command-line (#107 resolves #106)
+
 ## Release 1.3.1
 
 * Fix a bug around the logging of nil commands when runners are skipped (#104
