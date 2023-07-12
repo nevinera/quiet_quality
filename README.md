@@ -156,14 +156,14 @@ And then each tool can have an entry, within which `changed_files` and
 `filter_messages` can be specified - the tool-specific settings override the
 global ones.
 
-The tools have one additional setting that is not available at a global level:
-`file_filter`. This is a string that will be turned into a _ruby regex_, and
-used to limit what file paths are passed to the tool. For example, if you are
-working in a rails engine `engines/foo/`, and you touch one of the rspec tests
-there, you would not want `qq` in the root of the repository to run
-`rspec engines/foo/spec/foo/thing_spec.rb` - that probably won't work, as your
-engine will have its own test setup code and Gemfile. This setting is mostly
-intended to be used like this:
+The tools have two additional settings that are not available at a global level:
+`file_filter` and `excludes`. `file_filter` is a string that will be turned into
+a _ruby regex_, and used to limit what file paths are passed to the tool. For
+example, if you are working in a rails engine `engines/foo/`, and you touch one
+of the rspec tests there, you would not want `qq` in the root of the repository
+to run `rspec engines/foo/spec/foo/thing_spec.rb` - that probably won't work, as
+your engine will have its own test setup code and Gemfile. This setting is
+mostly intended to be used like this:
 
 ```yaml
 rspec:
@@ -171,6 +171,15 @@ rspec:
   filter_messages: false
   file_filter: "^spec/"
 ```
+
+`excludes` are more specific in meaning - this is an _array_ of regexes, and any
+file that matches any of these regexes will _not_ be passed to the tool as an
+explicit command line argument. This is generally because tools like rubocop
+have internal systems for excluding files, but if you pass a filename on the
+cli, those systems are ignored. That means that if you have changes to a
+generated file like `db/schema.rb`, and that file doesn't meet your rubocop (or
+standardrb) rules, you'll get _told_ unless you exclude it at the quiet-quality
+level as well.
 
 ### CLI Options
 

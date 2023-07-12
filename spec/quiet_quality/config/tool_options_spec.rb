@@ -27,17 +27,6 @@ RSpec.describe QuietQuality::Config::ToolOptions do
     end
   end
 
-  describe "#file_filter" do
-    subject(:file_filter) { tool_options.file_filter }
-    it { is_expected.to be_nil }
-
-    context "when set with a string" do
-      before { tool_options.file_filter = ".*" }
-      it { is_expected.to be_a(Regexp) }
-      it { is_expected.to eq(/.*/) }
-    end
-  end
-
   describe "constants for tools" do
     shared_examples "exposes the expected constants for" do |tool_name, expected_namespace|
       context "for #{tool_name}" do
@@ -60,14 +49,16 @@ RSpec.describe QuietQuality::Config::ToolOptions do
     subject(:to_h) { tool_options.to_h }
 
     context "with all attributes supplied" do
-      let(:tool_options) { described_class.new(:rspec, limit_targets: true, filter_messages: false, file_filter: /^foo.*$/i) }
+      let(:file_filter) { QuietQuality::Config::FileFilter.new(regex: /^foo.*$/i, excludes: [/foo/, /bar/]) }
+      let(:tool_options) { described_class.new(:rspec, limit_targets: true, filter_messages: false, file_filter: file_filter) }
 
       it "produces the expected hash" do
         expect(to_h).to eq({
           tool_name: :rspec,
           limit_targets: true,
           filter_messages: false,
-          file_filter: "(?i-mx:^foo.*$)"
+          file_filter: "(?i-mx:^foo.*$)",
+          excludes: ["(?-mix:foo)", "(?-mix:bar)"]
         })
       end
     end
@@ -80,7 +71,8 @@ RSpec.describe QuietQuality::Config::ToolOptions do
           tool_name: :standardrb,
           limit_targets: true,
           filter_messages: false,
-          file_filter: nil
+          file_filter: nil,
+          excludes: nil
         })
       end
     end

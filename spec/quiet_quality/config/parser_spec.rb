@@ -61,10 +61,16 @@ RSpec.describe QuietQuality::Config::Parser do
         logging: :light
       )
       expect_tool_options(
-        rspec: {filter_messages: false, limit_targets: false, file_filter: "spec/.*_spec.rb"},
+        rspec: {filter_messages: false, limit_targets: false},
         standardrb: {filter_messages: true, limit_targets: nil, file_filter: nil},
         rubocop: {filter_messages: nil, limit_targets: false, file_filter: nil}
       )
+
+      it "parsed the rspec file_filter properly" do
+        filter = parsed_options.tool_option("rspec", "file_filter")
+        expect(filter.regex).to eq(/spec\/.*_spec.rb/)
+        expect(filter.excludes).to contain_exactly(/^db\/schema\.rb/, /^db\/seeds\.rb/)
+      end
     end
 
     context "with a mocked configuration file" do
@@ -145,7 +151,26 @@ RSpec.describe QuietQuality::Config::Parser do
 
       describe "file_filter parsing" do
         expect_config "no settings", %({}), tools: {rspec: {file_filter: nil}, rubocop: {file_filter: nil}}
-        expect_config "an rspec file_filter", %({rspec: {file_filter: "^spec/"}}), tools: {rspec: {file_filter: "^spec/"}, rubocop: {file_filter: nil}}
+
+        context "with a config that has an rspec file_filter" do
+          let(:yaml) { %({rspec: {file_filter: "^spec/"}}) }
+
+          it "has the expected file_filters set" do
+            expect(parsed_options.tool_option("rspec", "file_filter").regex).to eq(/^spec\//)
+            expect(parsed_options.tool_option("rspec", "file_filter").excludes).to be_nil
+            expect(parsed_options.tool_option("rubocop", "file_filter")).to be_nil
+          end
+        end
+
+        context "with a config that has rubocop excludes set" do
+          let(:yaml) { %({rubocop: {excludes: ["foo", "bar"]}}) }
+
+          it "has the expected file_filters set" do
+            expect(parsed_options.tool_option("rubocop", "file_filter").excludes).to contain_exactly(/foo/, /bar/)
+            expect(parsed_options.tool_option("rubocop", "file_filter").regex).to be_nil
+            expect(parsed_options.tool_option("rspec", "file_filter")).to be_nil
+          end
+        end
       end
     end
   end

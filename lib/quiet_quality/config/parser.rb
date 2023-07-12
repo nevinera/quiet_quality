@@ -64,7 +64,7 @@ module QuietQuality
         read_tool_option(opts, tool_name, :unfiltered, :filter_messages, as: :reversed_boolean)
         read_tool_option(opts, tool_name, :changed_files, :limit_targets, as: :boolean)
         read_tool_option(opts, tool_name, :all_files, :limit_targets, as: :reversed_boolean)
-        read_tool_option(opts, tool_name, :file_filter, :file_filter, as: :string)
+        read_file_filter(opts, tool_name)
       end
 
       def invalid!(message)
@@ -95,6 +95,15 @@ module QuietQuality
         validate_value("#{tool}.#{name}", parsed_value, as: as)
         coerced_value = coerce_value(parsed_value, as: as)
         opts.set_tool_option(tool, into, coerced_value)
+      end
+
+      def read_file_filter(opts, tool)
+        parsed_regex = data.dig(tool.to_sym, :file_filter)
+        parsed_excludes = data.dig(tool.to_sym, :excludes)
+        if parsed_regex || parsed_excludes
+          filter = Config::FileFilter.new(regex: parsed_regex, excludes: parsed_excludes)
+          opts.set_tool_option(tool, :file_filter, filter)
+        end
       end
 
       def validate_value(name, value, as:, from: nil)
