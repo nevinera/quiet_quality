@@ -14,6 +14,10 @@ module QuietQuality
           ["rspec", "-f", "json"]
         end
 
+        def base_exec_command
+          ["rspec"]
+        end
+
         def relevant_path?(path)
           path.end_with?("_spec.rb")
         end

@@ -9,7 +9,8 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
     relevant: "foo.rb",
     irrelevant: "foo.ts",
     filter: /foo/,
-    base_command: ["standardrb", "-f", "json"]
+    base_command: ["standardrb", "-f", "json"],
+    base_exec_command: ["standardrb"]
   }
 
   describe "#tool_name" do
@@ -30,6 +31,11 @@ RSpec.describe QuietQuality::Tools::Standardrb::Runner do
   describe "#base_command" do
     subject(:base_command) { runner.base_command }
     it { is_expected.to eq(["standardrb", "-f", "json"]) }
+  end
+
+  describe "#base_exec_command" do
+    subject(:base_exec_command) { runner.base_exec_command }
+    it { is_expected.to eq(["standardrb"]) }
   end
 
   describe "#relevant_path?" do

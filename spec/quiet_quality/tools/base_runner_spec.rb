@@ -31,6 +31,14 @@ RSpec.describe QuietQuality::Tools::BaseRunner do
         expect { command }.to raise_error(NoMethodError, /must implement.*command/i)
       end
     end
+
+    describe "#exec_command" do
+      subject(:exec_command) { runner.exec_command }
+
+      it "raises a NoMethodError" do
+        expect { exec_command }.to raise_error(NoMethodError, /must implement.*exec_command/i)
+      end
+    end
   end
 
   context "with a properly implemented subclass" do

@@ -10,6 +10,7 @@ RSpec.describe QuietQuality::Tools::HamlLint::Runner do
     irrelevant: "foo.html.erb",
     filter: /foo/,
     base_command: ["haml-lint", "--reporter", "json"],
+    base_exec_command: ["haml-lint"],
     failure: [65],
     error: [1, 2, 3, 99]
   }
@@ -31,6 +32,11 @@ RSpec.describe QuietQuality::Tools::HamlLint::Runner do
   describe "#base_command" do
     subject(:base_command) { runner.base_command }
     it { is_expected.to eq(["haml-lint", "--reporter", "json"]) }
+  end
+
+  describe "#base_exec_command" do
+    subject(:base_exec_command) { runner.base_exec_command }
+    it { is_expected.to eq(["haml-lint"]) }
   end
 
   describe "#relevant_path?" do
