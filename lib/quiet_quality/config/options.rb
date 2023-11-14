@@ -11,9 +11,10 @@ module QuietQuality
         @comparison_branch = nil
         @colorize = true
         @logging = :normal
+        @message_format = nil
       end
 
-      attr_accessor :tools, :comparison_branch, :annotator, :executor, :exec_tool
+      attr_accessor :tools, :comparison_branch, :annotator, :executor, :exec_tool, :message_format
       attr_reader :logging
       attr_writer :colorize
 
@@ -42,6 +43,7 @@ module QuietQuality
           comparison_branch: comparison_branch,
           colorize: colorize?,
           logging: logging,
+          message_format: message_format,
           tools: tool_hashes_by_name
         }
       end
