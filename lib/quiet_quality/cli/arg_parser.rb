@@ -103,7 +103,7 @@ module QuietQuality
 
         parser.on("-X", "--exec TOOL", "Exec one tool instead of managing several") do |tool_name|
           validate_value_from("tool", tool_name, Tools::AVAILABLE)
-          set_global_option(:exec, tool_name.to_sym)
+          set_global_option(:exec_tool, tool_name.to_sym)
         end
       end
 

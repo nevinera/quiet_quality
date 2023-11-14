@@ -126,15 +126,15 @@ RSpec.describe QuietQuality::Cli::ArgParser do
     end
 
     describe "executor options" do
-      expect_options("(none)", [], global: {executor: nil, exec: nil})
+      expect_options("(none)", [], global: {executor: nil, exec_tool: nil})
       expect_options("--executor concurrent", ["--executor", "concurrent"], global: {executor: :concurrent})
       expect_options("--executor serial", ["--executor", "serial"], global: {executor: :serial})
       expect_options("-Econcurrent", ["-Econcurrent"], global: {executor: :concurrent})
       expect_options("-Eserial", ["-Eserial"], global: {executor: :serial})
       expect_usage_error("--executor fooba", ["--executor", "fooba"], /Unrecognized executor/)
       expect_usage_error("-Efooba", ["-Efooba"], /Unrecognized executor/)
-      expect_options("--exec rspec", ["--exec", "rspec"], global: {exec: :rspec})
-      expect_options("-Xrspec", ["-Xrspec"], global: {exec: :rspec})
+      expect_options("--exec rspec", ["--exec", "rspec"], global: {exec_tool: :rspec})
+      expect_options("-Xrspec", ["-Xrspec"], global: {exec_tool: :rspec})
     end
 
     describe "annotation options" do

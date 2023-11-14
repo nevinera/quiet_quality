@@ -8,7 +8,7 @@ module QuietQuality
         :config_path,
         :annotator,
         :executor,
-        :exec,
+        :exec_tool,
         :comparison_branch,
         :colorize,
         :logging,
