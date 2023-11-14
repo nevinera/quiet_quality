@@ -1,4 +1,4 @@
-require_relative "./executor_examples"
+require_relative "executor_examples"
 
 RSpec.describe QuietQuality::Executors::ConcurrentExecutor do
   let(:rspec_options) { tool_options(:rspec, limit_targets: true, filter_messages: false) }

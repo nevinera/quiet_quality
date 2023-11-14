@@ -1,4 +1,4 @@
-require_relative "./base_executor"
+require_relative "base_executor"
 
 module QuietQuality
   module Executors

@@ -1,5 +1,5 @@
-require_relative "./annotators"
-require_relative "./tools"
+require_relative "annotators"
+require_relative "tools"
 
 module QuietQuality
   module Cli
