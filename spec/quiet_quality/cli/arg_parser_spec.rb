@@ -58,6 +58,7 @@ RSpec.describe QuietQuality::Cli::ArgParser do
             -l, --light                      Print aggregated results only
             -q, --quiet                      Don't print results, only return a status code
             -L, --logging LEVEL              Specify logging mode (from normal/light/quiet)
+            -F, --message-format FMT         A format string with which to print messages
             -v, --verbose                    Log more verbosely - multiple times is more verbose
       HELP_OUTPUT
     end
@@ -166,6 +167,10 @@ RSpec.describe QuietQuality::Cli::ArgParser do
       expect_options("--logging normal", ["--logging", "normal"], global: {logging: :normal})
       expect_options("-Lnormal", ["-Lnormal"], global: {logging: :normal})
       expect_usage_error("-Lshenanigans", ["-Lshenanigans"], /Unrecognized logging level/i)
+
+      expect_options("without message-format", [], global: {message_format: nil})
+      expect_options("-F '%lmcyan20rule %lbred40tool'", ["-F", "%lmcyan20rule %lbred40tool"], global: {message_format: "%lmcyan20rule %lbred40tool"})
+      expect_options("--message-format '%lmcyan20rule %lbred40tool'", ["--message-format", "%lmcyan20rule %lbred40tool"], global: {message_format: "%lmcyan20rule %lbred40tool"})
     end
 
     describe "logging color options" do
