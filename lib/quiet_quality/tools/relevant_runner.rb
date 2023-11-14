@@ -1,4 +1,4 @@
-require_relative "./base_runner"
+require_relative "base_runner"
 
 module QuietQuality
   module Tools

@@ -1,4 +1,4 @@
-require_relative "./runner_examples"
+require_relative "runner_examples"
 
 RSpec.describe QuietQuality::Tools::BaseRunner do
   let(:changed_files) { instance_double(QuietQuality::ChangedFiles) }

@@ -1,4 +1,4 @@
-require_relative "./rubocop"
+require_relative "rubocop"
 
 module QuietQuality
   module Tools
