@@ -7,12 +7,13 @@ module QuietQuality
         @annotator = nil
         @executor = Executors::ConcurrentExecutor
         @tools = nil
+        @exec_tool = nil
         @comparison_branch = nil
         @colorize = true
         @logging = :normal
       end
 
-      attr_accessor :tools, :comparison_branch, :annotator, :executor
+      attr_accessor :tools, :comparison_branch, :annotator, :executor, :exec_tool
       attr_reader :logging
       attr_writer :colorize
 
@@ -37,6 +38,7 @@ module QuietQuality
         {
           annotator: annotator,
           executor: executor.name,
+          exec_tool: exec_tool,
           comparison_branch: comparison_branch,
           colorize: colorize?,
           logging: logging,
