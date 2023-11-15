@@ -6,3 +6,4 @@ changed_files: false
 filter_messages: false
 logging: light
 colorize: true
+message_format: "%lcyan10tool| [%myellow40rule] %bred60loc  %e-90body"
