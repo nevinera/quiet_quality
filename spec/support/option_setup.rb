@@ -17,6 +17,7 @@ module OptionSetup
     opts = QuietQuality::Config::Options.new
     maybe_set_option(opts, attrs, :comparison_branch)
     maybe_set_option(opts, attrs, :logging)
+    maybe_set_option(opts, attrs, :message_format)
     maybe_set_option(opts, attrs, :colorize)
     maybe_set_option(opts, attrs, :annotator, :annotator_from)
     maybe_set_option(opts, attrs, :executor, :executor_from)
