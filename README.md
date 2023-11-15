@@ -151,6 +151,9 @@ The configuration file supports the following _global_ options (top-level keys):
 * `colorize`: by default, `bin/qq` will include color codes in its output, to
   make failing tools easier to spot, and messages easier to read. But you can
   supply `colorize: false` to tell it not to do that if you don't want them.
+* `message_format`: you can specify a format string with which to render the
+  messages, which interpolates values with various formatting flags. Details
+  given in the "Message Formatting" section below.
 
 And then each tool can have an entry, within which `changed_files` and
 `filter_messages` can be specified - the tool-specific settings override the
@@ -180,6 +183,40 @@ cli, those systems are ignored. That means that if you have changes to a
 generated file like `db/schema.rb`, and that file doesn't meet your rubocop (or
 standardrb) rules, you'll get _told_ unless you exclude it at the quiet-quality
 level as well.
+
+### Message Formatting
+
+You can supply a message-format string on the cli or in your config file, which
+will override the default formatting for message output on the CLI. These format
+strings are intended to be a single line containing "substitution tokens", which
+each look like `%[lr]?[bem]?color?(Size)(Source)`.
+
+* The first (optional) flag can be an "l", and "r", or be left off (which is the
+  same as "l"). This flag indicates the 'justification' - left or right.
+* The second (optional) flag can be a "b", an "e", or an "m", defaulting to "e";
+  these stand for "beginning", "ending", and "middle", and represent what part
+  of the string should be truncated if it needs to be shortened.
+* The third (optional) part is a color name, and can be any of "yellow", "red",
+  "green", "blue", "cyan", or "none" (leaving it off is the same as specifing
+  "none"). This is the color to use for the token in the output - note that any
+  color supplied here is used regardless of the '--colorize' flag.
+* The fourth part of the token is required, and is the _size_ of the token. If a
+  positive integer is supplied, then the token will take up that much space, and
+  will be padded on the appropriate side if necessary; if a negative integer is
+  supplied, then the token will not be padded out, but will still get truncated
+  if it is too long. The value '0' is special, and indicates that the token
+  should be neither padded nor truncated.
+* The last part of the token is a string indicating the _source_ data to
+  represent, and must be one of these values: "tool", "loc", "level", "path",
+  "lines", "rule", "body". Each of these represents one piece of data out of the
+  message object that can be rendered into the message line.
+
+Some example message formats:
+
+```text
+%lcyan8tool | %lmyellow30rule | %0loc
+%le6tool [%mblue20rule] %b45loc   %cyan-100body
+```
 
 ### CLI Options
 
