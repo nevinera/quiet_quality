@@ -18,7 +18,7 @@ module QuietQuality
           log_no_tools_text
         else
           log_options
-          executed
+          execute!
           log_results
           annotate_messages
         end
@@ -112,6 +112,26 @@ module QuietQuality
         return @_executed if defined?(@_executed)
         executor.execute!
         @_executed = executor
+      end
+
+      def exec_tool_options
+        @_exec_tool_options ||= options.tools
+          .detect { |topts| topts.tool_name == options.exec_tool.to_sym }
+      end
+
+      def execcer
+        @_execcer ||= QuietQuality::Executors::Execcer.new(
+          tool_options: exec_tool_options,
+          changed_files: changed_files
+        )
+      end
+
+      def execute!
+        if options.exec_tool
+          execcer.exec!
+        else
+          executed
+        end
       end
 
       def annotate_messages

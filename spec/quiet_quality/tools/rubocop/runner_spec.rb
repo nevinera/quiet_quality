@@ -9,7 +9,8 @@ RSpec.describe QuietQuality::Tools::Rubocop::Runner do
     relevant: "foo.rb",
     irrelevant: "foo.ts",
     filter: /foo/,
-    base_command: ["rubocop", "-f", "json"]
+    base_command: ["rubocop", "-f", "json"],
+    base_exec_command: ["rubocop"]
   }
 
   describe "#tool_name" do
@@ -30,6 +31,11 @@ RSpec.describe QuietQuality::Tools::Rubocop::Runner do
   describe "#base_command" do
     subject(:base_command) { runner.base_command }
     it { is_expected.to eq(["rubocop", "-f", "json"]) }
+  end
+
+  describe "#base_exec_command" do
+    subject(:base_exec_command) { runner.base_exec_command }
+    it { is_expected.to eq(["rubocop"]) }
   end
 
   describe "#relevant_path?" do

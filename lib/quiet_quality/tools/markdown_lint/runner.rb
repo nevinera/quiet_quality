@@ -10,13 +10,19 @@ module QuietQuality
           "[]"
         end
 
-        def command
+        def command(json: true)
           return nil if skip_execution?
+          base_command = ["mdl"]
+          base_command << "--json" if json
           if target_files.any?
-            ["mdl", "--json"] + target_files.sort
+            base_command + target_files.sort
           else
-            ["mdl", "--json", "."]
+            base_command + ["."]
           end
+        end
+
+        def exec_command
+          command(json: false)
         end
 
         def relevant_path?(path)

@@ -78,6 +78,7 @@ shared_examples "a functional RelevantRunner subclass" do |tool_name, options|
   irrelevant_name = opts.fetch(:irrelevant)
   filter = opts.fetch(:filter)
   base_command = opts.fetch(:base_command)
+  base_exec_command = opts.fetch(:base_exec_command)
 
   if opts[:runner_class_method]
     let(:runner_class) { send opts[:runner_class_method] }
@@ -143,6 +144,48 @@ shared_examples "a functional RelevantRunner subclass" do |tool_name, options|
             context "but there are _too many_ of them" do
               before { stub_const("QuietQuality::Tools::RelevantRunner::MAX_FILES", 0) }
               it { is_expected.to eq(base_command) }
+            end
+          end
+        end
+      end
+    end
+  end
+
+  describe "#exec_command" do
+    subject(:exec_command) { runner.exec_command }
+
+    if base_exec_command != :skip
+      context "when there are no changes to consider" do
+        let(:changed_files) { nil }
+        it { is_expected.to eq(base_exec_command) }
+      end
+
+      context "when there are changes to consider" do
+        context "but they are empty" do
+          let(:changed_files) { empty_changed_files }
+          it { is_expected.to be_nil }
+        end
+
+        context "but they contain no files matching the relevance method" do
+          let(:changed_files) { fully_changed_files(irrelevant_name) }
+          it { is_expected.to be_nil }
+        end
+
+        context "and they contain some files that are relevant" do
+          let(:changed_files) { fully_changed_files(relevant_name, irrelevant_name) }
+
+          context "but none matching the file_filter" do
+            let(:file_filter) { /never_gonna_give_you_up/ }
+            it { is_expected.to be_nil }
+          end
+
+          context "and they also match the file_filter" do
+            let(:file_filter) { /./ }
+            it { is_expected.to eq(base_exec_command + [relevant_name]) }
+
+            context "but there are _too many_ of them" do
+              before { stub_const("QuietQuality::Tools::RelevantRunner::MAX_FILES", 0) }
+              it { is_expected.to eq(base_exec_command) }
             end
           end
         end

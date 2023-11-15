@@ -22,7 +22,7 @@ module QuietQuality
         Options.new.tap { |opts| opts.tools = tools }
       end
 
-      def tool_names
+      def specified_tool_names
         if cli.tools.any?
           cli.tools
         elsif config_file&.tools&.any?
@@ -30,6 +30,14 @@ module QuietQuality
         else
           []
         end
+      end
+
+      def exec_tool_name
+        cli.global_option(:exec_tool)
+      end
+
+      def tool_names
+        (specified_tool_names + [exec_tool_name]).compact.uniq
       end
 
       def config_finder
@@ -84,6 +92,7 @@ module QuietQuality
         def update_globals
           update_annotator
           update_executor
+          update_exec_tool
           update_comparison_branch
           update_logging
         end
@@ -98,6 +107,10 @@ module QuietQuality
           executor_name = apply.global_option(:executor)
           return if executor_name.nil?
           options.executor = Executors::AVAILABLE.fetch(executor_name)
+        end
+
+        def update_exec_tool
+          set_unless_nil(options, :exec_tool, apply.global_option(:exec_tool))
         end
 
         def update_comparison_branch

@@ -4,6 +4,7 @@ RSpec.describe QuietQuality::Config::Options do
   it "has the expected default values" do
     expect(options.annotator).to be_nil
     expect(options.executor).to eq(QuietQuality::Executors::ConcurrentExecutor)
+    expect(options.exec_tool).to be_nil
     expect(options.tools).to be_nil
     expect(options.comparison_branch).to be_nil
     expect(options.colorize?).to be(true)
@@ -13,6 +14,7 @@ RSpec.describe QuietQuality::Config::Options do
   it { is_expected.to respond_to(:tools=) }
   it { is_expected.to respond_to(:annotator=) }
   it { is_expected.to respond_to(:executor=) }
+  it { is_expected.to respond_to(:exec_tool=) }
   it { is_expected.to respond_to(:comparison_branch=) }
   it { is_expected.to respond_to(:colorize=) }
 
@@ -86,6 +88,7 @@ RSpec.describe QuietQuality::Config::Options do
         colorize: true,
         comparison_branch: nil,
         executor: "QuietQuality::Executors::ConcurrentExecutor",
+        exec_tool: nil,
         logging: :normal,
         tools: {
           rspec: {

@@ -45,6 +45,7 @@ RSpec.describe QuietQuality::Cli::ArgParser do
             -C, --config PATH                Load a config file from this path
             -N, --no-config                  Do not load a config file, even if present
             -E, --executor EXECUTOR          Which executor to use
+            -X, --exec TOOL                  Exec one tool instead of managing several
             -A, --annotate ANNOTATOR         Annotate with this annotator
             -G, --annotate-github-stdout     Annotate with GitHub Workflow commands
             -a, --all-files [tool]           Use the tool(s) on all files
@@ -125,13 +126,15 @@ RSpec.describe QuietQuality::Cli::ArgParser do
     end
 
     describe "executor options" do
-      expect_options("(none)", [], global: {executor: nil})
+      expect_options("(none)", [], global: {executor: nil, exec_tool: nil})
       expect_options("--executor concurrent", ["--executor", "concurrent"], global: {executor: :concurrent})
       expect_options("--executor serial", ["--executor", "serial"], global: {executor: :serial})
       expect_options("-Econcurrent", ["-Econcurrent"], global: {executor: :concurrent})
       expect_options("-Eserial", ["-Eserial"], global: {executor: :serial})
       expect_usage_error("--executor fooba", ["--executor", "fooba"], /Unrecognized executor/)
       expect_usage_error("-Efooba", ["-Efooba"], /Unrecognized executor/)
+      expect_options("--exec rspec", ["--exec", "rspec"], global: {exec_tool: :rspec})
+      expect_options("-Xrspec", ["-Xrspec"], global: {exec_tool: :rspec})
     end
 
     describe "annotation options" do

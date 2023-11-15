@@ -24,6 +24,14 @@ RSpec.describe QuietQuality::Tools::RelevantRunner do
       end
     end
 
+    describe "#exec_command" do
+      subject(:exec_command) { runner.exec_command }
+
+      it "raises a NoMethodError" do
+        expect { exec_command }.to raise_error(NoMethodError)
+      end
+    end
+
     describe "#relevant_path?" do
       let(:path) { "fake/path" }
       subject(:relevant_path?) { runner.relevant_path?(path) }
@@ -40,6 +48,15 @@ RSpec.describe QuietQuality::Tools::RelevantRunner do
       it "raises a NoMethodError" do
         expect { base_command }
           .to raise_error(NoMethodError, /RelevantRunner subclass must.*command.*base_command/)
+      end
+    end
+
+    describe "#base_exec_command" do
+      subject(:base_exec_command) { runner.base_exec_command }
+
+      it "raises a NoMethodError" do
+        expect { base_exec_command }
+          .to raise_error(NoMethodError, /RelevantRunner subclass must.*exec_command.*base_exec_command/)
       end
     end
 
@@ -66,6 +83,10 @@ RSpec.describe QuietQuality::Tools::RelevantRunner do
 
         def base_command
           ["fake", "command"]
+        end
+
+        def base_exec_command
+          ["fake", "exec"]
         end
 
         def no_files_output
@@ -154,7 +175,8 @@ RSpec.describe QuietQuality::Tools::RelevantRunner do
       relevant: "foo.rb",
       irrelevant: "bar.rb",
       filter: /\.rb/,
-      base_command: ["fake", "command"]
+      base_command: ["fake", "command"],
+      base_exec_command: ["fake", "exec"]
     }
   end
 end

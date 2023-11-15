@@ -20,6 +20,7 @@ module OptionSetup
     maybe_set_option(opts, attrs, :colorize)
     maybe_set_option(opts, attrs, :annotator, :annotator_from)
     maybe_set_option(opts, attrs, :executor, :executor_from)
+    maybe_set_option(opts, attrs, :exec_tool)
     opts.tools = tool_options_from(attrs)
     opts
   end

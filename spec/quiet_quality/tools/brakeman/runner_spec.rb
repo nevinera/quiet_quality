@@ -14,6 +14,11 @@ RSpec.describe QuietQuality::Tools::Brakeman::Runner do
     it { is_expected.to eq(["brakeman", "-f", "json"]) }
   end
 
+  describe "#exec_command" do
+    subject(:exec_command) { runner.exec_command }
+    it { is_expected.to eq(["brakeman"]) }
+  end
+
   it_behaves_like "a functional BaseRunner subclass", :brakeman, failure: (3..8) do
     it "calls brakeman correctly" do
       runner.invoke!

@@ -14,6 +14,10 @@ module QuietQuality
           ["haml-lint", "--reporter", "json"]
         end
 
+        def base_exec_command
+          ["haml-lint"]
+        end
+
         def relevant_path?(path)
           path.end_with?(".haml")
         end

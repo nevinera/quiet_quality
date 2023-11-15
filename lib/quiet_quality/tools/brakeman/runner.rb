@@ -10,6 +10,10 @@ module QuietQuality
           ["brakeman", "-f", "json"]
         end
 
+        def exec_command
+          ["brakeman"]
+        end
+
         # These are specified in constants at the top of brakeman.rb:
         #   https://github.com/presidentbeef/brakeman/blob/main/lib/brakeman.rb#L6-L25
         def failure_status?(stat)

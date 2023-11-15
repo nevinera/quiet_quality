@@ -9,7 +9,8 @@ RSpec.describe QuietQuality::Tools::MarkdownLint::Runner do
     relevant: "foo.md",
     irrelevant: "foo.txt",
     filter: /foo/,
-    base_command: :skip
+    base_command: :skip,
+    base_exec_command: :skip
   }
 
   describe "#tool_name" do
@@ -74,6 +75,39 @@ RSpec.describe QuietQuality::Tools::MarkdownLint::Runner do
         let(:file_filter) { /foo|bar/ }
         let(:changed_files) { fully_changed_files("foo.md", "bar.md", "baz.md", "foo.txt") }
         it { is_expected.to eq(["mdl", "--json", "bar.md", "foo.md"]) }
+      end
+    end
+  end
+
+  describe "#exec_command" do
+    subject(:exec_command) { runner.exec_command }
+
+    context "when there are no changed to consider" do
+      let(:changed_files) { nil }
+      it { is_expected.to eq(["mdl", "."]) }
+    end
+
+    context "when there are changed to consider" do
+      context "but they are empty" do
+        let(:changed_files) { empty_changed_files }
+        it { is_expected.to be_nil }
+      end
+
+      context "but they contain no markdown files" do
+        let(:changed_files) { fully_changed_files("foo.txt") }
+        it { is_expected.to be_nil }
+      end
+
+      context "but they contain no files matching the file_filter" do
+        let(:file_filter) { /baz/ }
+        let(:changed_files) { fully_changed_files("foo.md", "bar.md") }
+        it { is_expected.to be_nil }
+      end
+
+      context "and they contain some files that are relevant" do
+        let(:file_filter) { /foo|bar/ }
+        let(:changed_files) { fully_changed_files("foo.md", "bar.md", "baz.md", "foo.txt") }
+        it { is_expected.to eq(["mdl", "bar.md", "foo.md"]) }
       end
     end
   end

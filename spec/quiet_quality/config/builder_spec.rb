@@ -80,6 +80,20 @@ RSpec.describe QuietQuality::Config::Builder do
       end
     end
 
+    describe "#exec_tool" do
+      subject(:exec_tool) { options.exec_tool }
+
+      context "when global_options[:exec_tool] is unset" do
+        let(:global_options) { {} }
+        it { is_expected.to be_nil }
+      end
+
+      context "when global_options[:exec_tool] is :rspec" do
+        let(:global_options) { {exec_tool: :rspec} }
+        it { is_expected.to eq(:rspec) }
+      end
+    end
+
     describe "#comparison_branch" do
       subject(:comparison_branch) { options.comparison_branch }
 
@@ -212,6 +226,36 @@ RSpec.describe QuietQuality::Config::Builder do
 
           it "uses the cli values" do
             expect(tools.map(&:tool_name)).to contain_exactly(:rspec, :standardrb)
+          end
+        end
+      end
+
+      context "when exec_tool is supplied" do
+        let(:global_options) { {exec_tool: :rspec} }
+
+        context "and no tools are specified on the cli" do
+          let(:tool_names) { [] }
+
+          it "treats the exec_tool as a listed tool" do
+            expect(tools.map(&:tool_name)).to contain_exactly(:rspec)
+          end
+        end
+
+        context "and some tools are specified on the cli" do
+          context "but it is not one of them" do
+            let(:tool_names) { [:standardrb] }
+
+            it "adds the exec_tool to the listed tools" do
+              expect(tools.map(&:tool_name)).to contain_exactly(:rspec, :standardrb)
+            end
+          end
+
+          context "and it is one of them" do
+            let(:tool_names) { [:rspec, :standardrb] }
+
+            it "does not change the listed tools" do
+              expect(tools.map(&:tool_name)).to contain_exactly(:rspec, :standardrb)
+            end
           end
         end
       end

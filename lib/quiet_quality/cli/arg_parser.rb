@@ -100,6 +100,11 @@ module QuietQuality
           validate_value_from("executor", name, Executors::AVAILABLE)
           set_global_option(:executor, name.to_sym)
         end
+
+        parser.on("-X", "--exec TOOL", "Exec one tool instead of managing several") do |tool_name|
+          validate_value_from("tool", tool_name, Tools::AVAILABLE)
+          set_global_option(:exec_tool, tool_name.to_sym)
+        end
       end
 
       def setup_annotation_options(parser)

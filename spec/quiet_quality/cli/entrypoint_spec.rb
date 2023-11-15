@@ -19,6 +19,8 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
     )
   end
   before { allow(QuietQuality::Executors::ConcurrentExecutor).to receive(:new).and_return(executor) }
+  let(:execcer) { instance_double(QuietQuality::Executors::Execcer, exec!: nil) }
+  before { allow(QuietQuality::Executors::Execcer).to receive(:new).and_return(execcer) }
 
   let(:changed_files) { instance_double(QuietQuality::ChangedFiles) }
   let(:git) { instance_double(QuietQuality::VersionControlSystems::Git, changed_files: changed_files) }
@@ -48,7 +50,7 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
       it { is_expected.to eq(entrypoint) }
       it { is_expected.to be_successful }
 
-      it "presents the outcomes properly" do
+      it "presents the outcomes properly", aggregate_failures: true do
         execute
         expect(presenter_class).to have_received(:new).with(
           stream: error_stream,
@@ -89,7 +91,7 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
       it { is_expected.to eq(entrypoint) }
       it { is_expected.not_to be_successful }
 
-      it "presents the outcomes properly" do
+      it "presents the outcomes properly", aggregate_failures: true do
         execute
         expect(presenter_class).to have_received(:new).with(
           stream: error_stream,
@@ -104,7 +106,7 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
         let(:argv) { ["--annotate", "github_stdout"] }
         let(:options) { build_options(annotator: :github_stdout, rubocop: {}, rspec: {}) }
 
-        it "writes the proper annotations to stdout" do
+        it "writes the proper annotations to stdout", aggregate_failures: true do
           execute
           expect(output_stream).to have_received(:puts).with("::warning file=foo.rb,line=1,title=just_delete_everything::Msg1")
           expect(output_stream).to have_received(:puts).with("::warning file=bar.rb,line=2,title=complexity_checks_that_make_things_worse Title::Msg2")
@@ -167,6 +169,44 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
         expect(error_stream)
           .to have_received(:puts)
           .with(a_string_matching(/specify one or more tools to run/))
+      end
+    end
+
+    context "when told to exec the rspec tool" do
+      let(:options) { build_options(rubocop: {}, rspec: {}, exec_tool: :rspec) }
+
+      # This is.. awkward. But the execcer doesn't actually allow anything after it to _run_ in
+      # reality, because when it `exec`s, the running code is replaced (or if it's skipping, it
+      # calls Kernel.exit). To emulate that behavior in the specs, without actually performing
+      # exit/exec, we're going to have it raise a special error, and rescue that error.
+      let(:exec_error_class) { Class.new(StandardError) }
+      let(:exec_called) { exec_error_class.new("because the rest of the entrypoint shouldn't run") }
+      before { allow(execcer).to receive(:exec!).and_raise(exec_called) }
+
+      let(:rescued_execute) do
+        execute
+      rescue exec_error_class
+        nil
+      end
+
+      it "invokes the execcer correctly", aggregate_failures: true do
+        rescued_execute
+
+        expect(QuietQuality::Executors::Execcer).to have_received(:new).with(
+          tool_options: instance_of(QuietQuality::Config::ToolOptions),
+          changed_files: changed_files
+        )
+        expect(execcer).to have_received(:exec!)
+      end
+
+      it "does not invoke the executor" do
+        rescued_execute
+        expect(executor).not_to have_received(:execute!)
+      end
+
+      it "logs as expected" do
+        rescued_execute
+        expect_debug("Complete Options object:", data: options.to_h)
       end
     end
   end
