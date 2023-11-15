@@ -32,13 +32,13 @@ RSpec.describe QuietQuality::Executors::Execcer do
           .with(changed_files: changed_files, file_filter: file_filter)
       end
 
-      it "logs correctly" do
+      it "logs correctly", aggregate_failures: true do
         exec!
         expect_info("Runner rspec exec_command: `foo bar`")
         expect_debug("Full exec_command for rspec", data: ["foo", "bar"])
       end
 
-      it "calls Kernel.exec correctly" do
+      it "calls Kernel.exec correctly", aggregate_failures: true do
         exec!
         expect(Kernel).to have_received(:exec).with("foo", "bar")
         expect(Kernel).not_to have_received(:exit)
@@ -55,13 +55,13 @@ RSpec.describe QuietQuality::Executors::Execcer do
           .with(changed_files: nil, file_filter: file_filter)
       end
 
-      it "logs correctly" do
+      it "logs correctly", aggregate_failures: true do
         exec!
         expect_info("Runner rspec exec_command: `foo bar`")
         expect_debug("Full exec_command for rspec", data: ["foo", "bar"])
       end
 
-      it "calls Kernel.exec correctly" do
+      it "calls Kernel.exec correctly", aggregate_failures: true do
         exec!
         expect(Kernel).to have_received(:exec).with("foo", "bar")
         expect(Kernel).not_to have_received(:exit)
@@ -79,13 +79,13 @@ RSpec.describe QuietQuality::Executors::Execcer do
           .with(changed_files: changed_files, file_filter: file_filter)
       end
 
-      it "logs correctly" do
+      it "logs correctly", aggregate_failures: true do
         exec!
         expect_info("Runner rspec exec_command: (skipped)")
         expect_debug("Full exec_command for rspec", data: nil)
       end
 
-      it "calls Kernel.exit instead of Kernel.exec" do
+      it "calls Kernel.exit instead of Kernel.exec", aggregate_failures: true do
         exec!
         expect_info <<~LOG_MESSAGE
           This runner does not believe it needs to execute at all.

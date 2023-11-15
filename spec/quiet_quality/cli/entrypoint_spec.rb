@@ -50,7 +50,7 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
       it { is_expected.to eq(entrypoint) }
       it { is_expected.to be_successful }
 
-      it "presents the outcomes properly" do
+      it "presents the outcomes properly", aggregate_failures: true do
         execute
         expect(presenter_class).to have_received(:new).with(
           stream: error_stream,
@@ -91,7 +91,7 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
       it { is_expected.to eq(entrypoint) }
       it { is_expected.not_to be_successful }
 
-      it "presents the outcomes properly" do
+      it "presents the outcomes properly", aggregate_failures: true do
         execute
         expect(presenter_class).to have_received(:new).with(
           stream: error_stream,
@@ -106,7 +106,7 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
         let(:argv) { ["--annotate", "github_stdout"] }
         let(:options) { build_options(annotator: :github_stdout, rubocop: {}, rspec: {}) }
 
-        it "writes the proper annotations to stdout" do
+        it "writes the proper annotations to stdout", aggregate_failures: true do
           execute
           expect(output_stream).to have_received(:puts).with("::warning file=foo.rb,line=1,title=just_delete_everything::Msg1")
           expect(output_stream).to have_received(:puts).with("::warning file=bar.rb,line=2,title=complexity_checks_that_make_things_worse Title::Msg2")
@@ -189,7 +189,7 @@ RSpec.describe QuietQuality::Cli::Entrypoint do
         nil
       end
 
-      it "invokes the execcer correctly" do
+      it "invokes the execcer correctly", aggregate_failures: true do
         rescued_execute
 
         expect(QuietQuality::Executors::Execcer).to have_received(:new).with(
