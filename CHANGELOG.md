@@ -1,5 +1,17 @@
 # Changelog
 
+## Release 1.5.0
+
+* Update to comply with current standardrb rules, and use checkout@v4
+* Add a `-X/--exec` argument that allows you to let qq craft the command, but
+  then actually exec the command instead of running it and handling its output.
+  Especially useful for things like `rspec`, where the output it gives you about
+  failing tests is very useful, and qq is mostly only helpful for determining
+  what specs to run.
+* Add a `--message-format` argument and `message_format` config file option,
+  which allow for a fairly complex configuration of the output format for
+  messages, so they can be displayed in various colorized/tabular formats.
+
 ## Release 1.4.0
 
 * Support specifying `excludes` per-tool, so that certain files won't be passed
