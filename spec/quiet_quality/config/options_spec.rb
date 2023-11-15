@@ -9,6 +9,7 @@ RSpec.describe QuietQuality::Config::Options do
     expect(options.comparison_branch).to be_nil
     expect(options.colorize?).to be(true)
     expect(options.logging).to eq(:normal)
+    expect(options.message_format).to be_nil
   end
 
   it { is_expected.to respond_to(:tools=) }
@@ -17,6 +18,7 @@ RSpec.describe QuietQuality::Config::Options do
   it { is_expected.to respond_to(:exec_tool=) }
   it { is_expected.to respond_to(:comparison_branch=) }
   it { is_expected.to respond_to(:colorize=) }
+  it { is_expected.to respond_to(:message_format=) }
 
   describe "#logging=" do
     it "updates the logging value" do
@@ -90,6 +92,7 @@ RSpec.describe QuietQuality::Config::Options do
         executor: "QuietQuality::Executors::ConcurrentExecutor",
         exec_tool: nil,
         logging: :normal,
+        message_format: nil,
         tools: {
           rspec: {
             tool_name: :rspec,

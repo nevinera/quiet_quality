@@ -48,6 +48,7 @@ module QuietQuality
         read_global_option(opts, :unfiltered, :filter_messages, as: :reversed_boolean)
         read_global_option(opts, :colorize, :colorize, as: :boolean)
         read_global_option(opts, :logging, :logging, as: :symbol, validate_from: Options::LOGGING_LEVELS)
+        read_global_option(opts, :message_format, :message_format, as: :string)
       end
 
       def store_tool_options(opts)

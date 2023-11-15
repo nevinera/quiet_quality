@@ -3,7 +3,8 @@ RSpec.describe QuietQuality::Cli::Presenter do
 
   let(:level) { nil }
   let(:colorize) { false }
-  let(:options) { build_options(colorize: colorize, logging: level) }
+  let(:message_format) { nil }
+  let(:options) { build_options(colorize: colorize, logging: level, message_format: message_format) }
 
   let(:rspec_outcome) { build_success(:rspec, "rspec output", "rspec logging") }
   let(:haml_lint_outcome) { build_failure(:haml_lint, "haml_lint output", "haml_lint logging") }
@@ -77,6 +78,19 @@ RSpec.describe QuietQuality::Cli::Presenter do
           expect(stream).to have_received(:puts).with("\n\n2 messages:").ordered
           expect(stream).to have_received(:puts).with("\e[33mai_fixes_ur_code\e[0m  foo.rb:55  [\e[33mfoorule\e[0m]  foo\\nbody").ordered
           expect(stream).to have_received(:puts).with("\e[33msudo_make_me_a_sandwhich\e[0m  bar.rb:8-14  [\e[33mbarule\e[0m]  barbody" + "x" * 113).ordered
+        end
+      end
+
+      context "with a message-format supplied" do
+        let(:message_format) { "%5tool|%5path|%r7lines|%mcyan5rule" }
+
+        it "writes standard output with formatted messages" do
+          log_results
+          expect(stream).to have_received(:puts).with("--- Passed: rspec").ordered
+          expect(stream).to have_received(:puts).with("--- Failed: haml_lint").ordered
+          expect(stream).to have_received(:puts).with("\n\n2 messages:").ordered
+          expect(stream).to have_received(:puts).with("ai_f…|foo.…|     55|\e[96mfo…le\e[0m")
+          expect(stream).to have_received(:puts).with("sudo…|bar.…|   8-14|\e[96mba…le\e[0m")
         end
       end
     end

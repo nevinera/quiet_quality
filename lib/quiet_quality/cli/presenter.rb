@@ -78,12 +78,28 @@ module QuietQuality
         s.gsub(/ *\n */, "\\n").slice(0, length)
       end
 
-      def log_message(msg)
+      def locally_formatted_message(msg)
         tool = colorize(:yellow, msg.tool_name)
         line_range = line_range_for(msg)
         rule_string = msg.rule ? "  [#{colorize(:yellow, msg.rule)}]" : ""
         truncated_body = reduce_text(msg.body, 120)
-        stream.puts "#{tool}  #{msg.path}:#{line_range}#{rule_string}  #{truncated_body}"
+        "#{tool}  #{msg.path}:#{line_range}#{rule_string}  #{truncated_body}"
+      end
+
+      def loggable_message(msg)
+        if options.message_format
+          message_formatter.format(msg)
+        else
+          stream.puts locally_formatted_message(msg)
+        end
+      end
+
+      def log_message(msg)
+        stream.puts loggable_message(msg)
+      end
+
+      def message_formatter
+        @_message_formatter ||= MessageFormatter.new(message_format: options.message_format)
       end
     end
   end

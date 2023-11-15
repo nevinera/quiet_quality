@@ -195,6 +195,38 @@ RSpec.describe QuietQuality::Config::Builder do
       end
     end
 
+    describe "#message_format" do
+      subject(:message_format) { options.message_format }
+
+      context "when global_options[:message_format] is unset" do
+        let(:global_options) { {} }
+        it { is_expected.to be_nil }
+      end
+
+      context "when global_options[:message_format] is specified" do
+        let(:global_options) { {message_format: "foobar"} }
+        it { is_expected.to eq("foobar") }
+      end
+
+      context "when a config file is passed" do
+        let(:global_options) { {config_path: "/fake.yml", message_format: cli_message_format}.compact }
+
+        context "when the config file sets message_format" do
+          let(:cfg_global_options) { {message_format: "barbaz"} }
+
+          context "and the cli does not" do
+            let(:cli_message_format) { nil }
+            it { is_expected.to eq("barbaz") }
+          end
+
+          context "and the cli sets it differently" do
+            let(:cli_message_format) { "foobaz" }
+            it { is_expected.to eq("foobaz") }
+          end
+        end
+      end
+    end
+
     describe "#tools" do
       subject(:tools) { options.tools }
 

@@ -12,6 +12,7 @@ module QuietQuality
         :comparison_branch,
         :colorize,
         :logging,
+        :message_format,
         :limit_targets,
         :filter_messages,
         :file_filter

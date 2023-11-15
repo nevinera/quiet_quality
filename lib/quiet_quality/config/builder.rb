@@ -120,6 +120,7 @@ module QuietQuality
         def update_logging
           set_unless_nil(options, :logging, apply.global_option(:logging))
           set_unless_nil(options, :colorize, apply.global_option(:colorize))
+          set_unless_nil(options, :message_format, apply.global_option(:message_format))
         end
 
         # ---- update the tool options (apply global forms first) -------

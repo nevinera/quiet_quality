@@ -147,6 +147,8 @@ RSpec.describe QuietQuality::Config::Parser do
         expect_invalid "an invalid logging option", %({logging: shecklackity}), /option logging must be one of the allowed values/
         expect_config "colorization enabled", %({colorize: true}), globals: {colorize: true}
         expect_config "colorization disabled", %({colorize: false}), globals: {colorize: false}
+        expect_config "message_format unset", %({}), globals: {message_format: nil}
+        expect_config "message_format set", %({message_format: "foo"}), globals: {message_format: "foo"}
       end
 
       describe "file_filter parsing" do
