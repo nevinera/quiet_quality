@@ -12,9 +12,11 @@ module QuietQuality
         if runner.exec_command
           Kernel.exec(*runner.exec_command)
         else
-          info "This runner does not believe it needs to execute at all."
-          info "This typically means that it was told to target changed-files, but no relevant"
-          info "files were changed."
+          info <<~LOG_MESSAGE
+            This runner does not believe it needs to execute at all.
+            This typically means that it was told to target changed-files, but no relevant
+            files were changed.
+          LOG_MESSAGE
           Kernel.exit(0)
         end
       end

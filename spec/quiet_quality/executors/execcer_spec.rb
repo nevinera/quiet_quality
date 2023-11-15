@@ -87,9 +87,11 @@ RSpec.describe QuietQuality::Executors::Execcer do
 
       it "calls Kernel.exit instead of Kernel.exec" do
         exec!
-        expect_info "This runner does not believe it needs to execute at all."
-        expect_info "This typically means that it was told to target changed-files, but no relevant"
-        expect_info "files were changed."
+        expect_info <<~LOG_MESSAGE
+          This runner does not believe it needs to execute at all.
+          This typically means that it was told to target changed-files, but no relevant
+          files were changed.
+        LOG_MESSAGE
         expect(Kernel).to have_received(:exit).with(0)
         expect(Kernel).not_to have_received(:exec)
       end
