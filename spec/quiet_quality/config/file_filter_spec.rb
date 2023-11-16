@@ -116,4 +116,15 @@ RSpec.describe QuietQuality::Config::FileFilter do
       end
     end
   end
+
+  describe "==" do
+    let(:ff) { described_class.new(regex: "a", excludes: ["b", "c"]) }
+    let(:ff_same) { described_class.new(regex: "a", excludes: ["b", "c"]) }
+    let(:ff_different_order) { described_class.new(regex: "a", excludes: ["b", "c"]) }
+    let(:ff_different_values) { described_class.new(regex: "b", excludes: ["a", "c"]) }
+
+    specify { expect(ff).to eq(ff_same) }
+    specify { expect(ff).to eq(ff_different_order) }
+    specify { expect(ff).not_to eq(ff_different_values) }
+  end
 end
