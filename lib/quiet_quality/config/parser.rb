@@ -65,7 +65,8 @@ module QuietQuality
         read_tool_option(opts, tool_name, :unfiltered, :filter_messages, as: :reversed_boolean)
         read_tool_option(opts, tool_name, :changed_files, :limit_targets, as: :boolean)
         read_tool_option(opts, tool_name, :all_files, :limit_targets, as: :reversed_boolean)
-        read_file_filter(opts, tool_name)
+        read_tool_option(opts, tool_name, :file_filter, :file_filter, as: :string)
+        read_tool_option(opts, tool_name, :excludes, :excludes, as: :strings)
       end
 
       def invalid!(message)
@@ -98,21 +99,13 @@ module QuietQuality
         opts.set_tool_option(tool, into, coerced_value)
       end
 
-      def read_file_filter(opts, tool)
-        parsed_regex = data.dig(tool.to_sym, :file_filter)
-        parsed_excludes = data.dig(tool.to_sym, :excludes)
-        if parsed_regex || parsed_excludes
-          filter = Config::FileFilter.new(regex: parsed_regex, excludes: parsed_excludes)
-          opts.set_tool_option(tool, :file_filter, filter)
-        end
-      end
-
       def validate_value(name, value, as:, from: nil)
         case as
         when :boolean then validate_boolean(name, value)
         when :reversed_boolean then validate_boolean(name, value)
         when :symbol then validate_symbol(name, value, from: from)
         when :string then validate_string(name, value)
+        when :strings then validate_strings(name, value)
         end
       end
 
@@ -138,11 +131,17 @@ module QuietQuality
         invalid!("option #{name} must not be empty") if value.empty?
       end
 
+      def validate_strings(name, value)
+        invalid!("option #{name} must be an array") unless value.is_a?(Array)
+        value.each_with_index { |item, n| validate_string("#{name}[#{n}]", item) }
+      end
+
       def coerce_value(value, as:)
         case as
         when :boolean then !!value
         when :reversed_boolean then !value
         when :string then value.to_s
+        when :strings then value.map(&:to_s)
         when :symbol then value.to_sym
         end
       end

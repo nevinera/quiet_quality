@@ -21,7 +21,8 @@ module QuietQuality
       TOOL_OPTIONS = [
         :limit_targets,
         :filter_messages,
-        :file_filter
+        :file_filter,
+        :excludes
       ].to_set
 
       def initialize

@@ -67,9 +67,9 @@ RSpec.describe QuietQuality::Config::Parser do
       )
 
       it "parsed the rspec file_filter properly" do
-        filter = parsed_options.tool_option("rspec", "file_filter")
-        expect(filter.regex).to eq(/spec\/.*_spec.rb/)
-        expect(filter.excludes).to contain_exactly(/^db\/schema\.rb/, /^db\/seeds\.rb/)
+        expect(parsed_options.tool_option("rspec", "file_filter")).to eq("spec/.*_spec.rb")
+        expect(parsed_options.tool_option("rspec", "excludes"))
+          .to contain_exactly("^db/schema\\.rb", "^db/seeds\\.rb")
       end
     end
 
@@ -158,9 +158,10 @@ RSpec.describe QuietQuality::Config::Parser do
           let(:yaml) { %({rspec: {file_filter: "^spec/"}}) }
 
           it "has the expected file_filters set" do
-            expect(parsed_options.tool_option("rspec", "file_filter").regex).to eq(/^spec\//)
-            expect(parsed_options.tool_option("rspec", "file_filter").excludes).to be_nil
+            expect(parsed_options.tool_option("rspec", "file_filter")).to eq("^spec/")
+            expect(parsed_options.tool_option("rspec", "excludes")).to be_nil
             expect(parsed_options.tool_option("rubocop", "file_filter")).to be_nil
+            expect(parsed_options.tool_option("rubocop", "excludes")).to be_nil
           end
         end
 
@@ -168,11 +169,16 @@ RSpec.describe QuietQuality::Config::Parser do
           let(:yaml) { %({rubocop: {excludes: ["foo", "bar"]}}) }
 
           it "has the expected file_filters set" do
-            expect(parsed_options.tool_option("rubocop", "file_filter").excludes).to contain_exactly(/foo/, /bar/)
-            expect(parsed_options.tool_option("rubocop", "file_filter").regex).to be_nil
+            expect(parsed_options.tool_option("rubocop", "excludes")).to contain_exactly("foo", "bar")
+            expect(parsed_options.tool_option("rubocop", "file_filter")).to be_nil
+            expect(parsed_options.tool_option("rspec", "excludes")).to be_nil
             expect(parsed_options.tool_option("rspec", "file_filter")).to be_nil
           end
         end
+
+        expect_invalid "an invalid tool file_filter", %({rspec: {file_filter: 2}}), /must be a string/
+        expect_invalid "an invalid tool excludes", %({rspec: {excludes: "foo"}}), /must be an array/
+        expect_invalid "an invalid tool excludes", %({rspec: {excludes: ["a",2]}}), /must be a string/
       end
     end
   end
