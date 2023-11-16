@@ -129,7 +129,7 @@ module QuietQuality
           options.tools.each do |tool_options|
             update_tool_option(tool_options, :limit_targets)
             update_tool_option(tool_options, :filter_messages)
-            update_tool_option(tool_options, :file_filter)
+            set_unless_nil(tool_options, :file_filter, build_file_filter(tool_options.tool_name))
           end
         end
 
@@ -137,6 +137,13 @@ module QuietQuality
           tool_name = tool_options.tool_name
           set_unless_nil(tool_options, option_name, apply.global_option(option_name))
           set_unless_nil(tool_options, option_name, apply.tool_option(tool_name, option_name))
+        end
+
+        def build_file_filter(tool_name)
+          filter_string = apply.tool_option(tool_name, :file_filter)
+          excludes_strings = apply.tool_option(tool_name, :excludes)
+          return nil if filter_string.nil? && (excludes_strings.nil? || excludes_strings.empty?)
+          Config::FileFilter.new(regex: filter_string, excludes: excludes_strings)
         end
       end
     end
