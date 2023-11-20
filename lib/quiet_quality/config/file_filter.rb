@@ -8,6 +8,8 @@ module QuietQuality
         @excludes_strings = excludes
       end
 
+      attr_reader :regex_string, :excludes_strings
+
       def regex
         return nil if @regex_string.nil?
         @_regex ||= Regexp.new(@regex_string)
@@ -31,6 +33,10 @@ module QuietQuality
       # (b) either none of the excludes match or none are supplied
       def match?(s)
         regex_match?(s) && !excludes_match?(s)
+      end
+
+      def ==(other)
+        regex_string == other.regex_string && excludes_strings.sort == other.excludes_strings.sort
       end
 
       private

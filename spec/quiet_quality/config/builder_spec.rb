@@ -413,7 +413,7 @@ RSpec.describe QuietQuality::Config::Builder do
           let(:file_filter) { QuietQuality::Config::FileFilter.new(regex: ".*", excludes: ["foo", "bar"]) }
 
           context "when the config file sets it" do
-            let(:cfg_tool_options) { {rspec: {file_filter: file_filter}} }
+            let(:cfg_tool_options) { {rspec: {file_filter: ".*", excludes: ["foo", "bar"]}} }
             it { is_expected.to eq(file_filter) }
           end
 
