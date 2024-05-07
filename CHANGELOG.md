@@ -1,5 +1,13 @@
 # Changelog
 
+## Release 1.5.1
+
+* Refactor ConfigParser to just parse the config into ParsedOptions, separating
+  the file-filter/excludes handling properly (#114)
+* Update the standard/rubocop constraints (dev-only)
+* Fail the pipeline when rspec encounters non-spec failures (#120 resolves #119)
+* Expose error messages when brakeman encounters errors (#122 resolves #115)
+
 ## Release 1.5.0
 
 * Update to comply with current standardrb rules, and use checkout@v4
