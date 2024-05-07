@@ -2,6 +2,8 @@ module QuietQuality
   module Tools
     module Rspec
       TOOL_NAME = :rspec
+
+      Error = Class.new(Tools::Error)
     end
   end
 end
