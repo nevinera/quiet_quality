@@ -40,11 +40,14 @@ RSpec.describe QuietQuality::Tools::Brakeman::Parser do
     context "when there are errors" do
       let(:text) { fixture_content("tools", "brakeman", "errors.json") }
 
-      it "raises a ParsingError" do
+      it "raises a ParsingError and logs the errors" do
         expect { messages }.to raise_error(
           QuietQuality::Tools::ParsingError,
           /Found 2 errors/
         )
+        expect_warn "Brakeman errors:"
+        expect_warn "    Something went wrong"
+        expect_warn "    Something else too"
       end
     end
   end
