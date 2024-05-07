@@ -2,6 +2,8 @@ module QuietQuality
   module Tools
     module Brakeman
       class Parser
+        include Logging
+
         def initialize(text)
           @text = text
         end
@@ -24,6 +26,8 @@ module QuietQuality
         def check_errors!
           errors = data[:errors]
           return if errors.nil? || errors.empty?
+          warn "Brakeman errors:"
+          errors.each { |error| warn "    #{error}" }
           fail(ParsingError, "Found #{errors.length} errors in brakeman output")
         end
 
