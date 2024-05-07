@@ -22,7 +22,8 @@ module QuietQuality
         :limit_targets,
         :filter_messages,
         :file_filter,
-        :excludes
+        :excludes,
+        :command
       ].to_set
 
       def initialize

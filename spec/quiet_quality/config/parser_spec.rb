@@ -180,6 +180,28 @@ RSpec.describe QuietQuality::Config::Parser do
         expect_invalid "an invalid tool excludes", %({rspec: {excludes: "foo"}}), /must be an array/
         expect_invalid "an invalid tool excludes", %({rspec: {excludes: ["a",2]}}), /must be a string/
       end
+
+      describe "command parsing" do
+        expect_config "no settings", %({}), tools: {rspec: {command: nil}, rubocop: {command: nil}}
+
+        context "with a config that has an rspec command supplied" do
+          let(:yaml) { %({rspec: {command: ["foo", "bar", "baz"]}}) }
+
+          it "has the expected commands set" do
+            expect(parsed_options.tool_option("rspec", "command")).to eq(["foo", "bar", "baz"])
+            expect(parsed_options.tool_option("rubocop", "command")).to be_nil
+          end
+        end
+
+        context "with multiple configs with commands supplied" do
+          let(:yaml) { %({rspec: {command: ["a", "b"]}, rubocop: {command: ["c", "d"]}}) }
+
+          it "has the expected commands set" do
+            expect(parsed_options.tool_option("rspec", "command")).to eq(["a", "b"])
+            expect(parsed_options.tool_option("rubocop", "command")).to eq(["c", "d"])
+          end
+        end
+      end
     end
   end
 end
