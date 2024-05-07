@@ -2,6 +2,8 @@ module QuietQuality
   module Tools
     module Rspec
       class Parser
+        include Logging
+
         def initialize(text)
           @text = text
         end
@@ -70,8 +72,18 @@ module QuietQuality
           @_errors_count ||= content.dig(:summary, :errors_outside_of_examples_count) || 0
         end
 
+        def error_messages
+          @_error_messages ||= content.fetch(:messages, [])
+        end
+
         def raise_if_errors_outside_of_examples!
           return if errors_count < 1
+          warn "RSpec errors:"
+          warn "-" * 80
+          error_messages.each do |msg|
+            warn msg
+            warn "-" * 80
+          end
           fail Rspec::Error, "Rspec encountered #{errors_count} errors outside of examples"
         end
       end

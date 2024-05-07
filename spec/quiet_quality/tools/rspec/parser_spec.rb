@@ -68,6 +68,9 @@ RSpec.describe QuietQuality::Tools::Rspec::Parser do
           QuietQuality::Tools::Rspec::Error,
           "Rspec encountered 2 errors outside of examples"
         )
+        expect_warn "RSpec errors:"
+        expect_warn a_string_matching(/An error occurred while loading/)
+        expect_warn "No examples found."
       end
     end
   end
