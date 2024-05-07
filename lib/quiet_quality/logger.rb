@@ -53,8 +53,10 @@ module QuietQuality
         data_text = JSON.pretty_generate(data)
         message = message + "\n" + data_text
       end
-      prefixed_message = message.split("\n").map { |line| "[#{prefix}] #{line}" }.join("\n")
-      colorize(prefixed_message, message_level)
+      message.split("\n")
+        .map { |line| "[#{prefix}] #{line}" }
+        .map { |prefixed_line| colorize(prefixed_line, message_level) }
+        .join("\n")
     end
 
     def colorize(s, message_level)
