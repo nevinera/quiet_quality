@@ -67,7 +67,7 @@ module QuietQuality
         end
 
         def errors_count
-          @_errors_count ||= (content.dig(:summary, :errors_outside_of_examples_count) || 0)
+          @_errors_count ||= content.dig(:summary, :errors_outside_of_examples_count) || 0
         end
 
         def raise_if_errors_outside_of_examples!
