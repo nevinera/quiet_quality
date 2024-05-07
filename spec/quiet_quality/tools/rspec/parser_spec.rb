@@ -59,5 +59,19 @@ RSpec.describe QuietQuality::Tools::Rspec::Parser do
       it { is_expected.to be_a(QuietQuality::Messages) }
       it { is_expected.to be_empty }
     end
+
+    context "when there are errors outside of examples" do
+      let(:text) { fixture_content("tools", "rspec", "errors-outside-of-examples.json") }
+
+      it "raises an Rspec::Error" do
+        expect { messages }.to raise_error(
+          QuietQuality::Tools::Rspec::Error,
+          "Rspec encountered 2 errors outside of examples"
+        )
+        expect_warn "RSpec errors:"
+        expect_warn a_string_matching(/An error occurred while loading/)
+        expect_warn "No examples found."
+      end
+    end
   end
 end
