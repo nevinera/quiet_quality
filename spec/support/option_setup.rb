@@ -33,7 +33,7 @@ module OptionSetup
     return if value.nil?
 
     value = send(transform, value) if transform
-    opts.send("#{key}=", value)
+    opts.send(:"#{key}=", value)
   end
 
   def set_global_options(po, global_options)

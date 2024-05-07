@@ -84,7 +84,7 @@ module QuietQuality
 
         def set_unless_nil(object, method, value)
           return if value.nil?
-          object.send("#{method}=", value)
+          object.send(:"#{method}=", value)
         end
 
         # ---- update the global options -------------
