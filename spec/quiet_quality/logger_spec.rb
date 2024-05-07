@@ -107,10 +107,10 @@ RSpec.describe QuietQuality::Logger do
         let(:initial_level) { iterated_level }
         it_logs("\e[33m[ WARN] some text\e[0m")
         it_logs(<<~LOGS.strip, data: {some: "data"})
-          \e[33m[ WARN] some text
-          [ WARN] {
-          [ WARN]   "some": "data"
-          [ WARN] }\e[0m
+          \e[33m[ WARN] some text\e[0m
+          \e[33m[ WARN] {\e[0m
+          \e[33m[ WARN]   "some": "data"\e[0m
+          \e[33m[ WARN] }\e[0m
         LOGS
       end
     end
@@ -132,10 +132,10 @@ RSpec.describe QuietQuality::Logger do
         let(:initial_level) { iterated_level }
         it_logs("\e[94m[ INFO] some text\e[0m")
         it_logs(<<~LOGS.strip, data: {some: "data"})
-          \e[94m[ INFO] some text
-          [ INFO] {
-          [ INFO]   "some": "data"
-          [ INFO] }\e[0m
+          \e[94m[ INFO] some text\e[0m
+          \e[94m[ INFO] {\e[0m
+          \e[94m[ INFO]   "some": "data"\e[0m
+          \e[94m[ INFO] }\e[0m
         LOGS
       end
     end
@@ -156,10 +156,10 @@ RSpec.describe QuietQuality::Logger do
       let(:initial_level) { :debug }
       it_logs("\e[96m[DEBUG] some text\e[0m")
       it_logs(<<~LOGS.strip, data: {some: "data"})
-        \e[96m[DEBUG] some text
-        [DEBUG] {
-        [DEBUG]   "some": "data"
-        [DEBUG] }\e[0m
+        \e[96m[DEBUG] some text\e[0m
+        \e[96m[DEBUG] {\e[0m
+        \e[96m[DEBUG]   "some": "data"\e[0m
+        \e[96m[DEBUG] }\e[0m
       LOGS
     end
   end
