@@ -130,6 +130,7 @@ module QuietQuality
             update_tool_option(tool_options, :limit_targets)
             update_tool_option(tool_options, :filter_messages)
             update_tool_option(tool_options, :command, global: false)
+            update_tool_option(tool_options, :exec_command, global: false)
             set_unless_nil(tool_options, :file_filter, build_file_filter(tool_options.tool_name))
           end
         end
