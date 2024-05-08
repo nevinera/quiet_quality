@@ -50,7 +50,7 @@ RSpec.describe QuietQuality::Config::ToolOptions do
 
     context "with all attributes supplied" do
       let(:file_filter) { QuietQuality::Config::FileFilter.new(regex: /^foo.*$/i, excludes: [/foo/, /bar/]) }
-      let(:tool_options) { described_class.new(:rspec, limit_targets: true, filter_messages: false, command: ["a", "b"], file_filter: file_filter) }
+      let(:tool_options) { described_class.new(:rspec, limit_targets: true, filter_messages: false, command: ["a", "b"], exec_command: ["c", "d"], file_filter: file_filter) }
 
       it "produces the expected hash" do
         expect(to_h).to eq({
@@ -59,6 +59,7 @@ RSpec.describe QuietQuality::Config::ToolOptions do
           filter_messages: false,
           file_filter: "(?i-mx:^foo.*$)",
           command: ["a", "b"],
+          exec_command: ["c", "d"],
           excludes: ["(?-mix:foo)", "(?-mix:bar)"]
         })
       end
@@ -74,6 +75,7 @@ RSpec.describe QuietQuality::Config::ToolOptions do
           filter_messages: false,
           file_filter: nil,
           command: nil,
+          exec_command: nil,
           excludes: nil
         })
       end
