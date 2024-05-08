@@ -68,6 +68,7 @@ module QuietQuality
         read_tool_option(opts, tool_name, :file_filter, :file_filter, as: :string)
         read_tool_option(opts, tool_name, :excludes, :excludes, as: :strings)
         read_tool_option(opts, tool_name, :command, :command, as: :strings)
+        read_tool_option(opts, tool_name, :exec_command, :exec_command, as: :strings)
       end
 
       def invalid!(message)
