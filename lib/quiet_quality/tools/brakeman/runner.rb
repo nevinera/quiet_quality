@@ -7,11 +7,11 @@ module QuietQuality
         end
 
         def command
-          ["brakeman", "-f", "json"]
+          command_override || ["brakeman", "-f", "json"]
         end
 
         def exec_command
-          ["brakeman"]
+          exec_override || ["brakeman"]
         end
 
         # These are specified in constants at the top of brakeman.rb:
