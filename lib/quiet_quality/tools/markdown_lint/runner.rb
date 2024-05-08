@@ -12,21 +12,26 @@ module QuietQuality
 
         def command(json: true)
           return nil if skip_execution?
-          base_command = ["mdl"]
-          base_command << "--json" if json
-          if target_files.any?
-            base_command + target_files.sort
-          else
-            base_command + ["."]
-          end
+          (command_override || ["mdl", "--json"]) + command_targets
         end
 
         def exec_command
-          command(json: false)
+          return nil if skip_execution?
+          (exec_override || ["mdl"]) + command_targets
         end
 
         def relevant_path?(path)
           path.end_with?(".md")
+        end
+
+        private
+
+        def command_targets
+          if target_files.any?
+            target_files.sort
+          else
+            ["."]
+          end
         end
       end
     end

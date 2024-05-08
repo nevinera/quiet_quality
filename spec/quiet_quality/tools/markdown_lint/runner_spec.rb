@@ -3,7 +3,16 @@ require_relative "../runner_examples"
 RSpec.describe QuietQuality::Tools::MarkdownLint::Runner do
   let(:changed_files) { nil }
   let(:file_filter) { nil }
-  subject(:runner) { described_class.new(changed_files: changed_files, file_filter: file_filter) }
+  let(:command_override) { nil }
+  let(:exec_override) { nil }
+  subject(:runner) do
+    described_class.new(
+      changed_files: changed_files,
+      file_filter: file_filter,
+      command_override: command_override,
+      exec_override: exec_override
+    )
+  end
 
   it_behaves_like "a functional RelevantRunner subclass", :markdown_lint, {
     relevant: "foo.md",
@@ -77,6 +86,39 @@ RSpec.describe QuietQuality::Tools::MarkdownLint::Runner do
         it { is_expected.to eq(["mdl", "--json", "bar.md", "foo.md"]) }
       end
     end
+
+    context "when a command_override is supplied" do
+      let(:command_override) { ["foo", "bar"] }
+
+      context "when there are no changed to consider" do
+        let(:changed_files) { nil }
+        it { is_expected.to eq(["foo", "bar", "."]) }
+      end
+
+      context "when there are changed to consider" do
+        context "but they are empty" do
+          let(:changed_files) { empty_changed_files }
+          it { is_expected.to be_nil }
+        end
+
+        context "but they contain no markdown files" do
+          let(:changed_files) { fully_changed_files("foo.txt") }
+          it { is_expected.to be_nil }
+        end
+
+        context "but they contain no files matching the file_filter" do
+          let(:file_filter) { /baz/ }
+          let(:changed_files) { fully_changed_files("foo.md", "bar.md") }
+          it { is_expected.to be_nil }
+        end
+
+        context "and they contain some files that are relevant" do
+          let(:file_filter) { /foo|bar/ }
+          let(:changed_files) { fully_changed_files("foo.md", "bar.md", "baz.md", "foo.txt") }
+          it { is_expected.to eq(["foo", "bar", "bar.md", "foo.md"]) }
+        end
+      end
+    end
   end
 
   describe "#exec_command" do
@@ -108,6 +150,39 @@ RSpec.describe QuietQuality::Tools::MarkdownLint::Runner do
         let(:file_filter) { /foo|bar/ }
         let(:changed_files) { fully_changed_files("foo.md", "bar.md", "baz.md", "foo.txt") }
         it { is_expected.to eq(["mdl", "bar.md", "foo.md"]) }
+      end
+    end
+
+    context "when an exec_override is supplied" do
+      let(:exec_override) { ["x", "z"] }
+
+      context "when there are no changed to consider" do
+        let(:changed_files) { nil }
+        it { is_expected.to eq(["x", "z", "."]) }
+      end
+
+      context "when there are changed to consider" do
+        context "but they are empty" do
+          let(:changed_files) { empty_changed_files }
+          it { is_expected.to be_nil }
+        end
+
+        context "but they contain no markdown files" do
+          let(:changed_files) { fully_changed_files("foo.txt") }
+          it { is_expected.to be_nil }
+        end
+
+        context "but they contain no files matching the file_filter" do
+          let(:file_filter) { /baz/ }
+          let(:changed_files) { fully_changed_files("foo.md", "bar.md") }
+          it { is_expected.to be_nil }
+        end
+
+        context "and they contain some files that are relevant" do
+          let(:file_filter) { /foo|bar/ }
+          let(:changed_files) { fully_changed_files("foo.md", "bar.md", "baz.md", "foo.txt") }
+          it { is_expected.to eq(["x", "z", "bar.md", "foo.md"]) }
+        end
       end
     end
   end
