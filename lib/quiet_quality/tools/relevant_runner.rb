@@ -13,12 +13,12 @@ module QuietQuality
 
       def command
         return nil if skip_execution?
-        base_command + target_files.sort
+        (command_override || base_command) + target_files.sort
       end
 
       def exec_command
         return nil if skip_execution?
-        base_exec_command + target_files.sort
+        (exec_override || base_exec_command) + target_files.sort
       end
 
       def relevant_path?(path)

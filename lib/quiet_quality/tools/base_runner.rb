@@ -6,9 +6,11 @@ module QuietQuality
       # In general, we don't want to supply a huge number of arguments to a command-line tool.
       MAX_FILES = 100
 
-      def initialize(changed_files: nil, file_filter: nil)
+      def initialize(changed_files: nil, file_filter: nil, command_override: nil, exec_override: nil)
         @changed_files = changed_files
         @file_filter = file_filter
+        @command_override = command_override
+        @exec_override = exec_override
       end
 
       def invoke!
@@ -38,7 +40,7 @@ module QuietQuality
 
       private
 
-      attr_reader :changed_files, :file_filter
+      attr_reader :changed_files, :file_filter, :command_override, :exec_override
 
       def performed_outcome
         out, err, stat = Open3.capture3(*command)
