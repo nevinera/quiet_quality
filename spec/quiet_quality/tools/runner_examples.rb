@@ -88,7 +88,16 @@ shared_examples "a functional RelevantRunner subclass" do |tool_name, options|
 
   let(:changed_files) { nil }
   let(:file_filter) { filter }
-  let(:runner) { runner_class.new(changed_files: changed_files, file_filter: file_filter) }
+  let(:command_override) { nil }
+  let(:exec_override) { nil }
+  let(:runner) do
+    runner_class.new(
+      changed_files: changed_files,
+      file_filter: file_filter,
+      command_override: command_override,
+      exec_override: exec_override
+    )
+  end
 
   describe "#tool_name" do
     subject { runner.tool_name }
@@ -148,6 +157,46 @@ shared_examples "a functional RelevantRunner subclass" do |tool_name, options|
           end
         end
       end
+
+      context "when a command_override is supplied" do
+        let(:command_override) { ["x", "y"] }
+
+        context "when there are no changes to consider" do
+          let(:changed_files) { nil }
+          it { is_expected.to eq(command_override) }
+        end
+
+        context "when there are changes to consider" do
+          context "but they are empty" do
+            let(:changed_files) { empty_changed_files }
+            it { is_expected.to be_nil }
+          end
+
+          context "but they contain no files matching the relevance method" do
+            let(:changed_files) { fully_changed_files(irrelevant_name) }
+            it { is_expected.to be_nil }
+          end
+
+          context "and they contain some files that are relevant" do
+            let(:changed_files) { fully_changed_files(relevant_name, irrelevant_name) }
+
+            context "but none matching the file_filter" do
+              let(:file_filter) { /never_gonna_give_you_up/ }
+              it { is_expected.to be_nil }
+            end
+
+            context "and they also match the file_filter" do
+              let(:file_filter) { /./ }
+              it { is_expected.to eq(command_override + [relevant_name]) }
+
+              context "but there are _too many_ of them" do
+                before { stub_const("QuietQuality::Tools::RelevantRunner::MAX_FILES", 0) }
+                it { is_expected.to eq(command_override) }
+              end
+            end
+          end
+        end
+      end
     end
   end
 
@@ -186,6 +235,46 @@ shared_examples "a functional RelevantRunner subclass" do |tool_name, options|
             context "but there are _too many_ of them" do
               before { stub_const("QuietQuality::Tools::RelevantRunner::MAX_FILES", 0) }
               it { is_expected.to eq(base_exec_command) }
+            end
+          end
+        end
+      end
+
+      context "when an exec_override is supplied" do
+        let(:exec_override) { ["foo", "bar"] }
+
+        context "when there are no changes to consider" do
+          let(:changed_files) { nil }
+          it { is_expected.to eq(exec_override) }
+        end
+
+        context "when there are changes to consider" do
+          context "but they are empty" do
+            let(:changed_files) { empty_changed_files }
+            it { is_expected.to be_nil }
+          end
+
+          context "but they contain no files matching the relevance method" do
+            let(:changed_files) { fully_changed_files(irrelevant_name) }
+            it { is_expected.to be_nil }
+          end
+
+          context "and they contain some files that are relevant" do
+            let(:changed_files) { fully_changed_files(relevant_name, irrelevant_name) }
+
+            context "but none matching the file_filter" do
+              let(:file_filter) { /never_gonna_give_you_up/ }
+              it { is_expected.to be_nil }
+            end
+
+            context "and they also match the file_filter" do
+              let(:file_filter) { /./ }
+              it { is_expected.to eq(exec_override + [relevant_name]) }
+
+              context "but there are _too many_ of them" do
+                before { stub_const("QuietQuality::Tools::RelevantRunner::MAX_FILES", 0) }
+                it { is_expected.to eq(exec_override) }
+              end
             end
           end
         end

@@ -423,6 +423,52 @@ RSpec.describe QuietQuality::Config::Builder do
           end
         end
       end
+
+      describe "#command" do
+        let(:rspec_tool_option) { tools.detect { |t| t.tool_name == :rspec } }
+        subject(:rspec_command) { rspec_tool_option.command }
+
+        context "with no config file supplied" do
+          it { is_expected.to be_nil }
+        end
+
+        context "with a config file supplied" do
+          let(:global_options) { {config_path: "fake.yml"} }
+
+          context "when the config file sets it" do
+            let(:cfg_tool_options) { {rspec: {command: ["a", "b"]}} }
+            it { is_expected.to eq(["a", "b"]) }
+          end
+
+          context "when the config file does not set it" do
+            let(:cfg_tool_options) { {rspec: {filter_messages: false}} }
+            it { is_expected.to be_nil }
+          end
+        end
+      end
+
+      describe "#exec_command" do
+        let(:rspec_tool_option) { tools.detect { |t| t.tool_name == :rspec } }
+        subject(:rspec_exec_command) { rspec_tool_option.exec_command }
+
+        context "with no config file supplied" do
+          it { is_expected.to be_nil }
+        end
+
+        context "with a config file supplied" do
+          let(:global_options) { {config_path: "fake.yml"} }
+
+          context "when the config file sets it" do
+            let(:cfg_tool_options) { {rspec: {exec_command: ["a", "b"]}} }
+            it { is_expected.to eq(["a", "b"]) }
+          end
+
+          context "when the config file does not set it" do
+            let(:cfg_tool_options) { {rspec: {filter_messages: false}} }
+            it { is_expected.to be_nil }
+          end
+        end
+      end
     end
 
     describe "config_file parsing" do

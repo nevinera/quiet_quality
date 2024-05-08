@@ -99,6 +99,8 @@ RSpec.describe QuietQuality::Config::Options do
             file_filter: nil,
             excludes: nil,
             filter_messages: true,
+            command: nil,
+            exec_command: nil,
             limit_targets: true
           },
           standardrb: {
@@ -106,6 +108,8 @@ RSpec.describe QuietQuality::Config::Options do
             file_filter: nil,
             excludes: nil,
             filter_messages: false,
+            command: nil,
+            exec_command: nil,
             limit_targets: true
           }
         }

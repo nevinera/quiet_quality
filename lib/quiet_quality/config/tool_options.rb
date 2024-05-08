@@ -1,14 +1,16 @@
 module QuietQuality
   module Config
     class ToolOptions
-      def initialize(tool, limit_targets: true, filter_messages: true, file_filter: nil)
+      def initialize(tool, **options)
         @tool_name = tool.to_sym
-        @limit_targets = limit_targets
-        @filter_messages = filter_messages
-        @file_filter = file_filter
+        @limit_targets = options.fetch(:limit_targets, true)
+        @filter_messages = options.fetch(:filter_messages, true)
+        @file_filter = options.fetch(:file_filter, nil)
+        @command = options.fetch(:command, nil)
+        @exec_command = options.fetch(:exec_command, nil)
       end
 
-      attr_accessor :file_filter
+      attr_accessor :file_filter, :command, :exec_command
       attr_reader :tool_name
       attr_writer :limit_targets, :filter_messages
 
@@ -38,6 +40,8 @@ module QuietQuality
           limit_targets: limit_targets?,
           filter_messages: filter_messages?,
           file_filter: file_filter&.regex&.to_s,
+          command: command,
+          exec_command: exec_command,
           excludes: file_filter&.excludes&.map(&:to_s)
         }
       end

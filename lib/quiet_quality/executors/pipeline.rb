@@ -49,7 +49,9 @@ module QuietQuality
       def runner
         @_runner ||= tool_options.runner_class.new(
           changed_files: limit_targets? ? changed_files : nil,
-          file_filter: tool_options.file_filter
+          file_filter: tool_options.file_filter,
+          command_override: tool_options.command,
+          exec_override: tool_options.exec_command
         ).tap { |r| log_runner(r) }
       end
 

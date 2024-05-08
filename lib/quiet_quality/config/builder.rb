@@ -129,13 +129,15 @@ module QuietQuality
           options.tools.each do |tool_options|
             update_tool_option(tool_options, :limit_targets)
             update_tool_option(tool_options, :filter_messages)
+            update_tool_option(tool_options, :command, global: false)
+            update_tool_option(tool_options, :exec_command, global: false)
             set_unless_nil(tool_options, :file_filter, build_file_filter(tool_options.tool_name))
           end
         end
 
-        def update_tool_option(tool_options, option_name)
+        def update_tool_option(tool_options, option_name, global: true)
           tool_name = tool_options.tool_name
-          set_unless_nil(tool_options, option_name, apply.global_option(option_name))
+          set_unless_nil(tool_options, option_name, apply.global_option(option_name)) if global
           set_unless_nil(tool_options, option_name, apply.tool_option(tool_name, option_name))
         end
 
