@@ -2,7 +2,9 @@ RSpec.describe QuietQuality::Executors::Execcer do
   let(:limit_targets?) { true }
   let(:file_filter) { ".*" }
   let(:tool_name) { :rspec }
-  let(:tool_opts) { tool_options(tool_name, limit_targets: limit_targets?, file_filter: file_filter) }
+  let(:command_override) { ["my", "command"] }
+  let(:exec_override) { ["my", "exec"] }
+  let(:tool_opts) { tool_options(tool_name, limit_targets: limit_targets?, file_filter: file_filter, command: command_override, exec_command: exec_override) }
 
   let(:foo_file) { QuietQuality::ChangedFile.new(path: "path/foo.rb", lines: [1, 2, 3, 5, 10]) }
   let(:bar_file) { QuietQuality::ChangedFile.new(path: "path/bar.rb", lines: [5, 6, 7, 14, 15]) }
@@ -27,9 +29,12 @@ RSpec.describe QuietQuality::Executors::Execcer do
 
       it "sets up the runner correctly" do
         exec!
-        expect(runner_class)
-          .to have_received(:new)
-          .with(changed_files: changed_files, file_filter: file_filter)
+        expect(runner_class).to have_received(:new).with(
+          changed_files: changed_files,
+          file_filter: file_filter,
+          command_override: command_override,
+          exec_override: exec_override
+        )
       end
 
       it "logs correctly", aggregate_failures: true do
@@ -50,9 +55,12 @@ RSpec.describe QuietQuality::Executors::Execcer do
 
       it "sets up the runner correctly" do
         exec!
-        expect(runner_class)
-          .to have_received(:new)
-          .with(changed_files: nil, file_filter: file_filter)
+        expect(runner_class).to have_received(:new).with(
+          changed_files: nil,
+          file_filter: file_filter,
+          command_override: command_override,
+          exec_override: exec_override
+        )
       end
 
       it "logs correctly", aggregate_failures: true do
@@ -74,9 +82,12 @@ RSpec.describe QuietQuality::Executors::Execcer do
 
       it "sets up the runner correctly" do
         exec!
-        expect(runner_class)
-          .to have_received(:new)
-          .with(changed_files: changed_files, file_filter: file_filter)
+        expect(runner_class).to have_received(:new).with(
+          changed_files: changed_files,
+          file_filter: file_filter,
+          command_override: command_override,
+          exec_override: exec_override
+        )
       end
 
       it "logs correctly", aggregate_failures: true do
