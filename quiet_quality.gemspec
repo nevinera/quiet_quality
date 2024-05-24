@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
       .map { |path| path.sub(/^bin\//, "") }
   end
 
-  spec.add_dependency "git", "~> 1.18"
+  spec.add_dependency "git", "~> 2.0"
   spec.add_dependency "git_diff_parser", "~> 4"
 
   spec.add_development_dependency "rspec", "~> 3.13"
