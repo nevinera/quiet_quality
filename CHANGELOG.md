@@ -1,5 +1,10 @@
 # Changelog
 
+## Release 1.5.2
+
+* Support command/exec-command overrides (yaml-only) (#127)
+* Support ruby-git 2.x (#130 resolves #129)
+
 ## Release 1.5.1
 
 * Refactor ConfigParser to just parse the config into ParsedOptions, separating
