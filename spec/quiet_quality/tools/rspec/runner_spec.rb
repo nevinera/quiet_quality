@@ -61,4 +61,55 @@ RSpec.describe QuietQuality::Tools::Rspec::Runner do
       it { is_expected.to be_falsey }
     end
   end
+
+  def self.it_considers(status:, to_be:)
+    context "when the process exits with #{status}" do
+      let(:stat) { mock_status(status) }
+      it { is_expected.to eq(to_be) }
+    end
+  end
+
+  describe "#success_status?" do
+    subject(:success_status?) { runner.success_status?(stat) }
+
+    context "when running with 'changed_files'" do
+      let(:changed_files) { fully_changed_files("/tmp/foo") }
+      it_considers(status: 0, to_be: true)
+      it_considers(status: 1, to_be: false)
+      it_considers(status: 2, to_be: true)
+      it_considers(status: 3, to_be: true)
+      it_considers(status: 99, to_be: false)
+    end
+
+    context "when running without 'changed_files'" do
+      let(:changed_files) { nil }
+      it_considers(status: 0, to_be: true)
+      it_considers(status: 1, to_be: false)
+      it_considers(status: 2, to_be: false)
+      it_considers(status: 3, to_be: false)
+      it_considers(status: 99, to_be: false)
+    end
+  end
+
+  describe "#failure_status?" do
+    subject(:failure_status) { runner.failure_status?(stat) }
+
+    context "when running with 'changed_files'" do
+      let(:changed_files) { fully_changed_files("/tmp/foo") }
+      it_considers(status: 0, to_be: false)
+      it_considers(status: 1, to_be: true)
+      it_considers(status: 2, to_be: false)
+      it_considers(status: 3, to_be: false)
+      it_considers(status: 99, to_be: false)
+    end
+
+    context "when running without 'changed_files'" do
+      let(:changed_files) { nil }
+      it_considers(status: 0, to_be: false)
+      it_considers(status: 1, to_be: true)
+      it_considers(status: 2, to_be: true)
+      it_considers(status: 3, to_be: true)
+      it_considers(status: 99, to_be: false)
+    end
+  end
 end
