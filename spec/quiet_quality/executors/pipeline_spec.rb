@@ -180,5 +180,11 @@ RSpec.describe QuietQuality::Executors::Pipeline do
         expect_info("Messages for rspec positioned into the diff for annotation purposes")
       end
     end
+
+    it "passes the expected data to the parser" do
+      messages
+      expect(QuietQuality::Tools::Rspec::Parser).to have_received(:new)
+        .with(runner_outcome.output, tool_options: tool_opts)
+    end
   end
 end

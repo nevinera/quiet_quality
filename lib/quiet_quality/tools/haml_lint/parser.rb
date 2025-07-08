@@ -2,8 +2,9 @@ module QuietQuality
   module Tools
     module HamlLint
       class Parser
-        def initialize(text)
+        def initialize(text, tool_options:)
           @text = text
+          @tool_options = tool_options
         end
 
         def messages

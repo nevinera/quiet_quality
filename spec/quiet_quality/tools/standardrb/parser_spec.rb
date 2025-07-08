@@ -1,5 +1,5 @@
 RSpec.describe QuietQuality::Tools::Standardrb::Parser do
-  subject(:parser) { described_class.new(text) }
+  subject(:parser) { described_class.new(text, tool_options: {}) }
 
   describe "#messages" do
     let(:text) { fixture_content("tools", "standardrb", "no-failures.json") }

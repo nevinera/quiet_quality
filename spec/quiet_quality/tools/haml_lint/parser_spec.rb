@@ -1,5 +1,5 @@
 RSpec.describe QuietQuality::Tools::HamlLint::Parser do
-  subject(:parser) { described_class.new(text) }
+  subject(:parser) { described_class.new(text, tool_options: {}) }
 
   describe "#messages" do
     let(:text) { fixture_content("tools", "haml_lint", "no-failures.json") }

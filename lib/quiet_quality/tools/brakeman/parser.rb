@@ -4,8 +4,9 @@ module QuietQuality
       class Parser
         include Logging
 
-        def initialize(text)
+        def initialize(text, tool_options:)
           @text = text
+          @tool_options = tool_options
         end
 
         def messages
