@@ -4,8 +4,8 @@ module QuietQuality
       class Parser
         include Logging
 
-        def initialize(text, tool_options:)
-          @text = text
+        def initialize(outcome, tool_options:)
+          @outcome = outcome
           @tool_options = tool_options
         end
 
@@ -17,7 +17,11 @@ module QuietQuality
 
         private
 
-        attr_reader :text, :tool_options
+        attr_reader :outcome, :tool_options
+
+        def text
+          outcome.output
+        end
 
         # Many people use simplecov with rspec, and its default formatter
         # writes text output into the stdout stream of rspec even when rspec is

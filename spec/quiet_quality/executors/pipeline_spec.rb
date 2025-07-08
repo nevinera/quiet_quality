@@ -184,7 +184,7 @@ RSpec.describe QuietQuality::Executors::Pipeline do
     it "passes the expected data to the parser" do
       messages
       expect(QuietQuality::Tools::Rspec::Parser).to have_received(:new)
-        .with(runner_outcome.output, tool_options: tool_opts)
+        .with(runner_outcome, tool_options: tool_opts)
     end
   end
 end
