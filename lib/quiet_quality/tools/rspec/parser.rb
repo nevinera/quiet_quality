@@ -12,7 +12,8 @@ module QuietQuality
         def messages
           return @_messages if defined?(@_messages)
           messages = failed_examples.map { |ex| message_for(ex) }
-          @_messages = Messages.new(messages)
+          messages << coverage_message unless tool_options.limit_targets?
+          @_messages = Messages.new(messages.compact)
         end
 
         private
@@ -91,6 +92,34 @@ module QuietQuality
             warn "-" * 80
           end
           fail Rspec::Error, "Rspec encountered #{errors_count} errors outside of examples"
+        end
+
+        def net_coverage_message
+          Message.new(
+            path: "all",
+            body: "Net coverage was insufficient",
+            start_line: 0,
+            rule: "Net Coverage",
+            tool_name: TOOL_NAME
+          )
+        end
+
+        def per_file_coverage_message
+          Message.new(
+            path: "all",
+            body: "Per-file coverage was insufficient",
+            start_line: 0,
+            rule: "Per-File Coverage",
+            tool_name: TOOL_NAME
+          )
+        end
+
+        def coverage_message
+          @_coverage_message ||=
+            case outcome.exit_status
+            when 2 then net_coverage_message
+            when 3 then per_file_coverage_message
+            end
         end
       end
     end
