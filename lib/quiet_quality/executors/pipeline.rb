@@ -17,7 +17,8 @@ module QuietQuality
           tool: runner_outcome.tool,
           output: runner_outcome.output,
           logging: runner_outcome.logging,
-          failure: messages.any?
+          failure: messages.any?,
+          exit_status: runner_outcome.exit_status
         )
       end
 

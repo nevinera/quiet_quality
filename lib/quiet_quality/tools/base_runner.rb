@@ -47,9 +47,9 @@ module QuietQuality
         log_performance(err, stat)
 
         if success_status?(stat)
-          Outcome.new(tool: tool_name, output: out, logging: err)
+          Outcome.new(tool: tool_name, output: out, logging: err, exit_status: stat.exitstatus)
         elsif failure_status?(stat)
-          Outcome.new(tool: tool_name, output: out, logging: err, failure: true)
+          Outcome.new(tool: tool_name, output: out, logging: err, failure: true, exit_status: stat.exitstatus)
         else
           fail(ExecutionError, "Execution of #{tool_name} failed with #{stat.exitstatus}")
         end

@@ -1,13 +1,14 @@
 module QuietQuality
   module Tools
     class Outcome
-      attr_reader :output, :logging, :tool
+      attr_reader :output, :logging, :tool, :exit_status
 
-      def initialize(tool:, output:, logging: nil, failure: false)
+      def initialize(tool:, output:, logging: nil, failure: false, exit_status: nil)
         @tool = tool
         @output = output
         @logging = logging
         @failure = failure
+        @exit_status = exit_status
       end
 
       def failure?
