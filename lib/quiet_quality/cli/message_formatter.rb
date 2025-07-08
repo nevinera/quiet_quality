@@ -120,7 +120,7 @@ module QuietQuality
           end
         end
 
-        def base_string
+        def base_value
           case parsed_token.source
           when "tool" then message.tool_name
           when "loc" then location_string
@@ -129,7 +129,11 @@ module QuietQuality
           when "lines" then line_range
           when "rule" then message.rule
           when "body" then flattened_body
-          end.to_s
+          end
+        end
+
+        def base_string
+          base_value.to_s
         end
 
         def location_string
