@@ -129,7 +129,7 @@ module QuietQuality
           when "lines" then line_range
           when "rule" then message.rule
           when "body" then flattened_body
-          end
+          end.to_s
         end
 
         def location_string

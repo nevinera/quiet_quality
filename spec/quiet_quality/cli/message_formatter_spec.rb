@@ -5,7 +5,7 @@ RSpec.describe QuietQuality::Cli::MessageFormatter do
   describe "#format" do
     let(:message) do
       generate_message(
-        tool_name: "fake_tool",
+        tool_name: :fake_tool,
         path: "path/to/the/file.rb",
         start_line: 5,
         stop_line: stop_line,
