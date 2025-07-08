@@ -2,8 +2,8 @@ module QuietQuality
   module Tools
     module Rubocop
       class Parser
-        def initialize(text, tool_options:)
-          @text = text
+        def initialize(outcome, tool_options:)
+          @outcome = outcome
           @tool_options = tool_options
         end
 
@@ -18,7 +18,11 @@ module QuietQuality
 
         private
 
-        attr_reader :text, :tool_options
+        attr_reader :outcome, :tool_options
+
+        def text
+          outcome.output
+        end
 
         def content
           @_content ||= JSON.parse(text, symbolize_names: true)

@@ -63,7 +63,7 @@ module QuietQuality
       end
 
       def parser
-        @_parser ||= tool_options.parser_class.new(runner_outcome.output, tool_options: tool_options)
+        @_parser ||= tool_options.parser_class.new(runner_outcome, tool_options: tool_options)
       end
 
       def relevance_filter

@@ -4,8 +4,8 @@ module QuietQuality
       class Parser
         include Logging
 
-        def initialize(text, tool_options:)
-          @text = text
+        def initialize(outcome, tool_options:)
+          @outcome = outcome
           @tool_options = tool_options
         end
 
@@ -18,7 +18,11 @@ module QuietQuality
 
         private
 
-        attr_reader :text
+        attr_reader :outcome
+
+        def text
+          outcome.output
+        end
 
         def data
           @_data ||= JSON.parse(text, symbolize_names: true)
