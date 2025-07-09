@@ -32,8 +32,9 @@ module QuietQuality
         # stdout - we probably won't worry about any but the most common.
         def cleaned_text
           @_cleaned_text ||= text
-            .gsub(/Coverage report generated.*covered.$/, "")
-            .gsub(/Encoding problems with file.*$/, "")
+            .sub(/}Coverage report generated.*/m, "}\n")
+            .gsub(/^Encoding problems with file.*$/, "")
+            .gsub(/}Encoding problems with file.*$/, "}")
         end
 
         def content

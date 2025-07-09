@@ -54,6 +54,12 @@ RSpec.describe QuietQuality::Tools::Rspec::Parser do
       it { is_expected.to be_empty }
     end
 
+    context "when simplecov dumps *updated* non-json results output into the stream" do
+      let(:text) { fixture_content("tools", "rspec", "no-failures.updated-simplecov.json") }
+      it { is_expected.to be_a(QuietQuality::Messages) }
+      it { is_expected.to be_empty }
+    end
+
     context "when simplecov dumps multiple filename encoding problems into the stream" do
       let(:text) { fixture_content("tools", "rspec", "no-failures.with-simplecov-encoding-errors.json") }
       it { is_expected.to be_a(QuietQuality::Messages) }
