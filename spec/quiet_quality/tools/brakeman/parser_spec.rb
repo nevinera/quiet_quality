@@ -1,5 +1,6 @@
 RSpec.describe QuietQuality::Tools::Brakeman::Parser do
-  subject(:parser) { described_class.new(text) }
+  let(:outcome) { build_outcome(tool: :brakeman, output: text, logging: "") }
+  subject(:parser) { described_class.new(outcome, tool_options: {}) }
 
   describe "#messages" do
     let(:text) { fixture_content("tools", "brakeman", "no-failures.json") }

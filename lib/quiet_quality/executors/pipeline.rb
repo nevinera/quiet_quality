@@ -17,7 +17,8 @@ module QuietQuality
           tool: runner_outcome.tool,
           output: runner_outcome.output,
           logging: runner_outcome.logging,
-          failure: messages.any?
+          failure: messages.any?,
+          exit_status: runner_outcome.exit_status
         )
       end
 
@@ -62,7 +63,7 @@ module QuietQuality
       end
 
       def parser
-        @_parser ||= tool_options.parser_class.new(runner_outcome.output)
+        @_parser ||= tool_options.parser_class.new(runner_outcome, tool_options: tool_options)
       end
 
       def relevance_filter

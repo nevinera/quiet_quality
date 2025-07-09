@@ -3,7 +3,9 @@ RSpec.describe QuietQuality::Tools::Outcome do
   let(:failure) { false }
   let(:output) { "fake output" }
   let(:logging) { "fake logging" }
-  subject(:outcome) { described_class.new(tool: tool, output: output, logging: logging, failure: failure) }
+  let(:exit_status) { 0 }
+  let(:params) { {tool: tool, output: output, logging: logging, failure: failure, exit_status: exit_status} }
+  subject(:outcome) { described_class.new(**params) }
 
   describe "#failure?" do
     subject(:failure?) { outcome.failure? }
@@ -34,13 +36,15 @@ RSpec.describe QuietQuality::Tools::Outcome do
   end
 
   describe "#==" do
-    let(:other) { build_outcome(tool: other_tool, output: other_output, logging: other_logging, failure: other_failure) }
+    let(:other_params) { {tool: other_tool, output: other_output, logging: other_logging, failure: other_failure, exit_status: other_exit_status} }
+    let(:other) { build_outcome(**other_params) }
     subject(:equality) { outcome == other }
 
     let(:other_tool) { tool }
     let(:other_output) { output }
     let(:other_logging) { logging }
     let(:other_failure) { failure }
+    let(:other_exit_status) { exit_status }
 
     context "when all match" do
       it { is_expected.to be_truthy }

@@ -1,8 +1,11 @@
 RSpec.describe QuietQuality::Tools::Rspec::Parser do
-  subject(:parser) { described_class.new(text) }
+  let(:outcome) { build_outcome(tool: :rspec, output: text, logging: "", exit_status: exit_status) }
+  let(:topts) { tool_options(:rspec) }
+  subject(:parser) { described_class.new(outcome, tool_options: topts) }
 
   describe "#messages" do
     let(:text) { fixture_content("tools", "rspec", "no-failures.json") }
+    let(:exit_status) { 0 }
     subject(:messages) { parser.messages }
 
     it "is memoized" do
@@ -14,9 +17,16 @@ RSpec.describe QuietQuality::Tools::Rspec::Parser do
       let(:text) { fixture_content("tools", "rspec", "no-failures.json") }
       it { is_expected.to be_a(QuietQuality::Messages) }
       it { is_expected.to be_empty }
+
+      context "with limit_targets = true" do
+        let(:topts) { tool_options(:rspec, limit_targets: false) }
+        it { is_expected.to be_a(QuietQuality::Messages) }
+        it { is_expected.to be_empty }
+      end
     end
 
     context "when there are some offenses" do
+      let(:exit_status) { 1 }
       let(:text) { fixture_content("tools", "rspec", "failures.json") }
       it { is_expected.to be_a(QuietQuality::Messages) }
       it { is_expected.not_to be_empty }
@@ -67,6 +77,7 @@ RSpec.describe QuietQuality::Tools::Rspec::Parser do
     end
 
     context "when there are errors outside of examples" do
+      let(:exit_status) { 1 }
       let(:text) { fixture_content("tools", "rspec", "errors-outside-of-examples.json") }
 
       it "raises an Rspec::Error" do
@@ -77,6 +88,54 @@ RSpec.describe QuietQuality::Tools::Rspec::Parser do
         expect_warn "RSpec errors:"
         expect_warn a_string_matching(/An error occurred while loading/)
         expect_warn "No examples found."
+      end
+    end
+
+    context "when rspec exits with 2 (simplecov insufficient-coverage)" do
+      let(:exit_status) { 2 }
+
+      context "with limit_targets = true" do
+        let(:topts) { tool_options(:rspec, limit_targets: true) }
+        it { is_expected.to be_a(QuietQuality::Messages) }
+        it { is_expected.to be_empty }
+      end
+
+      context "with limit_targets = false" do
+        let(:topts) { tool_options(:rspec, limit_targets: false) }
+        it { is_expected.to be_a(QuietQuality::Messages) }
+        it { is_expected.not_to be_empty }
+
+        it "has the expected offense in it" do
+          expect(messages.count).to eq(1)
+          expect(messages.first.body).to eq("Net coverage was insufficient")
+          expect(messages.first.rule).to eq("Net Coverage")
+          expect(messages.first.tool_name).to eq(:rspec)
+          expect(messages.first.path).to eq("all")
+        end
+      end
+    end
+
+    context "when rspec exits with 3 (simplecov per-file insufficient-coverage)" do
+      let(:exit_status) { 3 }
+
+      context "with limit_targets = true" do
+        let(:topts) { tool_options(:rspec, limit_targets: true) }
+        it { is_expected.to be_a(QuietQuality::Messages) }
+        it { is_expected.to be_empty }
+      end
+
+      context "with limit_targets = false" do
+        let(:topts) { tool_options(:rspec, limit_targets: false) }
+        it { is_expected.to be_a(QuietQuality::Messages) }
+        it { is_expected.not_to be_empty }
+
+        it "has the expected offense in it" do
+          expect(messages.count).to eq(1)
+          expect(messages.first.body).to eq("Per-file coverage was insufficient")
+          expect(messages.first.rule).to eq("Per-File Coverage")
+          expect(messages.first.tool_name).to eq(:rspec)
+          expect(messages.first.path).to eq("all")
+        end
       end
     end
   end
