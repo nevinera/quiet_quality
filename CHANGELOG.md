@@ -1,9 +1,10 @@
 # Changelog
 
-## Release 1.5.3
+## Release 1.6.0
 
 * Fix `Git#comparison_base` to work with `git` gem 5.x, which changed
   `#merge_base` to return raw SHA strings instead of commit objects
+* Support standard fork-pull-request workflow
 
 ## Release 1.5.2
 
